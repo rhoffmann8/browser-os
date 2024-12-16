@@ -1,8 +1,8 @@
 .board {
   display: grid;
   gap: 8px;
-  grid-template-columns: repeat(var(--board-size), minmax(100px, 1fr));
-  grid-template-rows: repeat(var(--board-size), minmax(100px, 1fr));
+  grid-template-columns: repeat(var(--board-size), minmax(80px, 1fr));
+  grid-template-rows: repeat(var(--board-size), minmax(80px, 1fr));
   background: white;
 }
 

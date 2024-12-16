@@ -70,7 +70,7 @@ export function Desktop() {
         </WidgetDroppableContext>
       </IconDroppableContext>
 
-      <div style={{ marginLeft: 4 }}>OS Version 1.0</div>
+      <div style={{ marginLeft: 4 }}>OS Version 0.0.1</div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useDraggable } from "@dnd-kit/core";
 import { css } from "@emotion/css";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { getApplicationFromId } from "../application";
 import { useDesktopStore } from "../state/desktopState";
 import { Delta, type Widget } from "../types";
@@ -51,18 +51,36 @@ export function Widget({ widget }: { widget: Widget }) {
       }
     : undefined;
 
+  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
+  const setInitialDims = useCallback(() => {
+    if (
+      containerRef &&
+      widget.dimensions?.height === undefined &&
+      widget.dimensions?.width === undefined
+    ) {
+      const dims = containerRef.getBoundingClientRect();
+      widget.resize({ height: dims.height, width: dims.width });
+    }
+  }, [containerRef, widget]);
+
   const onWidgetResize = useCallback(
     (delta: Partial<Delta>) => {
+      // If the widget was initialized with undefined dims, then set dims to content size before resizing
+      // TODO: rethink window sizing system
+      setInitialDims();
       resizeWindow(id, delta);
     },
-    [id, resizeWindow]
+    [id, resizeWindow, setInitialDims]
   );
 
   const AppComponent = getApplicationFromId(application.id);
 
   return (
     <div
-      ref={setNodeRef}
+      ref={(r) => {
+        setContainerRef(r);
+        setNodeRef(r);
+      }}
       className={windowCss}
       onContextMenu={(e) => e.stopPropagation()}
       style={{

@@ -25,6 +25,8 @@ interface BoxProps
       | "overflowX"
       | "overflowY"
       | "height"
+      | "minHeight"
+      | "maxHeight"
       | "width"
       | "minWidth"
       | "maxWidth"
@@ -51,6 +53,8 @@ export const Box = forwardRef<HTMLDivElement, PropsWithChildren<BoxProps>>(
       overflowX,
       overflowY,
       height,
+      minHeight,
+      maxHeight,
       width,
       minWidth,
       maxWidth,
@@ -92,6 +96,8 @@ export const Box = forwardRef<HTMLDivElement, PropsWithChildren<BoxProps>>(
           : typeof height === "string"
           ? `height: ${height}`
           : ""}
+        ${typeof minHeight === "number" ? `min-width: ${minHeight}px;` : ""}
+        ${typeof maxHeight === "number" ? `max-width: ${maxHeight}px;` : ""}
         ${typeof width === "number"
           ? `width: ${width}px;`
           : typeof width === "string"
@@ -112,7 +118,9 @@ export const Box = forwardRef<HTMLDivElement, PropsWithChildren<BoxProps>>(
       justifyContent,
       justifySelf,
       margin,
+      maxHeight,
       maxWidth,
+      minHeight,
       minWidth,
       overflow,
       overflowX,

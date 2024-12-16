@@ -10,7 +10,7 @@ export interface Track {
 interface AudioPlayerContext {
   trackIndex: number;
   setTrackIndex: ChangeHandler<number>;
-  currentTrack: Track;
+  currentTrack?: Track;
   trackList: Track[];
   setTrackList: ChangeHandler<Track[]>;
   showTrackList: boolean;

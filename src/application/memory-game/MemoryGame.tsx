@@ -4,12 +4,19 @@ import { ApplicationComponent } from "../../types/application";
 import "./styles.css";
 import { Board } from "./Board";
 import { Box } from "../../components/Box";
+import { css } from "@emotion/css";
 
 enum Screen {
   START,
   BOARD,
   WIN,
 }
+
+const gameContainerCss = css`
+  min-width: 400px;
+  min-height: 400px;
+  padding: 24px;
+`;
 
 export const MemoryGame: ApplicationComponent<"memory-game"> = () => {
   const [screen, setScreen] = useState(Screen.START);
@@ -27,8 +34,12 @@ export const MemoryGame: ApplicationComponent<"memory-game"> = () => {
   }, [screen]);
 
   return (
-    <Box flexDirection="column" alignItems="center" flex={1}>
-      <h1>Memory game</h1>
+    <Box
+      className={gameContainerCss}
+      flexDirection="column"
+      alignItems="center"
+      flex={1}
+    >
       {renderScreen()}
     </Box>
   );
@@ -47,10 +58,10 @@ function Win({ onReset }: { onReset: () => void }) {
 
 function ChooseBoard({ onStart }: { onStart: () => void }) {
   return (
-    <div>
+    <Box fillHeight fillWidth alignItems="center" justifyContent="center">
       <button className="button" onClick={onStart}>
-        Start
+        Start game
       </button>
-    </div>
+    </Box>
   );
 }

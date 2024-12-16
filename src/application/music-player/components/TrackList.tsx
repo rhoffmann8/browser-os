@@ -52,7 +52,6 @@ export function TrackList() {
 
   return (
     <Box fillWidth flexDirection="column" className={trackListCss}>
-      <h1>Tracklist</h1>
       <ul>
         {trackList.map((track, index) => (
           <li

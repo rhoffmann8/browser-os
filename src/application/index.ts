@@ -8,19 +8,21 @@ import { TextEditor } from "./text-editor/TextEditor";
 import { FileObjectType } from "../filesystem/types";
 import { Dialog } from "./dialog/Dialog";
 import { MusicPlayer } from "./music-player/MusicPlayer";
+import { MarkdownViewer } from "./markdown-viewer/MarkdownViewer";
 
 export const APPLICATION_MAP: {
   [key in AppId]: (props: {
     params: Extract<Application, { id: key }>["params"];
     widget: Widget;
-  }) => JSX.Element;
+  }) => JSX.Element | null;
 } = {
   dialog: Dialog,
   "external-link": ExternalLink,
+  "markdown-viewer": MarkdownViewer,
   "memory-game": MemoryGame,
   "music-player": MusicPlayer,
   pdf: PDF,
-  textEditor: TextEditor,
+  "text-editor": TextEditor,
 };
 
 export function getApplicationFromId<K extends AppId>(key: K) {

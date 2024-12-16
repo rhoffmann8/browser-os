@@ -1,5 +1,17 @@
+import { css } from "@emotion/css";
 import { Box } from "../../../components/Box";
 import { useAudioPlayerContext } from "../context/AudioPlayerContext";
+
+import "./rangeSlider.css";
+
+const progressBarCss = css`
+  min-width: 100%;
+
+  input {
+    flex: 1;
+    cursor: pointer;
+  }
+`;
 
 export function ProgressBar() {
   const { audioRef, progressBarRef, currentTime, setCurrentTime, duration } =
@@ -22,7 +34,7 @@ export function ProgressBar() {
   const durationDisplay = formatTime(duration);
 
   return (
-    <Box alignItems="center" gap={8} style={{ minWidth: "100%" }}>
+    <Box className={progressBarCss} alignItems="center" gap={8}>
       {currentTimeDisplay}
       <Box flex={1} style={{ position: "relative" }}>
         <input
@@ -30,7 +42,6 @@ export function ProgressBar() {
           type="range"
           onChange={handleProgressChange}
           value={currentTime.toString()}
-          style={{ flex: 1, cursor: "pointer" }}
         />
       </Box>
       {durationDisplay}

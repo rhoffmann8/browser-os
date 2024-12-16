@@ -1,4 +1,10 @@
-import { DndContext, DragEndEvent, useDroppable } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useDroppable,
+  useSensor,
+} from "@dnd-kit/core";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { css } from "@emotion/css";
 import { MouseEventHandler, PropsWithChildren, useCallback } from "react";
@@ -24,6 +30,12 @@ export function IconDroppableContext({
   const unselectAll = useIconStore((state) => state.unselectAll);
   const setIconPosition = useIconStore((state) => state.setIconPosition);
 
+  const sensor = useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 4,
+    },
+  });
+
   const onDragEnd = useCallback(
     (e: DragEndEvent) => {
       if (!e.active) {
@@ -44,7 +56,11 @@ export function IconDroppableContext({
   );
 
   return (
-    <DndContext onDragEnd={onDragEnd} modifiers={[restrictToWindowEdges]}>
+    <DndContext
+      onDragEnd={onDragEnd}
+      modifiers={[restrictToWindowEdges]}
+      sensors={[sensor]}
+    >
       <div
         ref={setNodeRef}
         className={iconGridCss}

@@ -1,6 +1,6 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { Icon, Position, WidgetParams } from "./types";
+import { DesktopIcon, Position, WidgetParams } from "./types";
 import { Application } from "./types/application";
 
 export function randomRgba(opacity: number) {
@@ -27,7 +27,6 @@ export function updateItemInArray<T extends { id: UniqueIdentifier }>(
 ) {
   const itemIndex = arr.findIndex((w) => w.id === id);
   if (itemIndex === -1) return arr;
-  // return arr.filter((w) => w.id !== id).concat(updater(item));
   return arr.map((item, idx) => {
     if (idx === itemIndex) {
       return updater(item);
@@ -46,13 +45,15 @@ export function createIcon<A extends Application>(
   application: A,
   icon: IconDefinition,
   iconPosition: Position,
-  widget: Partial<WidgetParams>
-): Icon {
+  widget: Partial<WidgetParams>,
+  iconClassName?: string
+): DesktopIcon {
   return {
     id: crypto.randomUUID(),
     title,
     application,
     icon,
+    iconClassName,
     position: iconPosition,
     widget,
   };

@@ -1,14 +1,14 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { create } from "zustand";
-import { Icon, Position } from "../types";
+import { DesktopIcon, Position } from "../types";
 import { getStorageJSON } from "../utils";
-import { DEFAULT_ICONS, STORAGE_KEYS } from "../constants";
+import { createDefaultIcons, DEFAULT_ICONS, STORAGE_KEYS } from "../constants";
 
 interface IconState {
-  icons: Icon[];
+  icons: DesktopIcon[];
   selectedIcons: Set<UniqueIdentifier>;
-  addIcon: (icon: Icon) => void;
+  addIcon: (icon: DesktopIcon) => void;
   selectIcon: (id: UniqueIdentifier, append: boolean) => void;
   unselectIcon: (id: UniqueIdentifier, unappend: boolean) => void;
   unselectAll: () => void;
@@ -54,7 +54,7 @@ export const useIconStore = create<IconState>((set) => ({
           .concat({ ...icon, icon: newImage }),
       };
     }),
-  resetIconsToDefault: () => set({ icons: DEFAULT_ICONS }),
+  resetIconsToDefault: () => set({ icons: createDefaultIcons() }),
 }));
 
 useIconStore.subscribe((state) => {
