@@ -50,6 +50,8 @@ export function Controls() {
           setTrackIndex(0);
         } else if (trackIndex < trackList.length) {
           setTrackIndex((prev) => prev + 1);
+        } else {
+          setTrackIndex(-1);
         }
       };
     }
@@ -105,7 +107,7 @@ export function Controls() {
     <>
       <audio
         ref={audioRef}
-        src={currentTrack.src}
+        src={currentTrack?.src}
         onLoadedMetadata={onLoadedMetadata}
       />
       <Box fillWidth justifyContent="space-between">
@@ -171,7 +173,7 @@ export function Controls() {
           >
             <FontAwesomeIcon
               icon={faRepeat}
-              style={{ color: isRepeat ? "#ff6060" : "" }}
+              style={{ color: isRepeat ? "#f34646" : "" }}
             />
           </button>
         </Box>

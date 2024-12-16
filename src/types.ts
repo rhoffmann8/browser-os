@@ -13,10 +13,11 @@ export interface Moveable {
   position: Position;
 }
 
-export interface Icon extends Moveable {
+export interface DesktopIcon extends Moveable {
   id: UniqueIdentifier;
   title: string;
   icon: IconProp;
+  iconClassName?: string;
 
   widget: Partial<WidgetParams>;
 

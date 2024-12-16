@@ -30,18 +30,23 @@ let currentStackIndex = 0;
 function getNewStackIndex() {
   return currentStackIndex++;
 }
+
+function loadWidgets(): Widget[] {
+  const widgets: Widget[] = getStorageJSON(STORAGE_KEYS.widgets) ?? [];
+  currentStackIndex = Math.max(...widgets.map((w) => w.stackIndex));
+  return widgets;
+}
+
 export const useDesktopStore = create<DesktopState>((set, get) => ({
   background:
     localStorage.getItem(STORAGE_KEYS.background) ??
     "var(--background-color-default)",
-  widgets: ((getStorageJSON(STORAGE_KEYS.widgets) ?? []) as Widget[]).map(
-    (w) => ({
-      ...w,
-      resize: (dims: Dimensionable["dimensions"]) =>
-        get().setWidgetDimensions(w.id, dims),
-      close: () => get().closeWidget(w.id),
-    })
-  ),
+  widgets: loadWidgets().map((w) => ({
+    ...w,
+    resize: (dims: Dimensionable["dimensions"]) =>
+      get().setWidgetDimensions(w.id, dims),
+    close: () => get().closeWidget(w.id),
+  })),
   setWidgetDimensions: (id, dims) =>
     set((state) => ({
       widgets: updateItemInArray(state.widgets, id, (item) => ({

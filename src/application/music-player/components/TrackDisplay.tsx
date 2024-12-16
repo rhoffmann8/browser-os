@@ -39,7 +39,9 @@ export function TrackDisplay() {
 
   const displayContainerRef = useRef<HTMLDivElement>(null);
 
-  const text = `${currentTrack.author} - ${currentTrack.title}`;
+  const text = currentTrack
+    ? `${currentTrack.author} - ${currentTrack.title}`
+    : "No track playing";
   const textWidth = useMemo(() => {
     return getTextWidth(text, "normal 14px arial");
   }, [text]);
@@ -49,9 +51,7 @@ export function TrackDisplay() {
 
   return (
     <div ref={displayContainerRef} className={trackDisplayCss}>
-      <div className={cx({ scroll: isOverflowing })}>
-        {currentTrack.author} - {currentTrack.title}
-      </div>
+      <div className={cx({ scroll: isOverflowing })}>{text}</div>
     </div>
   );
 }

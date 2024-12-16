@@ -6,8 +6,8 @@ export interface PDFApplication {
 }
 
 export interface TextEditorApplication {
-  id: "textEditor";
-  params: { content: string };
+  id: "text-editor";
+  params: { content: string; readonly?: boolean };
 }
 
 export interface ExternalLinkApplication {
@@ -30,9 +30,15 @@ export interface MusicPlayerApplication {
   params: object;
 }
 
+export interface MarkdownViewerApplication {
+  id: "markdown-viewer";
+  params: { content: string };
+}
+
 export type Application =
   | DialogApplication
   | ExternalLinkApplication
+  | MarkdownViewerApplication
   | MemoryGameApplication
   | MusicPlayerApplication
   | PDFApplication

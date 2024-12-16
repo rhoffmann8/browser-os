@@ -1,17 +1,16 @@
 import { css } from "@emotion/css";
 import cx from "classnames";
-import { MouseEventHandler, useCallback, useRef, useState } from "react";
-import { useIconStore } from "../state/iconState";
-import { Icon } from "../types";
+import { useCallback, useState } from "react";
+import { useDesktopStore } from "../state/desktopState";
+import { DesktopIcon as DesktopIconType } from "../types";
 import { DesktopIconImage } from "./DesktopIconImage";
 import { IconTitle } from "./IconTitle";
-import { useDesktopStore } from "../state/desktopState";
 
 const containerCss = css`
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  /* justify-content: space-between; */
 
   padding: 4px;
   gap: 4px;
@@ -19,6 +18,7 @@ const containerCss = css`
   cursor: pointer;
 
   width: 80px;
+  max-height: 100px;
 
   img {
     height: 48px;
@@ -38,86 +38,86 @@ const containerCss = css`
 `;
 
 export interface IconProps {
-  icon: Icon;
+  icon: DesktopIconType;
   selected: boolean;
   onContextMenu?: (pos: { x: number; y: number }) => void;
 }
 
 export function DesktopIcon(props: IconProps) {
   const {
-    icon: { id, title: defaultTitle = "Icon", application, widget },
+    icon: { title: defaultTitle = "Icon", application, widget },
     selected,
     onContextMenu,
   } = props;
   const [title, setTitle] = useState(defaultTitle);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
 
-  const clickTimerRef = useRef<number | null>(null);
+  // const clickTimerRef = useRef<number | null>(null);
 
-  const selectIcon = useIconStore((state) => state.selectIcon);
-  const unselectIcon = useIconStore((state) => state.unselectIcon);
+  // const selectIcon = useIconStore((state) => state.selectIcon);
+  // const unselectIcon = useIconStore((state) => state.unselectIcon);
   const addWindow = useDesktopStore((state) => state.addWidget);
 
-  const onMouseDown: MouseEventHandler<HTMLDivElement> = useCallback(
-    (e) => {
-      if (e.button === 2) {
-        // right click
-        selectIcon(id, false);
-        return;
-      }
-
-      if (isEditingTitle) {
-        return;
-      }
-
-      if (!selected) {
-        selectIcon(id, e.ctrlKey);
-        clickTimerRef.current = setTimeout(() => {
-          clickTimerRef.current = null;
-        }, 300);
-        return;
-      }
-
-      if (clickTimerRef.current) {
-        // double click
-        clearTimeout(clickTimerRef.current);
-        clickTimerRef.current = null;
-        addWindow({
-          title,
-          application,
-          position: widget.position!,
-          dimensions: widget.dimensions,
-          resizable: widget.resizable,
-        });
-        return;
-      }
-
-      if (e.ctrlKey) {
-        unselectIcon(id, e.ctrlKey);
-        return;
-      }
-
-      setIsEditingTitle(true);
-    },
-    [
-      isEditingTitle,
-      selected,
-      selectIcon,
-      id,
-      addWindow,
+  const onOpenWindow = useCallback(() => {
+    addWindow({
       title,
       application,
-      widget.position,
-      widget.dimensions,
-      widget.resizable,
-      unselectIcon,
-    ]
-  );
+      position: widget.position!,
+      dimensions: widget.dimensions,
+      resizable: widget.resizable,
+    });
+  }, [
+    addWindow,
+    application,
+    title,
+    widget.dimensions,
+    widget.position,
+    widget.resizable,
+  ]);
+
+  // const onMouseDown: MouseEventHandler<HTMLDivElement> = useCallback(
+  //   (e) => {
+  //     if (e.button === 2) {
+  //       // right click
+  //       selectIcon(id, false);
+  //       return;
+  //     }
+
+  //     if (isEditingTitle) {
+  //       return;
+  //     }
+
+  //     if (!selected) {
+  //       selectIcon(id, e.ctrlKey);
+  //       clickTimerRef.current = setTimeout(() => {
+  //         clickTimerRef.current = null;
+  //       }, 300);
+  //       return;
+  //     }
+
+  //     if (clickTimerRef.current) {
+  //       // double click
+  //       clearTimeout(clickTimerRef.current);
+  //       clickTimerRef.current = null;
+  //       onOpenWindow();
+  //       return;
+  //     }
+
+  //     if (e.ctrlKey) {
+  //       unselectIcon(id, e.ctrlKey);
+  //       return;
+  //     }
+
+  //     setIsEditingTitle(true);
+  //   },
+  //   [isEditingTitle, selected, selectIcon, id, onOpenWindow, unselectIcon]
+  // );
 
   return (
     <div
       className={cx(containerCss, { selected })}
-      onMouseDown={onMouseDown}
+      // onMouseDown={onMouseDown}
+      onDoubleClick={onOpenWindow}
       onContextMenu={(e) => {
         e.preventDefault();
         e.stopPropagation();

@@ -3,10 +3,11 @@ import {
   faChessBoard,
   faEnvelope,
   faFilePdf,
-  faFileText,
+  faInfoCircle,
   faMusic,
+  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
-import { Icon } from "./types";
+import { DesktopIcon } from "./types";
 import {
   ExternalLinkApplication,
   PDFApplication,
@@ -18,8 +19,8 @@ export const DEFAULT_WINDOW_HEIGHT = 300;
 export const DEFAULT_WINDOW_WIDTH = 400;
 
 export const DEFAULT_TEXT_EDITOR: TextEditorApplication = {
-  id: "textEditor",
-  params: { content: "Your text goes here" },
+  id: "text-editor",
+  params: { content: "" },
 };
 
 export const RESUME_PDF_APPLICATION: PDFApplication = {
@@ -37,66 +38,100 @@ export const LINKEDIN_LINK_APPLICATION: ExternalLinkApplication = {
   params: { url: "https://linkedin.com/in/rhoffmann8" },
 };
 
-let yPos = 10;
-function getYPos() {
+// TODO: Rethink icon positioning logic
+let xPos = 0;
+let yPos = 0;
+function generateIconPos() {
+  if (xPos === 0 && yPos === 0) {
+    xPos += 10;
+    yPos += 10;
+    return { x: xPos, y: yPos };
+  }
+
   yPos += 90;
-  return yPos - 90;
+  if (yPos > window.innerHeight - 100) {
+    yPos = 10;
+    xPos += 80;
+  }
+  return { x: xPos, y: yPos };
 }
 
-export const DEFAULT_ICONS: Icon[] = [
-  createIcon(
-    "Resume",
-    RESUME_PDF_APPLICATION,
-    faFilePdf,
-    { x: 10, y: getYPos() },
-    { dimensions: { height: 1000, width: 800 }, position: { x: 200, y: 60 } }
-  ),
-  createIcon(
-    "About",
-    {
-      id: "textEditor",
-      params: { content: "My name is Rob and I code things." },
-    },
-    faFileText,
-    { x: 10, y: getYPos() },
-    { dimensions: { height: 300, width: 500 }, position: { x: 400, y: 100 } }
-  ),
-  createIcon(
-    "Contact",
-    { id: "external-link", params: { url: "mailto:contact@robhoffmann.me" } },
-    faEnvelope,
-    { x: 10, y: getYPos() },
-    { dimensions: { height: 0, width: 0 }, position: { x: 0, y: 0 } }
-  ),
-  createIcon(
-    "Github",
-    GITHUB_LINK_APPLICATION,
-    faGithub,
-    { x: 10, y: getYPos() },
-    { dimensions: { height: 0, width: 0 }, position: { x: 0, y: 0 } }
-  ),
-  createIcon(
-    "LinkedIn",
-    LINKEDIN_LINK_APPLICATION,
-    faLinkedin,
-    { x: 10, y: getYPos() },
-    { dimensions: { height: 0, width: 0 }, position: { x: 0, y: 0 } }
-  ),
-  createIcon(
-    "Memory game",
-    { id: "memory-game", params: {} },
-    faChessBoard,
-    { x: 10, y: getYPos() },
-    { dimensions: { height: 600, width: 600 }, position: { x: 400, y: 100 } }
-  ),
-  createIcon(
-    "Music",
-    { id: "music-player", params: {} },
-    faMusic,
-    { x: 10, y: getYPos() + 10 },
-    { position: { x: 400, y: 100 }, resizable: false }
-  ),
-];
+const aboutString = `
+  # About
+  
+  My name is Rob and I code things.
+
+  ## Questions?
+  
+  Click the Contact icon to send me an email.
+`;
+
+export function createDefaultIcons(): DesktopIcon[] {
+  xPos = 0;
+  yPos = 0;
+  return [
+    createIcon(
+      "About",
+      {
+        id: "markdown-viewer",
+        params: {
+          content: aboutString,
+        },
+      },
+      faInfoCircle,
+      generateIconPos(),
+      { dimensions: { height: 300, width: 500 }, position: { x: 400, y: 100 } }
+    ),
+    createIcon("Resume", RESUME_PDF_APPLICATION, faFilePdf, generateIconPos(), {
+      dimensions: { height: 1000, width: 800 },
+      position: { x: 200, y: 60 },
+    }),
+    createIcon(
+      "Contact",
+      { id: "external-link", params: { url: "mailto:contact@robhoffmann.me" } },
+      faEnvelope,
+      generateIconPos(),
+      { dimensions: { height: 0, width: 0 }, position: { x: 0, y: 0 } }
+    ),
+    createIcon("Github", GITHUB_LINK_APPLICATION, faGithub, generateIconPos(), {
+      dimensions: { height: 0, width: 0 },
+      position: { x: 0, y: 0 },
+    }),
+    createIcon(
+      "LinkedIn",
+      LINKEDIN_LINK_APPLICATION,
+      faLinkedin,
+      generateIconPos(),
+      { dimensions: { height: 0, width: 0 }, position: { x: 0, y: 0 } }
+    ),
+    createIcon(
+      "Text editor",
+      DEFAULT_TEXT_EDITOR,
+      faPencil,
+      generateIconPos(),
+      {
+        dimensions: { height: 300, width: 500 },
+        position: { x: 100, y: 100 },
+      }
+    ),
+    createIcon(
+      "Memory",
+      { id: "memory-game", params: {} },
+      faChessBoard,
+      generateIconPos(),
+      { position: { x: 400, y: 100 }, resizable: false }
+    ),
+    createIcon(
+      "Music",
+      { id: "music-player", params: {} },
+      faMusic,
+      generateIconPos(),
+      { position: { x: 400, y: 100 }, resizable: false }
+    ),
+  ];
+}
+
+export const DEFAULT_ICONS = createDefaultIcons();
 
 export const TASKBAR_WIDGET_NETWORK = "taskbar-network";
 export const TASKBAR_WIDGET_CLOCK = "taskbar-clock";

@@ -12,15 +12,10 @@ const containerCss = css`
   background: transparent;
   transition: background 100ms ease-in-out;
   flex-wrap: nowrap;
-
-  min-width: 60px;
-
   font-size: 14px;
-
-  padding: 0 2px 0 8px;
-
+  min-width: 60px;
+  padding: 0 0 0 8px;
   cursor: pointer;
-
   overflow: hidden;
 
   &:hover {
@@ -69,7 +64,7 @@ function OpenApplication({ widget }: { widget: Widget }) {
   return (
     <Box
       key={widget.id}
-      gap={4}
+      gap={8}
       className={cx(containerCss, { active: isActiveWindow(id) })}
       onClick={() => moveToTop(id)}
       onContextMenu={(e) => {

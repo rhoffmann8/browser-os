@@ -1,0 +1,59 @@
+:root {
+  --height-range-input: 12px;
+  --width-range-input: 12px;
+  --color-range-input: #f34646;
+}
+
+input[type="range"] {
+  /* removing default appearance */
+  -webkit-appearance: none;
+  appearance: none; 
+  /* creating a custom design */
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+  /*  slider progress trick  */
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+/* Track: webkit browsers */
+input[type="range"]::-webkit-slider-runnable-track {
+  height: var(--height-range-input);
+  background: #ccc;
+  border-radius: 16px;
+}
+
+/* Track: Mozilla Firefox */
+input[type="range"]::-moz-range-track {
+  height: var(--height-range-input);
+  background: #ccc;
+  border-radius: 16px;
+}
+
+/* Thumb: webkit */
+input[type="range"]::-webkit-slider-thumb {
+  /* removing default appearance */
+  -webkit-appearance: none;
+  appearance: none; 
+  /* creating a custom design */
+  height: var(--height-range-input);
+  width: var(--width-range-input);
+  background-color: #fff;
+  border-radius: 50%;
+  border: 2px solid var(--color-range-input);
+  /*  slider progress trick  */
+  box-shadow: -407px 0 0 400px var(--color-range-input);
+}
+
+
+/* Thumb: Firefox */
+input[type="range"]::-moz-range-thumb {
+  height: var(--height-range-input);
+  width: var(--width-range-input);
+  background-color: #fff;
+  border-radius: 50%;
+  border: 1px solid var(--color-range-input);
+  /*  slider progress trick  */
+  box-shadow: -407px 0 0 400px var(--color-range-input);
+}
