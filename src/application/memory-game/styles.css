@@ -1,0 +1,68 @@
+.board {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(var(--board-size), minmax(100px, 1fr));
+  grid-template-rows: repeat(var(--board-size), minmax(100px, 1fr));
+  background: white;
+}
+
+.button {
+  border: none;
+  border-radius: 0.4rem;
+  background: rgb(0, 30, 128);
+  color: white;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16pt;
+}
+
+.tile {
+  position: relative;
+  perspective: 1000px;
+  border: none;
+  cursor: pointer;
+  font-size: 20pt;
+  background: white;
+}
+
+.tile-inner {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+  background: white;
+}
+
+.tile-inner.show {
+  transform: rotateY(180deg);
+}
+
+.tile-front,
+.tile-back {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 0.2rem;
+  position: absolute;
+}
+
+.tile-front {
+  background-color: rgba(0, 19, 128, 0.75);
+}
+
+.tile-back {
+  background-color: rgb(0, 13, 194);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+}
+
+.win {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
