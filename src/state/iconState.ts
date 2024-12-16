@@ -3,7 +3,7 @@ import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { create } from "zustand";
 import { Icon, Position } from "../types";
 import { getStorageJSON } from "../utils";
-import { DEFAULT_ICONS } from "../constants";
+import { DEFAULT_ICONS, STORAGE_KEYS } from "../constants";
 
 interface IconState {
   icons: Icon[];
@@ -58,5 +58,5 @@ export const useIconStore = create<IconState>((set) => ({
 }));
 
 useIconStore.subscribe((state) => {
-  localStorage.setItem("icons", JSON.stringify(state.icons));
+  localStorage.setItem(STORAGE_KEYS.icons, JSON.stringify(state.icons));
 });

@@ -4,8 +4,8 @@ import { useTaskbarStore } from "../state/taskbarState";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@emotion/css";
 import { useDesktopStore } from "../state/desktopState";
-import { UniqueIdentifier } from "@dnd-kit/core";
 import { TASKBAR_WIDGET_CLOCK, TASKBAR_WIDGET_NETWORK } from "../constants";
+import { Widget } from "../types";
 
 const taskbarItemCss = css`
   display: flex;
@@ -45,21 +45,20 @@ export function useTaskbarContextMenu(): ContextMenuItem[] {
 }
 
 export function useTaskbarApplicationContextMenu(
-  id: UniqueIdentifier
+  widget: Widget
 ): ContextMenuItem[] {
-  const setWindowPosition = useDesktopStore((state) => state.setWindowPosition);
-  const closeWindow = useDesktopStore((state) => state.closeWindow);
+  const setWindowPosition = useDesktopStore((state) => state.setWidgetPosition);
 
   return [
     {
       id: "taskbar-recenter-window",
       title: "Reset position",
-      onClick: () => setWindowPosition(id, { x: 10, y: 10 }),
+      onClick: () => setWindowPosition(widget.id, { x: 10, y: 10 }),
     },
     {
       id: "taskbar-close-window",
       title: "Close window",
-      onClick: () => closeWindow(id),
+      onClick: () => widget.close(),
     },
   ];
 }

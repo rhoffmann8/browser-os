@@ -10,7 +10,7 @@ import { useIconStore } from "../state/iconState";
 
 export function useDesktopContextMenu() {
   const setBackground = useDesktopStore((state) => state.setBackground);
-  const addWindow = useDesktopStore((state) => state.addWindow);
+  const addWindow = useDesktopStore((state) => state.addWidget);
   const closeAll = useDesktopStore((state) => state.closeAll);
   const resetIconsToDefault = useIconStore(
     (state) => state.resetIconsToDefault
@@ -20,8 +20,10 @@ export function useDesktopContextMenu() {
     addWindow({
       title: "Test",
       position: { x: Math.random() * 50, y: Math.random() * 50 },
-      height: DEFAULT_WINDOW_HEIGHT,
-      width: DEFAULT_WINDOW_WIDTH,
+      dimensions: {
+        height: DEFAULT_WINDOW_HEIGHT,
+        width: DEFAULT_WINDOW_WIDTH,
+      },
       application: DEFAULT_TEXT_EDITOR,
     });
   }, [addWindow]);

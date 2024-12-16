@@ -1,9 +1,16 @@
 import { Desktop } from "./Desktop";
-
-import "./App.css";
+import { ContextMenu } from "./menu/ContextMenu";
+import { Taskbar } from "./taskbar/Taskbar";
+import { Viewport } from "./Viewport";
 
 function App() {
-  return <Desktop />;
+  return (
+    <Viewport>
+      <Desktop />
+      <Taskbar />
+      <ContextMenu />
+    </Viewport>
+  );
 }
 
 export default App;

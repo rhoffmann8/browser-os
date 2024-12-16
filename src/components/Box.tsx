@@ -16,6 +16,8 @@ interface BoxProps
       | "flexDirection"
       | "alignItems"
       | "justifyContent"
+      | "alignSelf"
+      | "justifySelf"
       | "gap"
       | "padding"
       | "margin"
@@ -40,6 +42,8 @@ export const Box = forwardRef<HTMLDivElement, PropsWithChildren<BoxProps>>(
       alignItems,
       justifyContent,
       flexDirection,
+      alignSelf,
+      justifySelf,
       gap,
       margin,
       padding,
@@ -61,17 +65,19 @@ export const Box = forwardRef<HTMLDivElement, PropsWithChildren<BoxProps>>(
         ${flexDirection ? `flex-direction: ${flexDirection};` : ""}
         ${alignItems ? `align-items: ${alignItems};` : ""}
         ${justifyContent ? `justify-content: ${justifyContent};` : ""}
+        ${alignSelf ? `align-self: ${alignSelf};` : ""}
+        ${justifySelf ? `justify-self: ${justifySelf};` : ""}
         ${gap ? `gap: ${gap}px;` : ""}
 
         ${padding
           ? typeof padding === "number"
             ? `padding: ${padding}px;`
-            : `padding:${padding}`
+            : `padding:${padding};`
           : ""}
         ${margin
           ? typeof margin === "number"
             ? `margin: ${margin}px;`
-            : `margin: ${margin}`
+            : `margin: ${margin};`
           : ""}
 
         ${overflow ? `overflow: ${overflow};` : ""}
@@ -96,6 +102,7 @@ export const Box = forwardRef<HTMLDivElement, PropsWithChildren<BoxProps>>(
       `;
     }, [
       alignItems,
+      alignSelf,
       fillHeight,
       fillWidth,
       flex,
@@ -103,6 +110,7 @@ export const Box = forwardRef<HTMLDivElement, PropsWithChildren<BoxProps>>(
       gap,
       height,
       justifyContent,
+      justifySelf,
       margin,
       maxWidth,
       minWidth,

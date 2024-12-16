@@ -1,4 +1,4 @@
-import { DesktopWindow } from "../types";
+import { Widget } from "../types";
 
 export interface PDFApplication {
   id: "pdf";
@@ -20,14 +20,26 @@ export interface MemoryGameApplication {
   params: object;
 }
 
+export interface DialogApplication {
+  id: "dialog";
+  params: { message: string };
+}
+
+export interface MusicPlayerApplication {
+  id: "music-player";
+  params: object;
+}
+
 export type Application =
+  | DialogApplication
   | ExternalLinkApplication
   | MemoryGameApplication
+  | MusicPlayerApplication
   | PDFApplication
   | TextEditorApplication;
 export type AppId = Application["id"];
 
 export type ApplicationComponent<K extends AppId> = (props: {
   params: Extract<Application, { id: K }>["params"];
-  window: DesktopWindow;
-}) => JSX.Element;
+  widget: Widget;
+}) => JSX.Element | null;

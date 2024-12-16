@@ -1,6 +1,6 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { Position, Dimensionable, Positionable } from "./types";
+import { Icon, Position, WidgetParams } from "./types";
 import { Application } from "./types/application";
 
 export function randomRgba(opacity: number) {
@@ -45,15 +45,30 @@ export function createIcon<A extends Application>(
   title: string,
   application: A,
   icon: IconDefinition,
-  position: Position,
-  windowDimensions: Dimensionable & Positionable
-) {
+  iconPosition: Position,
+  widget: Partial<WidgetParams>
+): Icon {
   return {
     id: crypto.randomUUID(),
     title,
     application,
     icon,
-    position,
-    window: windowDimensions,
+    position: iconPosition,
+    widget,
   };
+}
+
+let canvasCache: HTMLCanvasElement;
+export function getTextWidth(text: string, font: string) {
+  // re-use canvas object for better performance
+  const canvas =
+    canvasCache || (canvasCache = document.createElement("canvas"));
+  const context = canvas.getContext("2d");
+  if (!context) {
+    return 0;
+  }
+
+  context.font = font;
+  const metrics = context.measureText(text);
+  return metrics.width;
 }

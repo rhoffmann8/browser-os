@@ -18,6 +18,12 @@
   --color-theme-hover: #444;
 
   --box-shadow-primary: 0px 0px 16px 0px #444;
+
+  --background-color-default: linear-gradient(rgba(154, 248, 188, 0.5), rgba(38, 201, 243, 0.75));
+}
+
+* { 
+  box-sizing: border-box;
 }
 
 body {
@@ -28,11 +34,12 @@ body {
   min-height: 100vh;
 
   overflow: hidden;
+
+  font-size: 14px;
 }
 
 button {
   font-weight: 500;
   font-family: inherit;
   cursor: pointer;
-  transition: border-color 0.25s;
 }

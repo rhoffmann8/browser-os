@@ -14,10 +14,10 @@ const containerCss = css`
   justify-content: space-between;
 
   padding: 4px;
+  gap: 4px;
 
   cursor: pointer;
 
-  height: 80px;
   width: 80px;
 
   img {
@@ -45,7 +45,7 @@ export interface IconProps {
 
 export function DesktopIcon(props: IconProps) {
   const {
-    icon: { id, title: defaultTitle = "Icon", application, window },
+    icon: { id, title: defaultTitle = "Icon", application, widget },
     selected,
     onContextMenu,
   } = props;
@@ -56,7 +56,7 @@ export function DesktopIcon(props: IconProps) {
 
   const selectIcon = useIconStore((state) => state.selectIcon);
   const unselectIcon = useIconStore((state) => state.unselectIcon);
-  const addWindow = useDesktopStore((state) => state.addWindow);
+  const addWindow = useDesktopStore((state) => state.addWidget);
 
   const onMouseDown: MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
@@ -83,12 +83,11 @@ export function DesktopIcon(props: IconProps) {
         clearTimeout(clickTimerRef.current);
         clickTimerRef.current = null;
         addWindow({
-          id: crypto.randomUUID(),
           title,
           application,
-          position: window.position,
-          height: window.height,
-          width: window.width,
+          position: widget.position!,
+          dimensions: widget.dimensions,
+          resizable: widget.resizable,
         });
         return;
       }
@@ -101,17 +100,17 @@ export function DesktopIcon(props: IconProps) {
       setIsEditingTitle(true);
     },
     [
-      addWindow,
-      application,
-      id,
       isEditingTitle,
-      selectIcon,
       selected,
+      selectIcon,
+      id,
+      addWindow,
       title,
+      application,
+      widget.position,
+      widget.dimensions,
+      widget.resizable,
       unselectIcon,
-      window.height,
-      window.position,
-      window.width,
     ]
   );
 
