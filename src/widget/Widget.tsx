@@ -3,11 +3,11 @@ import { css } from "@emotion/css";
 import { useCallback } from "react";
 import { getApplicationFromId } from "../application";
 import { useDesktopStore } from "../state/desktopState";
-import { Delta, type DesktopWindow } from "../types";
-import { DesktopWindowButtons } from "./DesktopWindowButtons";
-import { DesktopWindowContent } from "./DesktopWindowContent";
-import { DesktopWindowHandle } from "./DesktopWindowHandle";
-import { DesktopWindowResizeContainer } from "./DesktopWindowResizeContainer";
+import { Delta, type Widget } from "../types";
+import { WidgetButtons } from "./WidgetButtons";
+import { WidgetContent } from "./WidgetContent";
+import { WidgetHandle } from "./WidgetHandle";
+import { WidgetResizeContainer } from "./WidgetResizeContainer";
 
 const windowCss = css`
   position: absolute;
@@ -28,15 +28,22 @@ const handleCss = css`
   cursor: pointer;
 `;
 
-export function DesktopWindow(window: DesktopWindow) {
-  const { id, title, position, application, height, width, stackIndex } =
-    window;
+export function Widget({ widget }: { widget: Widget }) {
+  const {
+    id,
+    title,
+    position,
+    application,
+    resizable,
+    dimensions: { height, width } = {},
+    stackIndex,
+  } = widget;
 
   const { attributes, listeners, setNodeRef, transform, setActivatorNodeRef } =
     useDraggable({ id });
 
   const moveToTop = useDesktopStore((state) => state.moveToTop);
-  const resizeWindow = useDesktopStore((state) => state.resizeWindow);
+  const resizeWindow = useDesktopStore((state) => state.resizeWidget);
 
   const draggableStyle = transform
     ? {
@@ -44,7 +51,7 @@ export function DesktopWindow(window: DesktopWindow) {
       }
     : undefined;
 
-  const onWindowResize = useCallback(
+  const onWidgetResize = useCallback(
     (delta: Partial<Delta>) => {
       resizeWindow(id, delta);
     },
@@ -68,7 +75,10 @@ export function DesktopWindow(window: DesktopWindow) {
       }}
       onMouseDown={() => moveToTop(id)}
     >
-      <DesktopWindowResizeContainer onResize={onWindowResize}>
+      <WidgetResizeContainer
+        onResize={onWidgetResize}
+        disabled={resizable === false}
+      >
         <div
           style={{
             flex: 1,
@@ -78,19 +88,19 @@ export function DesktopWindow(window: DesktopWindow) {
           }}
         >
           <div className={handleCss}>
-            <DesktopWindowHandle
+            <WidgetHandle
               title={title}
               ref={setActivatorNodeRef}
               attributes={attributes}
               listeners={listeners}
             />
-            <DesktopWindowButtons id={id} />
+            <WidgetButtons widget={widget} />
           </div>
-          <DesktopWindowContent>
-            <AppComponent params={application.params as any} window={window} />
-          </DesktopWindowContent>
+          <WidgetContent>
+            <AppComponent params={application.params as any} widget={widget} />
+          </WidgetContent>
         </div>
-      </DesktopWindowResizeContainer>
+      </WidgetResizeContainer>
     </div>
   );
 }

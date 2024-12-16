@@ -8,12 +8,12 @@ import {
 import { PropsWithChildren, useCallback } from "react";
 import { useDesktopStore } from "../state/desktopState";
 
-export function WindowDroppableContext({
+export function WidgetDroppableContext({
   children,
 }: PropsWithChildren<{ parentRect: ClientRect | undefined }>) {
   const { setNodeRef } = useDroppable({ id: "window-droppable" });
 
-  const setWindowPosition = useDesktopStore((state) => state.setWindowPosition);
+  const setWindowPosition = useDesktopStore((state) => state.setWidgetPosition);
 
   const onDragEnd = useCallback(
     (e: DragEndEvent) => {

@@ -6,7 +6,7 @@ import { Box } from "../components/Box";
 import { useTaskbarApplicationContextMenu } from "../menu/useTaskbarContextMenu";
 import { useContextMenuStore } from "../state/contextMenuState";
 import { useDesktopStore } from "../state/desktopState";
-import { DesktopWindow } from "../types";
+import { Widget } from "../types";
 
 const containerCss = css`
   background: transparent;
@@ -23,7 +23,10 @@ const containerCss = css`
 
   overflow: hidden;
 
-  &:hover,
+  &:hover {
+    background: #555 !important;
+  }
+
   &.active {
     background: var(--color-theme-hover);
   }
@@ -43,30 +46,29 @@ const closeButtonCss = css`
 `;
 
 export function OpenApplications() {
-  const windows = useDesktopStore((state) => state.windows);
+  const windows = useDesktopStore((state) => state.widgets);
 
   return (
     <Box padding={"0 8px"} overflowY="hidden">
       {windows.map((w) => (
-        <OpenApplication key={w.id} window={w} />
+        <OpenApplication key={w.id} widget={w} />
       ))}
     </Box>
   );
 }
 
-function OpenApplication({ window: appWindow }: { window: DesktopWindow }) {
-  const { id, title } = appWindow;
+function OpenApplication({ widget }: { widget: Widget }) {
+  const { id, title } = widget;
 
-  const closeWindow = useDesktopStore((state) => state.closeWindow);
   const moveToTop = useDesktopStore((state) => state.moveToTop);
-  const isActiveWindow = useDesktopStore((state) => state.isActiveWindow);
+  const isActiveWindow = useDesktopStore((state) => state.isActiveWidget);
   const showContextMenu = useContextMenuStore((state) => state.show);
 
-  const menuItems = useTaskbarApplicationContextMenu(id);
+  const menuItems = useTaskbarApplicationContextMenu(widget);
 
   return (
     <Box
-      key={appWindow.id}
+      key={widget.id}
       gap={4}
       className={cx(containerCss, { active: isActiveWindow(id) })}
       onClick={() => moveToTop(id)}
@@ -81,7 +83,7 @@ function OpenApplication({ window: appWindow }: { window: DesktopWindow }) {
         className={closeButtonCss}
         onClick={(e) => {
           e.stopPropagation();
-          closeWindow(id);
+          widget.close();
         }}
       >
         <FontAwesomeIcon icon={faXmark} />

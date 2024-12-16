@@ -40,6 +40,7 @@ export function Board({ size, onWin }: { size: number; onWin: () => void }) {
   }, [matches, onWin, size]);
 
   return (
+    // @ts-expect-error css var
     <div className="board" style={{ "--board-size": size }}>
       {tiles.map((tile, idx) =>
         matches.has(idx) ? (

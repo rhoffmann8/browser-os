@@ -11,6 +11,6 @@ const contentCss = css`
   overflow: hidden;
 `;
 
-export function DesktopWindowContent({ children }: PropsWithChildren) {
+export function WidgetContent({ children }: PropsWithChildren) {
   return <div className={contentCss}>{children}</div>;
 }

@@ -1,26 +1,14 @@
 import { css } from "@emotion/css";
-import { MouseEventHandler, useCallback, useRef } from "react";
+import { MouseEventHandler, useCallback, useEffect, useRef } from "react";
 import { IconDroppableContext } from "./droppable/IconDroppableContext";
-import { WindowDroppableContext } from "./droppable/WindowDroppableContext";
+import { WidgetDroppableContext } from "./droppable/WidgetDroppableContext";
 import { DraggableIcon } from "./icon/DraggableIcon";
-import { ContextMenu } from "./menu/ContextMenu";
 import { useDesktopContextMenu } from "./menu/useDesktopContextMenu";
 import { useIconContextMenu } from "./menu/useIconContextMenu";
 import { useContextMenuStore } from "./state/contextMenuState";
 import { useDesktopStore } from "./state/desktopState";
 import { useIconStore } from "./state/iconState";
-import { Taskbar } from "./taskbar/Taskbar";
-import { DesktopWindow } from "./window/DesktopWindow";
-
-const viewportCss = css`
-  height: 100vh;
-  width: 100vw;
-
-  display: flex;
-  flex-direction: column;
-
-  overflow: hidden;
-`;
+import { Widget } from "./widget/Widget";
 
 const desktopCss = css`
   flex: 1;
@@ -36,10 +24,12 @@ export function Desktop() {
   const icons = useIconStore((state) => state.icons);
   const selectedIcons = useIconStore((state) => state.selectedIcons);
   const showContextMenu = useContextMenuStore((state) => state.show);
-  const windows = useDesktopStore((state) => state.windows);
+  const windows = useDesktopStore((state) => state.widgets);
 
   const desktopContextMenuItems = useDesktopContextMenu();
   const iconContextMenuItems = useIconContextMenu();
+
+  useGlobalErrorHandling();
 
   const onContextMenu = useCallback(
     (pos: { x: number; y: number }) => {
@@ -60,31 +50,44 @@ export function Desktop() {
   const desktopRef = useRef<HTMLDivElement>(null);
 
   return (
-    <>
-      <div className={viewportCss} style={{}}>
-        <div ref={desktopRef} className={desktopCss} style={{ background }}>
-          <IconDroppableContext onContextMenu={onViewportContextMenu}>
-            {icons.map((icon) => (
-              <DraggableIcon
-                key={icon.id}
-                icon={icon}
-                selected={selectedIcons.has(icon.id)}
-                onContextMenu={onContextMenu}
-              />
-            ))}
+    <div ref={desktopRef} className={desktopCss} style={{ background }}>
+      <IconDroppableContext onContextMenu={onViewportContextMenu}>
+        {icons.map((icon) => (
+          <DraggableIcon
+            key={icon.id}
+            icon={icon}
+            selected={selectedIcons.has(icon.id)}
+            onContextMenu={onContextMenu}
+          />
+        ))}
 
-            <WindowDroppableContext
-              parentRect={desktopRef.current?.getBoundingClientRect()}
-            >
-              {windows.map((window) => (
-                <DesktopWindow key={window.id} {...window} />
-              ))}
-            </WindowDroppableContext>
-          </IconDroppableContext>
-        </div>
-        <Taskbar />
-      </div>
-      <ContextMenu />
-    </>
+        <WidgetDroppableContext
+          parentRect={desktopRef.current?.getBoundingClientRect()}
+        >
+          {windows.map((widget) => (
+            <Widget key={widget.id} widget={widget} />
+          ))}
+        </WidgetDroppableContext>
+      </IconDroppableContext>
+
+      <div style={{ marginLeft: 4 }}>OS Version 1.0</div>
+    </div>
   );
+}
+
+function useGlobalErrorHandling() {
+  const addWindow = useDesktopStore((state) => state.addWidget);
+
+  useEffect(() => {
+    const listener = (e: ErrorEvent) =>
+      addWindow({
+        title: "Error",
+        position: { x: 100, y: 100 },
+        application: { id: "dialog", params: { message: e.message } },
+        resizable: false,
+      });
+    window.addEventListener("error", listener);
+
+    return () => window.removeEventListener("error", listener);
+  }, [addWindow]);
 }

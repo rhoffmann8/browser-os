@@ -8,9 +8,10 @@ const handleCss = css`
   padding-left: 4px;
 
   font-size: 14px;
+  font-weight: 600;
 `;
 
-export const DesktopWindowHandle = forwardRef<
+export const WidgetHandle = forwardRef<
   HTMLDivElement,
   {
     title: string;

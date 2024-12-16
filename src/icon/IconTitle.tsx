@@ -21,6 +21,14 @@ const inputCss = css`
   }
 `;
 
+const displayCss = css`
+  flex-wrap: wrap;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.2;
+  text-shadow: 1px 1px #000;
+`;
+
 interface Props {
   title: string;
   isEditing: boolean;
@@ -64,18 +72,7 @@ export function IconTitle({ isEditing, title, onUpdate, onCancel }: Props) {
   );
 
   if (!isEditing) {
-    return (
-      <Box
-        style={{
-          flexWrap: "wrap",
-          textAlign: "center",
-          fontSize: 12,
-          lineHeight: 1.2,
-        }}
-      >
-        {title}
-      </Box>
-    );
+    return <Box className={displayCss}>{title}</Box>;
   }
 
   return (

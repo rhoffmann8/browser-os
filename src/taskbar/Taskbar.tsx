@@ -24,7 +24,7 @@ const taskbarCss = css`
 `;
 
 const startButtonCss = css`
-  background: #777;
+  background: #666;
   border: none;
   border-top-right-radius: 0.2rem;
   border-bottom-right-radius: 0.2rem;

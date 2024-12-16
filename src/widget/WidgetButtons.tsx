@@ -1,8 +1,7 @@
 import { css } from "@emotion/css";
-import { useDesktopStore } from "../state/desktopState";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import { UniqueIdentifier } from "@dnd-kit/core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Widget } from "../types";
 
 const buttonCss = css`
   color: white;
@@ -18,12 +17,10 @@ const buttonCss = css`
   }
 `;
 
-export function DesktopWindowButtons({ id }: { id: UniqueIdentifier }) {
-  const closeWindow = useDesktopStore((state) => state.closeWindow);
-
+export function WidgetButtons({ widget }: { widget: Widget }) {
   return (
     <div>
-      <button className={buttonCss} onClick={() => closeWindow(id)}>
+      <button className={buttonCss} onClick={() => widget.close()}>
         <FontAwesomeIcon icon={faXmark} />
       </button>
     </div>

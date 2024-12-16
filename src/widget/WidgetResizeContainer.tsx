@@ -1,6 +1,7 @@
 import { css } from "@emotion/css";
 import { PropsWithChildren, useCallback, useRef } from "react";
 import { Delta } from "../types";
+import cx from "classnames";
 
 const boxCss = css`
   height: 100%;
@@ -11,8 +12,8 @@ const boxCss = css`
     "NW N NE"
     "W . E"
     "SW S SE";
-  grid-template-rows: 1px auto 1px;
-  grid-template-columns: 1px auto 1px;
+  grid-template-rows: 2px auto 2px;
+  grid-template-columns: 2px auto 2px;
   background-color: #333;
 
   .resize-handle {
@@ -48,13 +49,15 @@ const boxCss = css`
 
 interface Props {
   onResize: (delta: Partial<Delta>) => void;
+  disabled?: boolean;
 }
 
 type ResizeDirection = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
 
-export function DesktopWindowResizeContainer({
+export function WidgetResizeContainer({
   children,
   onResize,
+  disabled,
 }: PropsWithChildren<Props>) {
   const resizeDirection = useRef<ResizeDirection | undefined>(undefined);
 
@@ -93,46 +96,50 @@ export function DesktopWindowResizeContainer({
 
   const onPointerDown = useCallback(
     (direction: ResizeDirection) => {
+      if (disabled) {
+        return;
+      }
+
       resizeDirection.current = direction;
       document.addEventListener("pointermove", onPointerMove);
       document.addEventListener("pointerup", onPointerUp);
     },
-    [onPointerMove, onPointerUp]
+    [disabled, onPointerMove, onPointerUp]
   );
 
   return (
     <div className={boxCss}>
       <div
-        className="resize-handle resize-handle-nw"
+        className={cx("resize-handle", { "resize-handle-nw": !disabled })}
         onPointerDown={() => onPointerDown("NW")}
       />
       <div
-        className="resize-handle resize-handle-n"
+        className={cx("resize-handle", { "resize-handle-n": !disabled })}
         onPointerDown={() => onPointerDown("N")}
       />
       <div
-        className="resize-handle resize-handle-ne"
+        className={cx("resize-handle", { "resize-handle-ne": !disabled })}
         onPointerDown={() => onPointerDown("NE")}
       />
       <div
-        className="resize-handle resize-handle-w"
+        className={cx("resize-handle", { "resize-handle-w": !disabled })}
         onPointerDown={() => onPointerDown("W")}
       />
       {children}
       <div
-        className="resize-handle resize-handle-e"
+        className={cx("resize-handle", { "resize-handle-e": !disabled })}
         onPointerDown={() => onPointerDown("E")}
       />
       <div
-        className="resize-handle resize-handle-sw"
+        className={cx("resize-handle", { "resize-handle-sw": !disabled })}
         onPointerDown={() => onPointerDown("SW")}
       />
       <div
-        className="resize-handle resize-handle-s"
+        className={cx("resize-handle", { "resize-handle-s": !disabled })}
         onPointerDown={() => onPointerDown("S")}
       />
       <div
-        className="resize-handle resize-handle-se"
+        className={cx("resize-handle", { "resize-handle-se": !disabled })}
         onPointerDown={() => onPointerDown("SE")}
       />
     </div>

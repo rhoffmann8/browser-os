@@ -7,7 +7,10 @@ const editorCss = css`
 
   outline: none;
 
-  padding: 4px;
+  padding: 2px 4px;
+
+  font-size: 14px;
+  line-height: 1.2;
 `;
 
 export const TextEditor: ApplicationComponent<"textEditor"> = ({

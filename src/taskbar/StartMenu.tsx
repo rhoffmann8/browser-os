@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { Box } from "../components/Box";
-import { DesktopWindow } from "../types";
+import { Widget } from "../types";
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 
 const menuCss = css`
@@ -37,30 +37,27 @@ const menuCss = css`
 `;
 
 export function StartMenu({ onItemClick }: { onItemClick: () => void }) {
-  const addWindow = useDesktopStore((state) => state.addWindow);
+  const addWindow = useDesktopStore((state) => state.addWidget);
 
   const [resumeWindow, githubWindow, linkedInWindow]: Omit<
-    DesktopWindow,
+    Widget,
     "id" | "stackIndex"
   >[] = [
     {
-      height: 1000,
-      width: 800,
+      dimensions: { height: 1000, width: 800 },
       position: { x: 200, y: 60 },
       application: RESUME_PDF_APPLICATION,
       title: "Resume",
     },
     {
-      height: 0,
-      width: 0,
+      dimensions: { height: 0, width: 0 },
       position: { x: 0, y: 0 },
       application: GITHUB_LINK_APPLICATION,
       title: "Github",
     },
     {
       application: LINKEDIN_LINK_APPLICATION,
-      height: 0,
-      width: 0,
+      dimensions: { height: 0, width: 0 },
       position: { x: 0, y: 0 },
       title: "LinkedIn",
     },
