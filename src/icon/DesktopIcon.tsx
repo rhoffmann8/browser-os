@@ -1,10 +1,11 @@
 import { css } from "@emotion/css";
 import cx from "classnames";
-import { useCallback, useState } from "react";
+import { MouseEventHandler, useCallback, useState } from "react";
 import { useDesktopStore } from "../state/desktopState";
 import { DesktopIcon as DesktopIconType } from "../types";
 import { DesktopIconImage } from "./DesktopIconImage";
 import { IconTitle } from "./IconTitle";
+import { useIconStore } from "../state/iconState";
 
 const containerCss = css`
   display: inline-flex;
@@ -38,7 +39,7 @@ export interface IconProps {
 
 export function DesktopIcon(props: IconProps) {
   const {
-    icon: { title: defaultTitle = "Icon", application, widget },
+    icon: { title: defaultTitle = "Icon", application, widget, id },
     selected,
     onContextMenu,
   } = props;
@@ -47,26 +48,31 @@ export function DesktopIcon(props: IconProps) {
 
   // const clickTimerRef = useRef<number | null>(null);
 
-  // const selectIcon = useIconStore((state) => state.selectIcon);
+  const selectIcon = useIconStore((state) => state.selectIcon);
   // const unselectIcon = useIconStore((state) => state.unselectIcon);
   const addWindow = useDesktopStore((state) => state.addWidget);
 
-  const onOpenWindow = useCallback(() => {
-    addWindow({
-      title,
+  const onOpenWindow: MouseEventHandler<HTMLDivElement> = useCallback(
+    (e) => {
+      e.stopPropagation();
+
+      addWindow({
+        title,
+        application,
+        position: widget.position!,
+        dimensions: widget.dimensions,
+        resizable: widget.resizable,
+      });
+    },
+    [
+      addWindow,
       application,
-      position: widget.position!,
-      dimensions: widget.dimensions,
-      resizable: widget.resizable,
-    });
-  }, [
-    addWindow,
-    application,
-    title,
-    widget.dimensions,
-    widget.position,
-    widget.resizable,
-  ]);
+      title,
+      widget.dimensions,
+      widget.position,
+      widget.resizable,
+    ]
+  );
 
   // const onMouseDown: MouseEventHandler<HTMLDivElement> = useCallback(
   //   (e) => {
@@ -110,6 +116,10 @@ export function DesktopIcon(props: IconProps) {
     <div
       className={cx(containerCss, { selected })}
       // onMouseDown={onMouseDown}
+      onClick={(e) => {
+        e.stopPropagation();
+        selectIcon(id, false);
+      }}
       onDoubleClick={onOpenWindow}
       onContextMenu={(e) => {
         e.preventDefault();
