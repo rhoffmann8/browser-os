@@ -1,15 +1,15 @@
 import { css } from "@emotion/css";
-import { useDesktopStore } from "../state/desktopState";
+import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Box } from "../components/Box";
 import {
   GITHUB_LINK_APPLICATION,
   LINKEDIN_LINK_APPLICATION,
   RESUME_PDF_APPLICATION,
 } from "../constants";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
-import { Box } from "../components/Box";
-import { Widget } from "../types";
-import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
+import { useDesktopStore } from "../state/desktopState";
+import { WidgetParams } from "../types";
 
 const menuCss = css`
   position: absolute;
@@ -40,7 +40,7 @@ export function StartMenu({ onItemClick }: { onItemClick: () => void }) {
   const addWindow = useDesktopStore((state) => state.addWidget);
 
   const [resumeWindow, githubWindow, linkedInWindow]: Omit<
-    Widget,
+    WidgetParams,
     "id" | "stackIndex"
   >[] = [
     {
