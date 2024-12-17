@@ -48,7 +48,7 @@ function generateIconPos() {
     return { x: xPos, y: yPos };
   }
 
-  yPos += 90;
+  yPos += 84;
   if (yPos > window.innerHeight - 100) {
     yPos = 10;
     xPos += 80;

@@ -18,7 +18,7 @@ const containerCss = css`
 
 export const PDF: ApplicationComponent<"pdf"> = ({
   params: { src },
-  widget: window,
+  widget,
 }) => {
   const [, setNumPages] = useState<number>();
   const [pageNumber] = useState<number>(1);
@@ -31,7 +31,7 @@ export const PDF: ApplicationComponent<"pdf"> = ({
     <div className={containerCss}>
       <Document file={src} onLoadSuccess={onDocumentLoadSuccess}>
         <Outline />
-        <Page pageNumber={pageNumber} height={window.dimensions.height} />
+        <Page pageNumber={pageNumber} height={widget.dimensions?.height} />
       </Document>
     </div>
   );

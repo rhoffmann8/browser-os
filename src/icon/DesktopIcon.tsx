@@ -10,20 +10,14 @@ const containerCss = css`
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  /* justify-content: space-between; */
+  justify-content: center;
 
   padding: 4px;
   gap: 4px;
 
   cursor: pointer;
 
-  width: 80px;
-  max-height: 100px;
-
-  img {
-    height: 48px;
-    width: 48px;
-  }
+  width: 60px;
 
   input {
     height: 20px;
@@ -32,7 +26,6 @@ const containerCss = css`
 
   &.selected,
   &:hover {
-    /* outline: 1px solid var(--color-theme-hover); */
     background: #80bff7;
   }
 `;

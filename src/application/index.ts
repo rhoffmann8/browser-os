@@ -5,7 +5,7 @@ import { ExternalLink } from "./external-link/ExternalLink";
 import { MemoryGame } from "./memory-game/MemoryGame";
 import { PDF } from "./pdf/PDF";
 import { TextEditor } from "./text-editor/TextEditor";
-import { FileObjectType } from "../filesystem/types";
+// import { FileObjectType } from "../filesystem/types";
 import { Dialog } from "./dialog/Dialog";
 import { MusicPlayer } from "./music-player/MusicPlayer";
 import { MarkdownViewer } from "./markdown-viewer/MarkdownViewer";
@@ -29,14 +29,14 @@ export function getApplicationFromId<K extends AppId>(key: K) {
   return APPLICATION_MAP[key];
 }
 
-export class ApplicationRegistry {
-  static registry: Map<FileObjectType, Application> = new Map();
+// export class ApplicationRegistry {
+//   static registry: Map<FileObjectType, Application> = new Map();
 
-  static register(fileType: FileObjectType, application: Application) {
-    this.registry.set(fileType, application);
-  }
+//   static register(fileType: FileObjectType, application: Application) {
+//     this.registry.set(fileType, application);
+//   }
 
-  static getApplicationForFileType(fileType: FileObjectType) {
-    return this.registry.get(fileType);
-  }
-}
+//   static getApplicationForFileType(fileType: FileObjectType) {
+//     return this.registry.get(fileType);
+//   }
+// }
