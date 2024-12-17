@@ -8,7 +8,6 @@ const contentCss = css`
   color: black;
 
   display: flex;
-  overflow: hidden;
 `;
 
 export function WidgetContent({ children }: PropsWithChildren) {
