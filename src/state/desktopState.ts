@@ -33,7 +33,9 @@ function getNewStackIndex() {
 
 function loadWidgets(): Widget[] {
   const widgets: Widget[] = getStorageJSON(STORAGE_KEYS.widgets) ?? [];
-  currentStackIndex = Math.max(...widgets.map((w) => w.stackIndex));
+  currentStackIndex = widgets.length
+    ? Math.max(...widgets.map((w) => w.stackIndex))
+    : 0;
   return widgets;
 }
 
