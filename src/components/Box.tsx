@@ -136,3 +136,7 @@ export const Box = forwardRef<HTMLDivElement, PropsWithChildren<BoxProps>>(
     );
   }
 );
+
+export function BoxCol(props: BoxProps) {
+  return <Box {...props} flexDirection="column" />;
+}
