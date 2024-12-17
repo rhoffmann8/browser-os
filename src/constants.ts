@@ -83,8 +83,10 @@ export function createDefaultIcons(): DesktopIcon[] {
       { dimensions: { height: 300, width: 500 }, position: { x: 400, y: 100 } }
     ),
     createIcon("Resume", RESUME_PDF_APPLICATION, faFilePdf, generateIconPos(), {
-      dimensions: { height: 1000, width: 800 },
-      position: { x: 200, y: 60 },
+      dimensions: {
+        height: window.innerHeight * 0.8,
+      },
+      position: { x: 100, y: 40 },
     }),
     createIcon(
       "Contact",
