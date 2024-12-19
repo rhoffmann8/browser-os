@@ -1,10 +1,9 @@
+import { css } from "@emotion/css";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { TASKBAR_WIDGET_CLOCK, TASKBAR_WIDGET_NETWORK } from "../constants";
 import { ContextMenuItem } from "../state/contextMenuState";
 import { useTaskbarStore } from "../state/taskbarState";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { css } from "@emotion/css";
-import { useDesktopStore } from "../state/desktopState";
-import { TASKBAR_WIDGET_CLOCK, TASKBAR_WIDGET_NETWORK } from "../constants";
 import { Widget } from "../types";
 
 const taskbarItemCss = css`
@@ -36,7 +35,7 @@ export function useTaskbarContextMenu(): ContextMenuItem[] {
           {activeItems.has(TASKBAR_WIDGET_CLOCK) && (
             <FontAwesomeIcon icon={faCheck} />
           )}
-          Show time/date
+          Show date/time
         </div>
       ),
       onClick: () => toggleItem(TASKBAR_WIDGET_CLOCK),
@@ -47,13 +46,11 @@ export function useTaskbarContextMenu(): ContextMenuItem[] {
 export function useTaskbarApplicationContextMenu(
   widget: Widget
 ): ContextMenuItem[] {
-  const setWindowPosition = useDesktopStore((state) => state.setWidgetPosition);
-
   return [
     {
       id: "taskbar-recenter-window",
       title: "Reset position",
-      onClick: () => setWindowPosition(widget.id, { x: 10, y: 10 }),
+      onClick: () => widget.setPosition({ x: 10, y: 10 }),
     },
     {
       id: "taskbar-close-window",

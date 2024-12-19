@@ -24,7 +24,7 @@ const inputCss = css`
 const displayCss = css`
   flex-wrap: wrap;
   text-align: center;
-  font-size: 12px;
+  font-size: 0.8rem;
   font-weight: 600;
   line-height: 1.2;
   text-shadow: 0px 1px 2px #000;

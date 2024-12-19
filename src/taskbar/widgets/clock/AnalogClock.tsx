@@ -5,19 +5,22 @@ const containerCss = css`
   position: absolute;
   top: 0;
   right: 0;
-  height: 140px;
-  width: 140px;
-  background: linear-gradient(#eee, #999);
+  height: 160px;
+  width: 160px;
   padding: 0;
-  border: 2px solid #777;
+
+  background: linear-gradient(var(--color-theme-secondary), #000);
+  box-shadow: 0 0 2px 4px var(--color-theme-primary) inset,
+    0 1px 8px 1px var(--color-theme-primary);
   border-radius: 50%;
+
   z-index: -1;
   opacity: 0;
-  transition: top 100ms linear, opacity 300ms linear;
+  transition: top 100ms linear, opacity 100ms linear;
 
   &.show {
     opacity: 1;
-    top: -144px;
+    top: -164px;
   }
 `;
 
@@ -42,9 +45,9 @@ export function AnalogClock({ date, show }: { date: Date; show: boolean }) {
 
   return (
     <div className={cx(containerCss, { show })}>
-      <Hand color="blue" length={5} rotate={secondsRotation} />
-      <Hand color="black" length={15} rotate={minutesRotation} />
-      <Hand color="red" length={30} rotate={hoursRotation} />
+      <Hand color="#1d8dd8" length={10} rotate={secondsRotation} />
+      <Hand color="white" length={18} rotate={minutesRotation} />
+      <Hand color="red" length={35} rotate={hoursRotation} />
     </div>
   );
 }
@@ -67,7 +70,7 @@ function Hand({ length, rotate, color }: HandProps) {
       className={handCss}
       style={{
         height: `calc(50% - ${length}px)`,
-        background: `linear-gradient(color-mix(in srgb, ${color} 30%, transparent), ${color})`,
+        background: `linear-gradient(color-mix(in srgb, ${color} 50%, transparent), ${color})`,
         top: length,
         transform: `rotate(${rotate}deg)`,
       }}

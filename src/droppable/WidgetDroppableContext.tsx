@@ -13,7 +13,7 @@ export function WidgetDroppableContext({
 }: PropsWithChildren<{ parentRect: ClientRect | undefined }>) {
   const { setNodeRef } = useDroppable({ id: "window-droppable" });
 
-  const setWindowPosition = useDesktopStore((state) => state.setWidgetPosition);
+  const setWidgetPosition = useDesktopStore((state) => state.setWidgetPosition);
 
   const onDragEnd = useCallback(
     (e: DragEndEvent) => {
@@ -26,12 +26,12 @@ export function WidgetDroppableContext({
         return;
       }
 
-      setWindowPosition(e.active.id, {
+      setWidgetPosition(e.active.id, {
         x: translated.left,
         y: translated.top,
       });
     },
-    [setWindowPosition]
+    [setWidgetPosition]
   );
 
   return (

@@ -1,6 +1,6 @@
 import { useDesktopStore } from "../state/desktopState";
 import { useIconStore } from "../state/iconState";
-import { randomRgba } from "../utils";
+import { randomRgba } from "../utils/style";
 
 export function useDesktopContextMenu() {
   const setBackground = useDesktopStore((state) => state.setBackground);
@@ -27,6 +27,14 @@ export function useDesktopContextMenu() {
       id: "close-all-windows",
       title: "Close all windows",
       onClick: closeAll,
+    },
+    {
+      id: "reset-application-state",
+      title: "Reset application state",
+      onClick: () => {
+        localStorage.clear();
+        window.location.reload();
+      },
     },
   ];
 }

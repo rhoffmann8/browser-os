@@ -39,7 +39,13 @@ export interface IconProps {
 
 export function DesktopIcon(props: IconProps) {
   const {
-    icon: { title: defaultTitle = "Icon", application, widget, id },
+    icon: {
+      description,
+      title: defaultTitle = "Icon",
+      application,
+      widget,
+      id,
+    },
     selected,
     onContextMenu,
   } = props;
@@ -57,7 +63,7 @@ export function DesktopIcon(props: IconProps) {
       e.stopPropagation();
 
       addWindow({
-        title,
+        title: widget.title,
         application,
         position: widget.position!,
         dimensions: widget.dimensions,
@@ -67,10 +73,10 @@ export function DesktopIcon(props: IconProps) {
     [
       addWindow,
       application,
-      title,
       widget.dimensions,
       widget.position,
       widget.resizable,
+      widget.title,
     ]
   );
 
@@ -115,6 +121,7 @@ export function DesktopIcon(props: IconProps) {
   return (
     <div
       className={cx(containerCss, { selected })}
+      title={description}
       // onMouseDown={onMouseDown}
       onClick={(e) => {
         e.stopPropagation();
