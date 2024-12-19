@@ -5,8 +5,9 @@ import { Box } from "../components/Box";
 import { useTaskbarContextMenu } from "../menu/useTaskbarContextMenu";
 import { useContextMenuStore } from "../state/contextMenuState";
 import { OpenApplications } from "./OpenApplications";
-import { StartMenu } from "./StartMenu";
+import { StartMenu } from "./start-menu/StartMenu";
 import { TaskbarWidgets } from "./widgets/TaskbarWidgets";
+import { ZIndex } from "../constants";
 
 const taskbarCss = css`
   background: var(--color-theme-gradient);
@@ -20,7 +21,7 @@ const taskbarCss = css`
   position: relative;
 
   overflow: visible;
-  z-index: 9999;
+  z-index: ${ZIndex.Taskbar};
 `;
 
 const startButtonCss = css`
@@ -31,7 +32,7 @@ const startButtonCss = css`
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   color: white;
-  font-size: 16px;
+  font-size: 1rem;
   padding: 0 24px;
 
   &:hover {

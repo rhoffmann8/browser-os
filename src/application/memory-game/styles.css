@@ -49,6 +49,7 @@
 
 .tile-front {
   background-color: rgba(0, 19, 128, 0.75);
+  box-shadow: 0px 1px 2px 1px var(--color-theme-primary);
 }
 
 .tile-back {
@@ -65,4 +66,14 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.win h1,
+.win h2 {
+  margin: 0;
+  text-align: center;
+}
+
+.win button {
+  margin-top: 36px;
 }

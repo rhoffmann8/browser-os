@@ -3,15 +3,16 @@ import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { useOutsideClick } from "rooks";
 import { useContextMenuStore } from "../state/contextMenuState";
 import { Position } from "../types";
+import { ZIndex } from "../constants";
 
 const menuCss = css`
   list-style: none;
   padding: 0;
   position: absolute;
   background: var(--color-theme-primary);
-  font-size: 12px;
+  font-size: 0.8rem;
 
-  z-index: 9999;
+  z-index: ${ZIndex.ContextMenu};
 
   cursor: pointer;
 

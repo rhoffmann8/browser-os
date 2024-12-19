@@ -1,7 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import { css } from "@emotion/css";
 import { useCallback, useState } from "react";
-import { getApplicationFromId } from "../application";
+import { getApplicationComponentFromId } from "../application";
 import { useDesktopStore } from "../state/desktopState";
 import { Delta, type Widget } from "../types";
 import { WidgetButtons } from "./WidgetButtons";
@@ -20,10 +20,9 @@ const windowCss = css`
   box-shadow: var(--box-shadow-primary);
 `;
 
-const handleCss = css`
+const handleContainerCss = css`
   display: flex;
   background: var(--color-theme-gradient);
-  font-size: 16px;
 
   cursor: pointer;
 `;
@@ -31,7 +30,6 @@ const handleCss = css`
 export function Widget({ widget }: { widget: Widget }) {
   const {
     id,
-    title,
     position,
     application,
     resizable,
@@ -42,7 +40,6 @@ export function Widget({ widget }: { widget: Widget }) {
   const { attributes, listeners, setNodeRef, transform, setActivatorNodeRef } =
     useDraggable({ id });
 
-  const moveToTop = useDesktopStore((state) => state.moveToTop);
   const resizeWindow = useDesktopStore((state) => state.resizeWidget);
 
   const draggableStyle = transform
@@ -73,7 +70,7 @@ export function Widget({ widget }: { widget: Widget }) {
     [id, resizeWindow, setInitialDims]
   );
 
-  const AppComponent = getApplicationFromId(application.id);
+  const AppComponent = getApplicationComponentFromId(application.id);
 
   return (
     <div
@@ -86,12 +83,13 @@ export function Widget({ widget }: { widget: Widget }) {
       style={{
         height,
         width,
-        top: position.y,
-        left: position.x,
+        top: position?.y ?? 0,
+        left: position?.x ?? 0,
         zIndex: stackIndex,
+        filter: widget.isActive() ? undefined : "brightness(0.95)",
         ...draggableStyle,
       }}
-      onMouseDown={() => moveToTop(id)}
+      onMouseDown={() => widget.moveToTop()}
     >
       <WidgetResizeContainer
         onResize={onWidgetResize}
@@ -105,9 +103,9 @@ export function Widget({ widget }: { widget: Widget }) {
             overflow: "hidden",
           }}
         >
-          <div className={handleCss}>
+          <div className={handleContainerCss}>
             <WidgetHandle
-              title={title}
+              widget={widget}
               ref={setActivatorNodeRef}
               attributes={attributes}
               listeners={listeners}

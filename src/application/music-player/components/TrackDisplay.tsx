@@ -1,8 +1,8 @@
 import { css } from "@emotion/css";
 import cx from "classnames";
 import { useMemo, useRef } from "react";
-import { getTextWidth } from "../../../utils";
 import { useAudioPlayerContext } from "../context/AudioPlayerContext";
+import { getTextWidth } from "../../../utils/style";
 
 const trackDisplayCss = css`
   overflow: clip;
@@ -40,7 +40,9 @@ export function TrackDisplay() {
   const displayContainerRef = useRef<HTMLDivElement>(null);
 
   const text = currentTrack
-    ? `${currentTrack.author} - ${currentTrack.title}`
+    ? `${currentTrack.author ? `${currentTrack.author} - ` : ""}${
+        currentTrack.title
+      }`
     : "No track playing";
   const textWidth = useMemo(() => {
     return getTextWidth(text, "normal 14px arial");

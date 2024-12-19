@@ -1,44 +1,53 @@
-import { css } from "@emotion/css";
+import { useEffect, useRef, useState } from "react";
+import { BoxCol } from "../../components/Box";
+import { useDesktopStore } from "../../state/desktopState";
 import { ApplicationComponent } from "../../types/application";
-import { useEffect, useRef } from "react";
+import { Toolbar } from "./components/Toolbar";
+import { editorCss } from "./styles";
 
-const editorCss = css`
-  height: 100%;
-  width: 100%;
+const WIDGET_TITLE_UNSAVED = "<unsaved>";
 
-  outline: none;
-
-  padding: 2px 4px;
-
-  font-size: 14px;
-  line-height: 1.2;
-
-  border: none;
-  resize: none;
-
-  background: transparent;
-  color: black;
-`;
+export type Note = { id: string; title: string; content: string };
 
 export const TextEditor: ApplicationComponent<"text-editor"> = ({
-  params: { content, readonly },
+  params: { readonly, activeFile: defaultActiveFile },
+  widget,
 }) => {
+  const setWidgetTitle = useDesktopStore((state) => state.setWidgetTitle);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const [content, setContent] = useState(defaultActiveFile?.content ?? "");
 
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 100);
   }, []);
 
-  if (!readonly) {
-    return (
+  useEffect(() => {
+    if (!defaultActiveFile) {
+      setWidgetTitle(widget.id, WIDGET_TITLE_UNSAVED);
+    } else {
+      setWidgetTitle(widget.id, defaultActiveFile.title);
+    }
+  }, [defaultActiveFile, setWidgetTitle, widget.id]);
+
+  if (readonly) {
+    return <div className={editorCss}>{content}</div>;
+  }
+
+  return (
+    <BoxCol fillWidth className={editorCss}>
+      <Toolbar
+        widget={widget}
+        defaultActiveFile={defaultActiveFile}
+        content={content}
+        onContentChange={setContent}
+      />
       <textarea
         ref={inputRef}
         placeholder="Your text goes here"
-        defaultValue={content}
+        value={content}
         className={editorCss}
+        onChange={(e) => setContent(e.currentTarget.value)}
       />
-    );
-  }
-
-  return <div className={editorCss}>{content}</div>;
+    </BoxCol>
+  );
 };

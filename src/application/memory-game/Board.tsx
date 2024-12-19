@@ -1,6 +1,13 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { ChangeHandler } from "../../types";
 
-export function Board({ size, onWin }: { size: number; onWin: () => void }) {
+interface BoardProps {
+  size: number;
+  onWin: () => void;
+  onMoveCountUpdate: ChangeHandler<number>;
+}
+
+export function Board({ size, onWin, onMoveCountUpdate }: BoardProps) {
   // These states save the indices of the tiles, not the numbers
   const [matches, setMatches] = useState<Set<number>>(new Set());
   const [turned, setTurned] = useState<Set<number>>(new Set());
@@ -25,13 +32,15 @@ export function Board({ size, onWin }: { size: number; onWin: () => void }) {
   useEffect(() => {
     if (turned.size < 2) return;
 
+    onMoveCountUpdate((prev) => prev + 1);
+
     const timeout = setTimeout(() => {
       updateMatched();
       setTurned(new Set());
     }, 1000);
 
     return () => clearTimeout(timeout);
-  }, [turned, updateMatched]);
+  }, [onMoveCountUpdate, turned, updateMatched]);
 
   useEffect(() => {
     if (matches.size === size ** 2) {

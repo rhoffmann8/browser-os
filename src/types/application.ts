@@ -1,13 +1,15 @@
+import { APPLICATION_MAP } from "../application";
+import { Note } from "../application/text-editor/TextEditor";
 import { Widget } from "../types";
 
-export interface PDFApplication {
-  id: "pdf";
+export interface PDFViewerApplication {
+  id: "pdf-viewer";
   params: { src: string };
 }
 
 export interface TextEditorApplication {
   id: "text-editor";
-  params: { content: string; readonly?: boolean };
+  params: { readonly?: boolean; activeFile?: Note };
 }
 
 export interface ExternalLinkApplication {
@@ -41,11 +43,14 @@ export type Application =
   | MarkdownViewerApplication
   | MemoryGameApplication
   | MusicPlayerApplication
-  | PDFApplication
+  | PDFViewerApplication
   | TextEditorApplication;
-export type AppId = Application["id"];
+export type AppId = keyof typeof APPLICATION_MAP;
 
-export type ApplicationComponent<K extends AppId> = (props: {
+export type ApplicationComponentProps<K extends AppId> = {
   params: Extract<Application, { id: K }>["params"];
   widget: Widget;
-}) => JSX.Element | null;
+};
+export type ApplicationComponent<K extends AppId> = (
+  props: ApplicationComponentProps<K>
+) => JSX.Element | null;

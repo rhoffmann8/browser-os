@@ -1,32 +1,25 @@
-import { JSX } from "react";
-import { Widget } from "../types";
-import { AppId, Application } from "../types/application";
+import { AppId } from "../types/application";
 import { ExternalLink } from "./external-link/ExternalLink";
 import { MemoryGame } from "./memory-game/MemoryGame";
-import { PDF } from "./pdf/PDF";
+import { PDFViewer } from "./pdf-viewer/PDFViewer";
 import { TextEditor } from "./text-editor/TextEditor";
 // import { FileObjectType } from "../filesystem/types";
 import { Dialog } from "./dialog/Dialog";
-import { MusicPlayer } from "./music-player/MusicPlayer";
 import { MarkdownViewer } from "./markdown-viewer/MarkdownViewer";
+import { MusicPlayer } from "./music-player/MusicPlayer";
 
-export const APPLICATION_MAP: {
-  [key in AppId]: (props: {
-    params: Extract<Application, { id: key }>["params"];
-    widget: Widget;
-  }) => JSX.Element | null;
-} = {
-  dialog: Dialog,
-  "external-link": ExternalLink,
-  "markdown-viewer": MarkdownViewer,
-  "memory-game": MemoryGame,
-  "music-player": MusicPlayer,
-  pdf: PDF,
-  "text-editor": TextEditor,
+export const APPLICATION_MAP = {
+  dialog: { title: "Dialog", component: Dialog },
+  "external-link": { title: "", component: ExternalLink },
+  "markdown-viewer": { title: "Markdown Viewer", component: MarkdownViewer },
+  "memory-game": { title: "Memory", component: MemoryGame },
+  "music-player": { title: "Music", component: MusicPlayer },
+  "pdf-viewer": { title: "PDF Viewer", component: PDFViewer },
+  "text-editor": { title: "Notes", component: TextEditor },
 };
 
-export function getApplicationFromId<K extends AppId>(key: K) {
-  return APPLICATION_MAP[key];
+export function getApplicationComponentFromId<K extends AppId>(key: K) {
+  return APPLICATION_MAP[key].component;
 }
 
 // export class ApplicationRegistry {

@@ -15,7 +15,8 @@ export interface Moveable {
 
 export interface DesktopIcon extends Moveable {
   id: UniqueIdentifier;
-  title: string;
+  title?: string;
+  description?: string;
   icon: IconProp;
   iconClassName?: string;
 
@@ -25,8 +26,8 @@ export interface DesktopIcon extends Moveable {
 }
 
 export interface WidgetParams extends Moveable, Partial<Dimensionable> {
-  title: string;
   application: Application;
+  title?: string;
   resizable?: boolean;
 }
 
@@ -34,7 +35,11 @@ export interface Widget extends WidgetParams {
   id: UniqueIdentifier;
   stackIndex: number;
 
+  isActive: () => boolean;
+  moveToTop: () => void;
+  setTitle: (title: string) => void;
   resize: (dims: Dimensionable["dimensions"]) => void;
+  setPosition: (next: Position) => void;
   close: () => void;
 }
 

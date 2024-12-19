@@ -1,10 +1,11 @@
 import { create } from "zustand";
-import { getStorageJSON, toggleArrayItem } from "../utils";
 import {
-  STORAGE_KEYS,
+  StorageKeys,
   TASKBAR_WIDGET_CLOCK,
   TASKBAR_WIDGET_NETWORK,
 } from "../constants";
+import { getStorageJSON } from "../utils/storage";
+import { toggleArrayItem } from "../utils/array";
 
 interface TaskbarState {
   activeItems: Set<string>;
@@ -13,7 +14,7 @@ interface TaskbarState {
 
 export const useTaskbarStore = create<TaskbarState>((set) => ({
   activeItems: new Set(
-    getStorageJSON("taskbar-active-items") ?? [
+    getStorageJSON(StorageKeys.TASKBAR_ACTIVE_ITEMS) ?? [
       TASKBAR_WIDGET_NETWORK,
       TASKBAR_WIDGET_CLOCK,
     ]
@@ -27,7 +28,7 @@ export const useTaskbarStore = create<TaskbarState>((set) => ({
 
 useTaskbarStore.subscribe((state) => {
   localStorage.setItem(
-    STORAGE_KEYS.taskbarActiveItems,
+    StorageKeys.TASKBAR_ACTIVE_ITEMS,
     JSON.stringify([...state.activeItems])
   );
 });

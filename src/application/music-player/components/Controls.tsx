@@ -1,17 +1,20 @@
 import {
   faBackwardStep,
   faFastBackward,
-  faPause,
-  faPlay,
   faFastForward,
   faForwardStep,
-  faRepeat,
   faList,
+  faPause,
+  faPlay,
+  faRepeat,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Box } from "../../../components/Box";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Box } from "../../../components/Box";
 import { useAudioPlayerContext } from "../context/AudioPlayerContext";
+import { controlsContainerCss } from "../styles";
+
+const SEEK_SECONDS = 15;
 
 export function Controls() {
   const {
@@ -107,10 +110,15 @@ export function Controls() {
     <>
       <audio
         ref={audioRef}
+        key={currentTrack?.src}
         src={currentTrack?.src}
         onLoadedMetadata={onLoadedMetadata}
       />
-      <Box fillWidth justifyContent="space-between">
+      <Box
+        className={controlsContainerCss}
+        fillWidth
+        justifyContent="space-between"
+      >
         <Box>
           <button
             title="Toggle track list"
@@ -123,7 +131,13 @@ export function Controls() {
         <Box gap={6}>
           <button
             title="Previous track"
-            onClick={() => setTrackIndex((prev) => Math.max(prev - 1, 0))}
+            onClick={() => {
+              if (trackIndex === 0 && isRepeat) {
+                setTrackIndex(trackList.length - 1);
+                return;
+              }
+              setTrackIndex((prev) => Math.max(prev - 1, 0));
+            }}
           >
             <FontAwesomeIcon icon={faBackwardStep} />
           </button>
@@ -131,7 +145,7 @@ export function Controls() {
             title="Rewind"
             onClick={() => {
               if (audioRef.current) {
-                audioRef.current.currentTime -= 15;
+                audioRef.current.currentTime -= SEEK_SECONDS;
               }
             }}
           >
@@ -147,7 +161,7 @@ export function Controls() {
             title="Fast forward"
             onClick={() => {
               if (audioRef.current) {
-                audioRef.current.currentTime += 15;
+                audioRef.current.currentTime += SEEK_SECONDS;
               }
             }}
           >

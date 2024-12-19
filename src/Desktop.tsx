@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { MouseEventHandler, useCallback, useEffect, useRef } from "react";
+import { MouseEventHandler, useCallback, useRef } from "react";
 import { IconDroppableContext } from "./droppable/IconDroppableContext";
 import { WidgetDroppableContext } from "./droppable/WidgetDroppableContext";
 import { DraggableIcon } from "./icon/DraggableIcon";
@@ -28,8 +28,6 @@ export function Desktop() {
 
   const desktopContextMenuItems = useDesktopContextMenu();
   const iconContextMenuItems = useIconContextMenu();
-
-  useGlobalErrorHandling();
 
   const onContextMenu = useCallback(
     (pos: { x: number; y: number }) => {
@@ -73,21 +71,4 @@ export function Desktop() {
       <div style={{ marginLeft: 4 }}>OS Version 0.0.1</div>
     </div>
   );
-}
-
-function useGlobalErrorHandling() {
-  const addWindow = useDesktopStore((state) => state.addWidget);
-
-  useEffect(() => {
-    const listener = (e: ErrorEvent) =>
-      addWindow({
-        title: "Error",
-        position: { x: 100, y: 100 },
-        application: { id: "dialog", params: { message: e.message } },
-        resizable: false,
-      });
-    window.addEventListener("error", listener);
-
-    return () => window.removeEventListener("error", listener);
-  }, [addWindow]);
 }
