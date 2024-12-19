@@ -1,6 +1,12 @@
 import { faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useRef, MouseEventHandler, useCallback } from "react";
+import {
+  useState,
+  useRef,
+  MouseEventHandler,
+  useCallback,
+  KeyboardEventHandler,
+} from "react";
 import { useOutsideClick } from "rooks";
 import { Box } from "../../../../components/Box";
 import { Note } from "../../TextEditor";
@@ -35,11 +41,11 @@ export function SaveButton({ activeFile, onSave }: Props) {
     [activeFile, onSave]
   );
 
-  const onSaveMenuSaveAsClick: MouseEventHandler = useCallback((e) => {
+  const onSaveMenuSaveAsClick: MouseEventHandler = (e) => {
     e.stopPropagation();
     setShowSaveMenu(false);
     setShowSaveInput(true);
-  }, []);
+  };
 
   const onSaveButtonClick = () => {
     setShowSaveMenu((prev) => !prev);
@@ -52,6 +58,17 @@ export function SaveButton({ activeFile, onSave }: Props) {
     setSaveInput("");
   };
 
+  const onSaveInputKeyDown: KeyboardEventHandler = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      onSaveInputSaveClick();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setShowSaveInput(false);
+      setSaveInput("");
+    }
+  };
+
   return (
     <div style={{ position: "relative" }}>
       <button title="Save" onClick={onSaveButtonClick}>
@@ -59,7 +76,6 @@ export function SaveButton({ activeFile, onSave }: Props) {
           icon={faFloppyDisk}
           className={saveIconCss}
           size="lg"
-          color="#444"
         />
       </button>
       {showSaveMenu && (
@@ -70,22 +86,20 @@ export function SaveButton({ activeFile, onSave }: Props) {
       )}
       {showSaveInput && (
         <Box
-          className={saveInputContainerCss}
           ref={saveInputRef}
+          className={saveInputContainerCss}
           onClick={(e) => e.stopPropagation()}
         >
-          <input
-            autoFocus
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                onSaveInputSaveClick();
-              }
-            }}
-            onChange={(e) => setSaveInput(e.currentTarget.value)}
-            value={saveInput}
-          />
+          <label style={{ display: "flex", gap: 4, alignItems: "center" }}>
+            <span style={{ textWrap: "nowrap" }}>Save as</span>
+            <input
+              autoFocus
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={onSaveInputKeyDown}
+              onChange={(e) => setSaveInput(e.currentTarget.value)}
+              value={saveInput}
+            />
+          </label>
           <button
             disabled={!saveInput}
             onClick={(e) => {
@@ -93,11 +107,7 @@ export function SaveButton({ activeFile, onSave }: Props) {
               onSaveInputSaveClick();
             }}
           >
-            <FontAwesomeIcon
-              icon={faFloppyDisk}
-              className={saveIconCss}
-              color="#444"
-            />
+            <FontAwesomeIcon icon={faFloppyDisk} className={saveIconCss} />
           </button>
         </Box>
       )}

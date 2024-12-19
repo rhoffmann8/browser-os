@@ -25,9 +25,12 @@ const containerCss = css`
     width: 100%;
   }
 
-  &.selected,
   &:hover {
-    background: #80bff7;
+    background: rgba(128, 191, 247, 0.5);
+  }
+
+  &.selected {
+    background: rgba(128, 191, 247, 0.75);
   }
 `;
 

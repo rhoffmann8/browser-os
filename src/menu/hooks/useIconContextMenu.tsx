@@ -1,5 +1,5 @@
-import { ContextMenuItem } from "../state/contextMenuState";
-import { useIconStore } from "../state/iconState";
+import { ContextMenuItem } from "../../state/contextMenuState";
+import { useIconStore } from "../../state/iconState";
 import * as faIcons from "@fortawesome/free-regular-svg-icons";
 
 const allIcons = Object.keys(faIcons)

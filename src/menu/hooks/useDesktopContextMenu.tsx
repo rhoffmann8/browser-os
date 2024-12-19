@@ -1,6 +1,6 @@
-import { useDesktopStore } from "../state/desktopState";
-import { useIconStore } from "../state/iconState";
-import { randomRgba } from "../utils/style";
+import { useDesktopStore } from "../../state/desktopState";
+import { useIconStore } from "../../state/iconState";
+import { randomRgba } from "../../utils/style";
 
 export function useDesktopContextMenu() {
   const setBackground = useDesktopStore((state) => state.setBackground);

@@ -1,8 +1,8 @@
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { BoxCol } from "./components/Box";
 import { css } from "@emotion/css";
+import { BoxCol } from "../components/Box";
 
 const mobileCss = css`
   width: 100vw;

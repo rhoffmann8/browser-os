@@ -1,14 +1,13 @@
+import { useState } from "react";
 import { toast } from "react-toastify";
 import { Box } from "../../../components/Box";
+import { ChangeHandler, Widget } from "../../../types";
 import { TextEditorApplication } from "../../../types/application";
 import { toolbarCss } from "../styles";
-import { writeFile, deleteFile } from "../utils";
+import { Note } from "../TextEditor";
+import { deleteFile, writeFile } from "../utils";
 import { OpenButton } from "./toolbar-buttons/OpenButton";
 import { SaveButton } from "./toolbar-buttons/SaveButton";
-import { useDesktopStore } from "../../../state/desktopState";
-import { useState } from "react";
-import { Note } from "../TextEditor";
-import { ChangeHandler, Widget } from "../../../types";
 
 interface Props {
   widget: Widget;
@@ -23,11 +22,6 @@ export function Toolbar({
   content,
   onContentChange,
 }: Props) {
-  const setWidgetApplication = useDesktopStore(
-    (state) => state.setWidgetApplication
-  );
-  const setWidgetTitle = useDesktopStore((state) => state.setWidgetTitle);
-
   const [activeFile, setActiveFile] = useState<Note | undefined>(
     defaultActiveFile
   );
@@ -39,8 +33,8 @@ export function Toolbar({
         onSave={(id, title) => {
           const savedFile = writeFile(id, title, content);
           setActiveFile(savedFile);
-          setWidgetTitle(widget.id, title);
-          setWidgetApplication(widget.id, {
+          widget.setTitle(title);
+          widget.setApplication({
             ...widget.application,
             params: { ...widget.application.params, activeFile: savedFile },
           } as TextEditorApplication);
@@ -53,14 +47,14 @@ export function Toolbar({
           deleteFile(note.id);
           if (note.id === activeFile?.id) {
             setActiveFile(undefined);
-            setWidgetTitle(widget.id, "<unsaved>");
+            widget.setTitle("<unsaved>");
           }
           toast.success(`${note.title} deleted`, { autoClose: 2000 });
         }}
         onOpen={(note) => {
           setActiveFile(note);
           onContentChange(note.content);
-          setWidgetTitle(widget.id, note.title);
+          widget.setTitle(note.title);
         }}
       />
     </Box>

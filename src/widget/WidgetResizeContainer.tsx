@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { PropsWithChildren, useCallback, useRef } from "react";
+import { PropsWithChildren, useCallback, useMemo, useRef } from "react";
 import { Delta } from "../types";
 import cx from "classnames";
 
@@ -107,41 +107,45 @@ export function WidgetResizeContainer({
     [disabled, onPointerMove, onPointerUp]
   );
 
+  const handles = useMemo(
+    () =>
+      (["NW", "N", "NE", "W", "E", "SW", "S", "SE"] as ResizeDirection[]).map(
+        (direction) => (
+          <ResizeHandle
+            direction={direction}
+            disabled={disabled}
+            onPointerDown={onPointerDown}
+          />
+        )
+      ),
+    [disabled, onPointerDown]
+  );
+
   return (
     <div className={boxCss}>
-      <div
-        className={cx("resize-handle", { "resize-handle-nw": !disabled })}
-        onPointerDown={() => onPointerDown("NW")}
-      />
-      <div
-        className={cx("resize-handle", { "resize-handle-n": !disabled })}
-        onPointerDown={() => onPointerDown("N")}
-      />
-      <div
-        className={cx("resize-handle", { "resize-handle-ne": !disabled })}
-        onPointerDown={() => onPointerDown("NE")}
-      />
-      <div
-        className={cx("resize-handle", { "resize-handle-w": !disabled })}
-        onPointerDown={() => onPointerDown("W")}
-      />
+      {handles.slice(0, 4)}
       {children}
-      <div
-        className={cx("resize-handle", { "resize-handle-e": !disabled })}
-        onPointerDown={() => onPointerDown("E")}
-      />
-      <div
-        className={cx("resize-handle", { "resize-handle-sw": !disabled })}
-        onPointerDown={() => onPointerDown("SW")}
-      />
-      <div
-        className={cx("resize-handle", { "resize-handle-s": !disabled })}
-        onPointerDown={() => onPointerDown("S")}
-      />
-      <div
-        className={cx("resize-handle", { "resize-handle-se": !disabled })}
-        onPointerDown={() => onPointerDown("SE")}
-      />
+      {handles.slice(4)}
     </div>
+  );
+}
+
+interface ResizeHandleProps {
+  direction: ResizeDirection;
+  onPointerDown: (direction: ResizeDirection) => void;
+  disabled?: boolean;
+}
+function ResizeHandle({
+  direction,
+  disabled,
+  onPointerDown,
+}: ResizeHandleProps) {
+  return (
+    <div
+      className={cx("resize-handle", {
+        [`resize-handle-${direction.toLowerCase()}`]: !disabled,
+      })}
+      onPointerDown={() => onPointerDown(direction)}
+    />
   );
 }
