@@ -22,7 +22,7 @@ export const usePowerStore = create<PowerState>((set) => {
     powerState: PowerEnum.On,
     powerOn: async () => {
       set({ powerState: PowerEnum.PoweringOn });
-      await wait(1200);
+      await wait(1300);
       set({ powerState: PowerEnum.On });
     },
     powerOff: async () => {

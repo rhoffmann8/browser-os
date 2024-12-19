@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { MouseEventHandler, useCallback, useRef, useState } from "react";
 import { useOutsideClick } from "rooks";
 import { Box } from "../components/Box";
-import { useTaskbarContextMenu } from "../menu/useTaskbarContextMenu";
+import { useTaskbarContextMenu } from "../menu/hooks/useTaskbarContextMenu";
 import { useContextMenuStore } from "../state/contextMenuState";
 import { OpenApplications } from "./OpenApplications";
 import { StartMenu } from "./start-menu/StartMenu";

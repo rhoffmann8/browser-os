@@ -1,10 +1,10 @@
 import { css } from "@emotion/css";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { TASKBAR_WIDGET_CLOCK, TASKBAR_WIDGET_NETWORK } from "../constants";
-import { ContextMenuItem } from "../state/contextMenuState";
-import { useTaskbarStore } from "../state/taskbarState";
-import { Widget } from "../types";
+import { TASKBAR_WIDGET_CLOCK, TASKBAR_WIDGET_NETWORK } from "../../constants";
+import { ContextMenuItem } from "../../state/contextMenuState";
+import { useTaskbarStore } from "../../state/taskbarState";
+import { Widget } from "../../types";
 
 const taskbarItemCss = css`
   display: flex;

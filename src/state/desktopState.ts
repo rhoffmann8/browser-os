@@ -53,12 +53,11 @@ function enrichWidgetWithMethods<
   return {
     ...widget,
     isActive: () => get().isActiveWidget(widget.id),
-    resize: (dims: Dimensionable["dimensions"]) =>
-      get().setWidgetDimensions(widget.id, dims),
+    resize: (dims) => get().setWidgetDimensions(widget.id, dims),
     close: () => get().closeWidget(widget.id),
-    setTitle: (title: string) => get().setWidgetTitle(widget.id, title),
-    setPosition: (position: Position) =>
-      get().setWidgetPosition(widget.id, position),
+    setTitle: (title) => get().setWidgetTitle(widget.id, title),
+    setPosition: (position) => get().setWidgetPosition(widget.id, position),
+    setApplication: (next) => get().setWidgetApplication(widget.id, next),
     moveToTop: () => get().moveToTop(widget.id),
   };
 }

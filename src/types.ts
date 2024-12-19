@@ -37,9 +37,10 @@ export interface Widget extends WidgetParams {
 
   isActive: () => boolean;
   moveToTop: () => void;
-  setTitle: (title: string) => void;
   resize: (dims: Dimensionable["dimensions"]) => void;
+  setTitle: (title: string) => void;
   setPosition: (next: Position) => void;
+  setApplication: (next: Application) => void;
   close: () => void;
 }
 

@@ -1,12 +1,9 @@
 import { PropsWithChildren, useEffect } from "react";
 import { BrowserView, MobileView } from "react-device-detect";
 import { Slide, toast, ToastContainer } from "react-toastify";
-import { Desktop } from "./Desktop";
-import { ContextMenu } from "./menu/ContextMenu";
-import { Mobile } from "./Mobile";
-import { Taskbar } from "./taskbar/Taskbar";
-import { Viewport } from "./Viewport";
 import { ZIndex } from "./constants";
+import { Mobile } from "./views/MobileView";
+import { DesktopView } from "./views/DesktopView";
 
 function App() {
   return (
@@ -21,11 +18,7 @@ function App() {
       />
       <ErrorBoundary>
         <BrowserView>
-          <Viewport>
-            <Desktop />
-            <Taskbar />
-            <ContextMenu />
-          </Viewport>
+          <DesktopView />
         </BrowserView>
 
         <MobileView>

@@ -3,7 +3,7 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import cx from "classnames";
 import { Box } from "../components/Box";
-import { useTaskbarApplicationContextMenu } from "../menu/useTaskbarContextMenu";
+import { useTaskbarApplicationContextMenu } from "../menu/hooks/useTaskbarContextMenu";
 import { useContextMenuStore } from "../state/contextMenuState";
 import { useDesktopStore } from "../state/desktopState";
 import { Widget } from "../types";

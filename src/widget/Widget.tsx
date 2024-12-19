@@ -2,30 +2,13 @@ import { useDraggable } from "@dnd-kit/core";
 import { css } from "@emotion/css";
 import { useCallback, useState } from "react";
 import { getApplicationComponentFromId } from "../application";
+import { BoxCol } from "../components/Box";
 import { useDesktopStore } from "../state/desktopState";
 import { Delta, type Widget } from "../types";
 import { WidgetButtons } from "./WidgetButtons";
 import { WidgetContent } from "./WidgetContent";
 import { WidgetHandle } from "./WidgetHandle";
 import { WidgetResizeContainer } from "./WidgetResizeContainer";
-
-const windowCss = css`
-  position: absolute;
-
-  display: flex;
-  flex-direction: column;
-
-  overflow: hidden;
-
-  box-shadow: var(--box-shadow-primary);
-`;
-
-const handleContainerCss = css`
-  display: flex;
-  background: var(--color-theme-gradient);
-
-  cursor: pointer;
-`;
 
 export function Widget({ widget }: { widget: Widget }) {
   const {
@@ -80,6 +63,7 @@ export function Widget({ widget }: { widget: Widget }) {
       }}
       className={windowCss}
       onContextMenu={(e) => e.stopPropagation()}
+      onMouseDown={() => widget.moveToTop()}
       style={{
         height,
         width,
@@ -89,20 +73,12 @@ export function Widget({ widget }: { widget: Widget }) {
         filter: widget.isActive() ? undefined : "brightness(0.95)",
         ...draggableStyle,
       }}
-      onMouseDown={() => widget.moveToTop()}
     >
       <WidgetResizeContainer
         onResize={onWidgetResize}
         disabled={resizable === false}
       >
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
-        >
+        <BoxCol flex={1} overflow="hidden">
           <div className={handleContainerCss}>
             <WidgetHandle
               widget={widget}
@@ -115,8 +91,26 @@ export function Widget({ widget }: { widget: Widget }) {
           <WidgetContent>
             <AppComponent params={application.params as any} widget={widget} />
           </WidgetContent>
-        </div>
+        </BoxCol>
       </WidgetResizeContainer>
     </div>
   );
 }
+
+const windowCss = css`
+  position: absolute;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  box-shadow: var(--box-shadow-primary);
+`;
+
+const handleContainerCss = css`
+  display: flex;
+  background: var(--color-theme-gradient);
+
+  cursor: pointer;
+`;
