@@ -9,19 +9,30 @@ const containerCss = css`
   width: 160px;
   padding: 0;
 
-  background: linear-gradient(var(--color-theme-secondary), #000);
-  box-shadow: 0 0 2px 4px var(--color-theme-primary) inset,
+  background: linear-gradient(var(--color-theme-hover), #111);
+  box-shadow: 0 0 8px 4px #161616 inset,
     0 1px 8px 1px var(--color-theme-primary);
   border-radius: 50%;
 
   z-index: -1;
   opacity: 0;
-  transition: top 100ms linear, opacity 100ms linear;
+  transform: translateY(0);
+  transition: transform 200ms ease-in-out, opacity 200ms ease-in-out;
 
   &.show {
     opacity: 1;
-    top: -164px;
+    transform: translateY(-103%);
   }
+`;
+
+const tickCss = css`
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color: #999;
+  text-shadow: 0px 2px 1px black;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
 `;
 
 const DEGREES = 360;
@@ -45,11 +56,26 @@ export function AnalogClock({ date, show }: { date: Date; show: boolean }) {
 
   return (
     <div className={cx(containerCss, { show })}>
+      {Array.from({ length: 12 }).map((_, idx) => (
+        <div
+          className={tickCss}
+          style={{ transform: getTickTransform(idx + 1) }}
+        >
+          {idx + 1}
+        </div>
+      ))}
+
       <Hand color="#1d8dd8" length={10} rotate={secondsRotation} />
-      <Hand color="white" length={18} rotate={minutesRotation} />
-      <Hand color="red" length={35} rotate={hoursRotation} />
+      <Hand color="white" length={22} rotate={minutesRotation} />
+      <Hand color="red" length={36} rotate={hoursRotation} />
     </div>
   );
+}
+
+function getTickTransform(index: number) {
+  return `translate(-50%, -50%) rotate(${
+    180 + 30 * index
+  }deg) translateY(64px) rotate(${180 - 30 * index}deg)`;
 }
 
 const handCss = css`
@@ -73,7 +99,28 @@ function Hand({ length, rotate, color }: HandProps) {
         background: `linear-gradient(color-mix(in srgb, ${color} 50%, transparent), ${color})`,
         top: length,
         transform: `rotate(${rotate}deg)`,
+        boxShadow: `${getShadowXOffset(rotate)}px 0px 4px 0px black`,
       }}
     />
   );
+}
+
+const QUADRANT = DEGREES / 4;
+const SHADOW_X_OFFSET_PIXELS = 2;
+// As the hand rotates, the shadow needs to be shifted from one side to the other
+function getShadowXOffset(rotate: number) {
+  let normalizedRotate: number;
+  const delta = (rotate - QUADRANT) % QUADRANT;
+
+  if (rotate < QUADRANT) {
+    normalizedRotate = rotate;
+  } else if (rotate < QUADRANT * 2) {
+    normalizedRotate = QUADRANT - delta;
+  } else if (rotate < QUADRANT * 3) {
+    normalizedRotate = -delta;
+  } else {
+    normalizedRotate = -(QUADRANT - delta);
+  }
+
+  return normalizedRotate * (SHADOW_X_OFFSET_PIXELS * (1 / QUADRANT));
 }

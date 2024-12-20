@@ -30,7 +30,7 @@ export function useDesktopContextMenu() {
     },
     {
       id: "reset-application-state",
-      title: "Reset application state",
+      title: "Reset all saved state",
       onClick: () => {
         localStorage.clear();
         window.location.reload();
