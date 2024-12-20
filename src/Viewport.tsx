@@ -50,10 +50,9 @@ const viewportCss = css`
 
 const { normal, pressed } = getButtonBackgroundGradientStyles("#444");
 const buttonCss = css`
-  --power-on-green: #c2e08c;
-  --power-off-gray: #aaa;
-  --power-on-filter: blur(10px) saturate(5);
-  --power-off-filter: blur(0px) saturate(0);
+  --power-on-green: #99f100;
+  --power-on-filter: blur(15px) brightness(1);
+  --power-off-filter: blur(0px) brightness(0);
 
   padding: 24px;
   border-radius: 0.4rem;
@@ -64,7 +63,8 @@ const buttonCss = css`
   border-radius: 50%;
 
   path {
-    fill: #aaa;
+    fill: var(--power-on-green);
+    filter: var(--power-off-filter);
   }
 
   &:hover {
@@ -77,29 +77,26 @@ const buttonCss = css`
 
   &.powering-up path {
     animation: poweringUp 1s ease-in;
-    fill: var(--power-on-green);
     filter: var(--power-on-filter);
   }
 
   @keyframes poweringUp {
     0% {
-      fill: var(--power-off-gray);
       filter: var(--power-off-filter);
     }
     80% {
-      fill: var(--power-on-green);
+      filter: var(--power-on-filter);
     }
     81% {
-      fill: var(--power-off-gray);
+      filter: var(--power-off-filter);
     }
     90% {
-      fill: var(--power-on-green);
+      filter: var(--power-on-filter);
     }
     91% {
-      fill: var(--power-off-gray);
+      filter: var(--power-off-filter);
     }
     100% {
-      fill: var(--power-on-green);
       filter: var(--power-on-filter);
     }
   }

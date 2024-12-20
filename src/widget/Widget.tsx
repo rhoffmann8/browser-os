@@ -86,7 +86,7 @@ export function Widget({ widget }: { widget: Widget }) {
               attributes={attributes}
               listeners={listeners}
             />
-            <WidgetButtons widget={widget} />
+            <WidgetButtons onClose={() => widget.close()} />
           </div>
           <WidgetContent>
             <AppComponent params={application.params as any} widget={widget} />
@@ -106,6 +106,19 @@ const windowCss = css`
   overflow: hidden;
 
   box-shadow: var(--box-shadow-primary);
+
+  animation: open 100ms ease-in-out;
+
+  @keyframes open {
+    from {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 `;
 
 const handleContainerCss = css`

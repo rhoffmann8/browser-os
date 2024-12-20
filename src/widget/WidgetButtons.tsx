@@ -1,7 +1,6 @@
 import { css } from "@emotion/css";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Widget } from "../types";
 
 const buttonCss = css`
   color: white;
@@ -17,10 +16,10 @@ const buttonCss = css`
   }
 `;
 
-export function WidgetButtons({ widget }: { widget: Widget }) {
+export function WidgetButtons({ onClose }: { onClose: () => void }) {
   return (
     <div>
-      <button className={buttonCss} onClick={() => widget.close()}>
+      <button className={buttonCss} onClick={onClose}>
         <FontAwesomeIcon icon={faXmark} />
       </button>
     </div>
