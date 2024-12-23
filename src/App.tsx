@@ -1,7 +1,7 @@
 import { PropsWithChildren, useEffect } from "react";
 import { BrowserView, MobileView } from "react-device-detect";
 import { Slide, toast, ToastContainer } from "react-toastify";
-import { ZIndex } from "./constants";
+import { ZIndex } from "./constants/constants";
 import { Mobile } from "./views/MobileView";
 import { DesktopView } from "./views/DesktopView";
 

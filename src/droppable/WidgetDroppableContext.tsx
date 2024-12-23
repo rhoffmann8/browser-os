@@ -2,6 +2,7 @@ import {
   ClientRect,
   DndContext,
   DragEndEvent,
+  Modifier,
   useDroppable,
 } from "@dnd-kit/core";
 
@@ -35,8 +36,24 @@ export function WidgetDroppableContext({
   );
 
   return (
-    <DndContext onDragEnd={onDragEnd} modifiers={[]}>
+    <DndContext onDragEnd={onDragEnd} modifiers={[restrictToTopEdge]}>
       <div ref={setNodeRef}>{children}</div>
     </DndContext>
   );
 }
+
+const restrictToTopEdge: Modifier = ({ draggingNodeRect, transform }) => {
+  if (!draggingNodeRect) {
+    return transform;
+  }
+
+  const newY =
+    draggingNodeRect.top + transform.y < 0
+      ? -draggingNodeRect.top
+      : transform.y;
+
+  return {
+    ...transform,
+    y: newY,
+  };
+};

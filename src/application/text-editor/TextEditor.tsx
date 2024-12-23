@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { BoxCol } from "../../components/Box";
 import { useDesktopStore } from "../../state/desktopState";
-import { ApplicationComponent } from "../../types/application";
+import {
+  ApplicationComponent,
+  TextEditorApplication,
+} from "../../types/application";
 import { Toolbar } from "./components/Toolbar";
 import { editorCss } from "./styles";
 
@@ -9,7 +12,7 @@ const WIDGET_TITLE_UNSAVED = "<unsaved>";
 
 export type Note = { id: string; title: string; content: string };
 
-export const TextEditor: ApplicationComponent<"text-editor"> = ({
+export const TextEditor: ApplicationComponent<TextEditorApplication> = ({
   params: { readonly, activeFile: defaultActiveFile },
   widget,
 }) => {

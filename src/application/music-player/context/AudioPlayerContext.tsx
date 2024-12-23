@@ -18,11 +18,13 @@ interface AudioPlayerContext {
   audioRef: RefObject<HTMLAudioElement>;
   progressBarRef: RefObject<HTMLInputElement>;
   currentTime: number;
-  setCurrentTime: (next: number) => void;
+  setCurrentTime: ChangeHandler<number>;
   duration: number;
-  setDuration: (next: number) => void;
+  setDuration: ChangeHandler<number>;
   isPlaying: boolean;
   setIsPlaying: ChangeHandler<boolean>;
+  volume: number;
+  setVolume: ChangeHandler<number>;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContext | undefined>(

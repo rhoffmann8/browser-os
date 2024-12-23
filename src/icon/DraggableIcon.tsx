@@ -1,7 +1,8 @@
 import { useDraggable } from "@dnd-kit/core";
 import { DesktopIcon, IconProps } from "./DesktopIcon";
+import { Application } from "../types/application";
 
-export function DraggableIcon(props: IconProps) {
+export function DraggableIcon<A extends Application>(props: IconProps<A>) {
   const { icon } = props;
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: icon.id,

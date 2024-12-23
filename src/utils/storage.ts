@@ -1,4 +1,4 @@
-import { StorageKeys } from "../constants";
+import { StorageKeys } from "../constants/constants";
 
 export function getStorageJSON(key: StorageKeys) {
   try {

@@ -1,72 +1,28 @@
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import {
-  faChessBoard,
-  faEnvelope,
-  faFilePdf,
   faInfoCircle,
-  faMusic,
+  faFilePdf,
+  faEnvelope,
   faPencil,
+  faChessBoard,
+  faMusic,
 } from "@fortawesome/free-solid-svg-icons";
-import { DesktopIcon } from "./types";
-import {
-  ExternalLinkApplication,
-  PDFViewerApplication,
-  TextEditorApplication,
-} from "./types/application";
-import { createIcon } from "./utils/icon";
+import { aboutString } from "./applications";
+import { LINKEDIN_LINK_APPLICATION } from "./applications";
+import { GITHUB_LINK_APPLICATION } from "./applications";
+import { RESUME_PDF_APPLICATION } from "./applications";
+import { DEFAULT_TEXT_EDITOR } from "./applications";
+import { DesktopIcon } from "../types";
+import { createIcon } from "../utils/icon";
+import { Application } from "../types/application";
 
-export const DEFAULT_WINDOW_HEIGHT = 300;
-export const DEFAULT_WINDOW_WIDTH = 400;
-
-export const DEFAULT_TEXT_EDITOR: TextEditorApplication = {
-  id: "text-editor",
-  params: {},
-};
-
-export const RESUME_PDF_APPLICATION: PDFViewerApplication = {
-  id: "pdf-viewer",
-  params: { src: "/Hoffmann_Resume.pdf" },
-};
-
-export const GITHUB_LINK_APPLICATION: ExternalLinkApplication = {
-  id: "external-link",
-  params: { url: "https://github.com/rhoffmann8" },
-};
-
-export const LINKEDIN_LINK_APPLICATION: ExternalLinkApplication = {
-  id: "external-link",
-  params: { url: "https://linkedin.com/in/rhoffmann8" },
-};
+export const DESKTOP_ICON_HORIZONTAL_DELTA = 80;
+export const DESKTOP_ICON_VERTICAL_DELTA = 80;
 
 // TODO: Rethink icon positioning logic
-let xPos = 0;
-let yPos = 0;
-function generateIconPos() {
-  if (xPos === 0 && yPos === 0) {
-    xPos += 10;
-    yPos += 10;
-    return { x: xPos, y: yPos };
-  }
-
-  yPos += 84;
-  if (yPos > window.innerHeight - 100) {
-    yPos = 10;
-    xPos += 80;
-  }
-  return { x: xPos, y: yPos };
-}
-
-const aboutString = `
-  # About
-  
-  My name is Rob and I code things.
-
-  ## Questions?
-  
-  Click the Contact icon to send me an email.
-`;
-
-export function createDefaultIcons(): DesktopIcon[] {
+export let xPos = 0;
+export let yPos = 0;
+export function createDefaultIcons(): DesktopIcon<Application>[] {
   xPos = 0;
   yPos = 0;
   return [
@@ -76,15 +32,14 @@ export function createDefaultIcons(): DesktopIcon[] {
         description: "about me",
         application: {
           id: "markdown-viewer",
-          params: {
-            content: aboutString,
-          },
+          params: { content: aboutString },
+          singleInstance: true,
         },
         icon: faInfoCircle,
         position: generateIconPos(),
       },
       widget: {
-        dimensions: { height: 300, width: 500 },
+        dimensions: { height: 304, width: 550 },
         position: { x: 400, y: 100 },
         title: "About",
       },
@@ -152,7 +107,7 @@ export function createDefaultIcons(): DesktopIcon[] {
       icon: {
         title: "Memory",
         description: "match the tiles",
-        application: { id: "memory-game", params: {} },
+        application: { id: "memory-game", params: {}, singleInstance: true },
         icon: faChessBoard,
         position: generateIconPos(),
       },
@@ -166,7 +121,7 @@ export function createDefaultIcons(): DesktopIcon[] {
       icon: {
         title: "Music",
         description: "beats to recruit to",
-        application: { id: "music-player", params: {} },
+        application: { id: "music-player", params: {}, singleInstance: true },
         icon: faMusic,
         position: generateIconPos(),
       },
@@ -179,23 +134,19 @@ export function createDefaultIcons(): DesktopIcon[] {
   ];
 }
 
+export function generateIconPos() {
+  if (xPos === 0 && yPos === 0) {
+    xPos += 10;
+    yPos += 10;
+    return { x: xPos, y: yPos };
+  }
+
+  yPos += DESKTOP_ICON_VERTICAL_DELTA;
+  if (yPos > window.innerHeight - 100) {
+    yPos = 10;
+    xPos += 80;
+  }
+  return { x: xPos, y: yPos };
+}
+
 export const DEFAULT_ICONS = createDefaultIcons();
-
-export const TASKBAR_WIDGET_NETWORK = "taskbar-network";
-export const TASKBAR_WIDGET_CLOCK = "taskbar-clock";
-
-export enum StorageKeys {
-  WIDGETS = "desktop-widgets",
-  BACKGROUND = "desktop-background",
-  ICONS = "icons",
-  TASKBAR_ACTIVE_ITEMS = "taskbar-active-items",
-  NOTES = "notes",
-}
-
-export enum ZIndex {
-  StartMenu = 9998,
-  Taskbar = 9999,
-  ContextMenu = 10000,
-  PowerOverlay = 10001,
-  Toast = 10002,
-}

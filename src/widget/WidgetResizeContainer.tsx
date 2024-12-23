@@ -112,6 +112,7 @@ export function WidgetResizeContainer({
       (["NW", "N", "NE", "W", "E", "SW", "S", "SE"] as ResizeDirection[]).map(
         (direction) => (
           <ResizeHandle
+            key={direction}
             direction={direction}
             disabled={disabled}
             onPointerDown={onPointerDown}
@@ -145,7 +146,10 @@ function ResizeHandle({
       className={cx("resize-handle", {
         [`resize-handle-${direction.toLowerCase()}`]: !disabled,
       })}
-      onPointerDown={() => onPointerDown(direction)}
+      onPointerDown={(e) => {
+        e.preventDefault();
+        onPointerDown(direction);
+      }}
     />
   );
 }

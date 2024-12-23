@@ -1,10 +1,14 @@
 import { css } from "@emotion/css";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { TASKBAR_WIDGET_CLOCK, TASKBAR_WIDGET_NETWORK } from "../../constants";
+import {
+  TASKBAR_WIDGET_CLOCK,
+  TASKBAR_WIDGET_NETWORK,
+} from "../../constants/constants";
 import { ContextMenuItem } from "../../state/contextMenuState";
 import { useTaskbarStore } from "../../state/taskbarState";
 import { Widget } from "../../types";
+import { Application } from "../../types/application";
 
 const taskbarItemCss = css`
   display: flex;
@@ -43,8 +47,8 @@ export function useTaskbarContextMenu(): ContextMenuItem[] {
   ];
 }
 
-export function useTaskbarApplicationContextMenu(
-  widget: Widget
+export function useTaskbarApplicationContextMenu<A extends Application>(
+  widget: Widget<A>
 ): ContextMenuItem[] {
   return [
     {

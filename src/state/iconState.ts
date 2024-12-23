@@ -2,14 +2,23 @@ import { UniqueIdentifier } from "@dnd-kit/core";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { create } from "zustand";
 import { DesktopIcon, Position } from "../types";
-import { createDefaultIcons, DEFAULT_ICONS, StorageKeys } from "../constants";
+import { StorageKeys } from "../constants/constants";
+import {
+  DEFAULT_ICONS,
+  DESKTOP_ICON_HORIZONTAL_DELTA,
+  DESKTOP_ICON_VERTICAL_DELTA,
+} from "../constants/icons";
+import { createDefaultIcons } from "../constants/icons";
 import { getStorageJSON } from "../utils/storage";
 import { faNoteSticky } from "@fortawesome/free-solid-svg-icons";
+import { updateItemInArray } from "../utils/array";
+import { Application } from "../types/application";
 
 interface IconState {
-  icons: DesktopIcon[];
+  icons: DesktopIcon<Application>[];
   selectedIcons: Set<UniqueIdentifier>;
-  addIcon: (icon: DesktopIcon) => void;
+  autoLayout: (container: HTMLDivElement | null) => void;
+  addIcon: (icon: DesktopIcon<Application>) => void;
   selectIcon: (id: UniqueIdentifier, append: boolean) => void;
   unselectIcon: (id: UniqueIdentifier, unappend: boolean) => void;
   unselectAll: () => void;
@@ -41,8 +50,33 @@ function getNoteIcons() {
           dimensions: { height: 300, width: 500 },
           position: { x: 100, y: 100 },
         },
-      } as DesktopIcon)
+      } as DesktopIcon<Application>)
   );
+}
+
+function autoLayoutIcons(
+  container: HTMLDivElement,
+  icons: DesktopIcon<Application>[]
+) {
+  const rows = Math.floor(container.clientHeight / 90);
+  const columns = Math.floor(container.clientWidth / 80);
+
+  const ret: DesktopIcon<Application>[] = [];
+  let currIconIndex = 0;
+  for (let j = 0; currIconIndex < icons.length && j < columns; j++) {
+    for (let i = 0; currIconIndex < icons.length && i < rows; i++) {
+      ret.push({
+        ...icons[currIconIndex],
+        position: {
+          x: 10 + j * DESKTOP_ICON_VERTICAL_DELTA,
+          y: 10 + i * DESKTOP_ICON_HORIZONTAL_DELTA,
+        },
+      });
+      currIconIndex++;
+    }
+  }
+
+  return ret;
 }
 
 export const useIconStore = create<IconState>((set) => ({
@@ -51,6 +85,10 @@ export const useIconStore = create<IconState>((set) => ({
   ),
   selectedIcons: new Set(),
   addIcon: (icon) => set((state) => ({ icons: state.icons.concat(icon) })),
+  autoLayout: (container: HTMLDivElement | null) =>
+    set((state) =>
+      !container ? state : { icons: autoLayoutIcons(container, state.icons) }
+    ),
   selectIcon: (id, append) =>
     set((state) => ({
       selectedIcons: append
@@ -69,9 +107,10 @@ export const useIconStore = create<IconState>((set) => ({
       const icon = state.icons.find((i) => i.id === id);
       if (!icon) return state;
       return {
-        icons: state.icons
-          .filter((i) => i.id !== id)
-          .concat({ ...icon, position: newPosition }),
+        icons: updateItemInArray(state.icons, id, (item) => ({
+          ...item,
+          position: newPosition,
+        })),
       };
     }),
   updateIconImage: (id, newImage) =>
@@ -79,9 +118,10 @@ export const useIconStore = create<IconState>((set) => ({
       const icon = state.icons.find((i) => i.id === id);
       if (!icon) return state;
       return {
-        icons: state.icons
-          .filter((i) => i.id !== id)
-          .concat({ ...icon, icon: newImage }),
+        icons: updateItemInArray(state.icons, id, (item) => ({
+          ...item,
+          icon: newImage,
+        })),
       };
     }),
   resetIconsToDefault: () =>

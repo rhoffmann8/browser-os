@@ -5,7 +5,10 @@ import { Clock } from "./clock/Clock";
 import { Network } from "./network/Network";
 import { useTaskbarContextMenu } from "../../menu/hooks/useTaskbarContextMenu";
 import { useContextMenuStore } from "../../state/contextMenuState";
-import { TASKBAR_WIDGET_CLOCK, TASKBAR_WIDGET_NETWORK } from "../../constants";
+import {
+  TASKBAR_WIDGET_CLOCK,
+  TASKBAR_WIDGET_NETWORK,
+} from "../../constants/constants";
 
 export function TaskbarWidgets() {
   const activeItems = useTaskbarStore((state) => state.activeItems);

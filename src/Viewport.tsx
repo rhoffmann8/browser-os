@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import cx from "classnames";
 import { PropsWithChildren } from "react";
 import { Box } from "./components/Box";
-import { ZIndex } from "./constants";
+import { ZIndex } from "./constants/constants";
 import { PowerEnum, usePowerStore } from "./state/powerState";
 import { getButtonBackgroundGradientStyles } from "./utils/style";
 
@@ -26,6 +26,7 @@ export function Viewport({ children }: PropsWithChildren) {
       ) : (
         <Box fillHeight fillWidth alignItems="center" justifyContent="center">
           <button
+            disabled={powerState === PowerEnum.PoweringOn}
             title="Power on"
             className={cx(buttonCss, { "powering-up": isPoweringUp })}
             onClick={powerOn}
@@ -71,7 +72,7 @@ const buttonCss = css`
     opacity: 0.8;
   }
 
-  &:active {
+  &:active:not([disabled]) {
     background: ${pressed};
   }
 

@@ -4,25 +4,39 @@ import { css } from "@emotion/css";
 import { forwardRef } from "react";
 import { Widget } from "../types";
 import { APPLICATION_MAP } from "../application";
+import { AppId, Application } from "../types/application";
 
 const handleCss = css`
   flex: 1;
   padding-left: 4px;
   font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
-export const WidgetHandle = forwardRef<
-  HTMLDivElement,
-  {
-    widget: Widget;
-    attributes: DraggableAttributes;
-    listeners?: SyntheticListenerMap;
+interface Props<A extends Application> {
+  widget: Widget<A>;
+  attributes: DraggableAttributes;
+  listeners?: SyntheticListenerMap;
+}
+
+export const WidgetHandle = forwardRef<HTMLDivElement, Props<Application>>(
+  ({ widget: { title, application }, attributes, listeners }, ref) => {
+    const displayTitle = `${title ? `${title} - ` : ""}${
+      APPLICATION_MAP[application.id as AppId].title
+    }`;
+    return (
+      <div
+        ref={ref}
+        title={displayTitle}
+        className={handleCss}
+        {...attributes}
+        {...listeners}
+      >
+        {displayTitle}
+      </div>
+    );
   }
->(({ widget: { title, application }, attributes, listeners }, ref) => {
-  return (
-    <div ref={ref} className={handleCss} {...attributes} {...listeners}>
-      {title ? `${title} - ` : ""}
-      {APPLICATION_MAP[application.id].title}
-    </div>
-  );
-});
+);

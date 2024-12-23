@@ -1,11 +1,14 @@
 import { DesktopIcon, WidgetParams } from "../types";
+import { Application } from "../types/application";
 
-type CreateIconProps = {
-  icon: Omit<DesktopIcon, "id" | "widget">;
-  widget: Partial<WidgetParams>;
+type CreateIconProps<A extends Application> = {
+  icon: Omit<DesktopIcon<A>, "id" | "widget">;
+  widget: Partial<WidgetParams<A>>;
 };
 
-export function createIcon(props: CreateIconProps): DesktopIcon {
+export function createIcon<A extends Application>(
+  props: CreateIconProps<A>
+): DesktopIcon<A> {
   const { icon, widget } = props;
 
   return {
