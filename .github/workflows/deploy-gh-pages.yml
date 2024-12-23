@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: checkout browser-os
+        uses: actions/checkout@v4
+        with:
+          path: browser-os
+          ref: 'main'
+      - name: test4
+        run: |
+          ls
+      - name: checkout rhoffmann8.github.io
+        uses: actions/checkout@v4
+        with:
+          repository: rhoffmann8/rhoffmann8.github.io
+          path: website
+          ref: 'master'
+      - name: test
+        run: |
+          ls
+          cd browser-os
+      - name: Build static files
+        id: build
+        run: |
+          npm install
+          npm run build
+      - name: test2
+        run: |
+          cp -r dist/* ../website
+          cd ../website
+          git add .
+          git commit -m 'deploy'
+          git push
