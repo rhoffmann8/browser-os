@@ -1,20 +1,26 @@
-import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import {
-  faInfoCircle,
-  faFilePdf,
-  faEnvelope,
-  faPencil,
+  faGithub,
+  faLinkedin,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
+import {
   faChessBoard,
+  faEnvelope,
+  faFilePdf,
+  faInfoCircle,
   faMusic,
+  faPencil,
 } from "@fortawesome/free-solid-svg-icons";
-import { aboutString } from "./applications";
-import { LINKEDIN_LINK_APPLICATION } from "./applications";
-import { GITHUB_LINK_APPLICATION } from "./applications";
-import { RESUME_PDF_APPLICATION } from "./applications";
-import { DEFAULT_TEXT_EDITOR } from "./applications";
 import { DesktopIcon } from "../types";
-import { createIcon } from "../utils/icon";
 import { Application } from "../types/application";
+import { createIcon } from "../utils/icon";
+import {
+  aboutString,
+  DEFAULT_TEXT_EDITOR,
+  GITHUB_LINK_APPLICATION,
+  LINKEDIN_LINK_APPLICATION,
+  RESUME_PDF_APPLICATION,
+} from "./applications";
 
 export const DESKTOP_ICON_HORIZONTAL_DELTA = 80;
 export const DESKTOP_ICON_VERTICAL_DELTA = 80;
@@ -121,14 +127,32 @@ export function createDefaultIcons(): DesktopIcon<Application>[] {
       icon: {
         title: "Music",
         description: "beats to recruit to",
-        application: { id: "music-player", params: {}, singleInstance: true },
+        application: { id: "music-player", params: {} },
         icon: faMusic,
         position: generateIconPos(),
       },
       widget: {
-        dimensions: { width: 300 },
+        dimensions: { width: 340 },
         position: { x: 400, y: 100 },
         resizable: false,
+      },
+    }),
+    createIcon({
+      icon: {
+        title: "YouTube",
+        application: {
+          id: "video-player",
+          params: {
+            url: "https://www.youtube.com/watch?v=lZZvilITFdw",
+          },
+        },
+        icon: faYoutube,
+        position: generateIconPos(),
+      },
+      widget: {
+        dimensions: { width: 640, height: 480 },
+        position: { x: 400, y: 100 },
+        resizable: true,
       },
     }),
   ];

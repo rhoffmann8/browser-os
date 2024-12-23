@@ -1,4 +1,6 @@
 import {
+  fa1,
+  faAdd,
   faBackwardStep,
   faFastBackward,
   faFastForward,
@@ -7,14 +9,16 @@ import {
   faPause,
   faPlay,
   faRepeat,
+  faVolumeHigh,
 } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Box, BoxCol } from "../../../../components/Box";
+import { IconButton } from "../../../../components/IconButton";
 import { useAudioPlayerContext } from "../../context/AudioPlayerContext";
 import { controlsContainerCss } from "../../styles";
+import { getRepeatTypeDisplay } from "../../utils";
+import { useAudioControls } from "../hooks/useAudioControls";
 import { Volume } from "./Volume";
-import { ControlButton } from "./ControlButton";
 
 const SEEK_SECONDS = 15;
 
@@ -27,35 +31,40 @@ export function Controls() {
     setCurrentTime,
     progressBarRef,
     duration,
-    setDuration,
     showTrackList,
     setShowTrackList,
     currentTrack,
     isPlaying,
-    setIsPlaying,
     volume,
+    showAddTrack,
+    setShowAddTrack,
   } = useAudioPlayerContext();
 
-  const [isRepeat, setIsRepeat] = useState(false);
+  const {
+    togglePlay,
+    seek,
+    nextTrack,
+    prevTrack,
+    repeatType,
+    toggleRepeatType,
+    onLoadedMetadata,
+  } = useAudioControls();
 
-  const onLoadedMetadata = () => {
-    const seconds = audioRef.current?.duration;
-    if (seconds !== undefined) {
-      setDuration(seconds);
-      if (progressBarRef.current) {
-        progressBarRef.current.max = seconds.toString();
-      }
-    }
-  };
+  const [showVolume, setShowVolume] = useState(false);
 
   useEffect(() => {
     const currentAudioRef = audioRef.current;
     if (currentAudioRef) {
       currentAudioRef.onended = () => {
-        if (trackIndex === trackList.length - 1 && isRepeat) {
+        if (trackIndex === trackList.length - 1 && repeatType === "all") {
           setTrackIndex(0);
         } else if (trackIndex < trackList.length) {
-          setTrackIndex((prev) => prev + 1);
+          if (repeatType === "one") {
+            currentAudioRef.currentTime = 0;
+            currentAudioRef.play();
+          } else {
+            setTrackIndex((prev) => prev + 1);
+          }
         } else {
           setTrackIndex(-1);
         }
@@ -65,7 +74,7 @@ export function Controls() {
     return () => {
       if (currentAudioRef) currentAudioRef.onended = null;
     };
-  }, [audioRef, isRepeat, setTrackIndex, trackIndex, trackList.length]);
+  }, [audioRef, repeatType, setTrackIndex, trackIndex, trackList.length]);
 
   useEffect(() => {
     const currentAudioRef = audioRef.current;
@@ -86,6 +95,7 @@ export function Controls() {
     }
   }, [duration, setCurrentTime, audioRef, progressBarRef]);
 
+  const playAnimationRef = useRef<number | null>(null);
   const startAnimation = useCallback(() => {
     if (audioRef.current && progressBarRef.current && duration) {
       const animate = () => {
@@ -96,7 +106,6 @@ export function Controls() {
     }
   }, [updateProgress, duration, audioRef, progressBarRef]);
 
-  const playAnimationRef = useRef<number | null>(null);
   useEffect(() => {
     if (isPlaying) {
       audioRef.current?.play();
@@ -116,13 +125,6 @@ export function Controls() {
     };
   }, [isPlaying, startAnimation, updateProgress, audioRef]);
 
-  const onPauseOrPlayClick = useCallback(() => {
-    if (!currentTrack) {
-      setTrackIndex(0);
-    }
-    setIsPlaying((prev) => !prev);
-  }, [currentTrack, setIsPlaying, setTrackIndex]);
-
   return (
     <BoxCol fillWidth>
       <audio
@@ -136,75 +138,67 @@ export function Controls() {
         fillWidth
         justifyContent="space-between"
       >
-        <Box>
-          <button
+        <Box gap={6}>
+          <IconButton
             title="Toggle track list"
             onClick={() => setShowTrackList((prev) => !prev)}
-            style={{ color: showTrackList ? "#ff6060" : "" }}
-          >
-            <FontAwesomeIcon icon={faList} />
-          </button>
+            icon={faList}
+            style={{ color: showTrackList ? "var(--color-theme-red)" : "" }}
+          />
+          <IconButton
+            title="Toggle add track"
+            onClick={() => setShowAddTrack((prev) => !prev)}
+            icon={faAdd}
+            style={{ color: showAddTrack ? "var(--color-theme-red)" : "" }}
+          />
         </Box>
         <Box gap={6}>
-          <ControlButton
+          <IconButton
             title="Previous track"
             icon={faBackwardStep}
-            onClick={() => {
-              if (trackIndex === 0 && isRepeat) {
-                setTrackIndex(trackList.length - 1);
-                return;
-              }
-              setTrackIndex((prev) => Math.max(prev - 1, 0));
-            }}
+            onClick={prevTrack}
           />
-          <ControlButton
+          <IconButton
             title="Rewind"
             icon={faFastBackward}
-            onClick={() => {
-              if (audioRef.current) {
-                audioRef.current.currentTime -= SEEK_SECONDS;
-              }
-            }}
+            onClick={() => seek(-SEEK_SECONDS)}
           />
-          <ControlButton
+          <IconButton
             title={isPlaying ? "Pause" : "Play"}
             icon={isPlaying ? faPause : faPlay}
-            onClick={onPauseOrPlayClick}
+            onClick={togglePlay}
           />
-          <ControlButton
+          <IconButton
             title="Fast forward"
             icon={faFastForward}
-            onClick={() => {
-              if (audioRef.current) {
-                audioRef.current.currentTime += SEEK_SECONDS;
-              }
-            }}
+            onClick={() => seek(SEEK_SECONDS)}
           />
-          <ControlButton
+          <IconButton
             title="Next track"
             icon={faForwardStep}
-            onClick={() => {
-              if (trackIndex === trackList.length - 1 && isRepeat) {
-                setTrackIndex(0);
-                return;
-              }
-              setTrackIndex((prev) => Math.min(prev + 1, trackList.length - 1));
-            }}
+            onClick={nextTrack}
           />
         </Box>
-        <Box>
-          <button
-            title="Toggle repeat"
-            onClick={() => setIsRepeat((prev) => !prev)}
-          >
-            <FontAwesomeIcon
-              icon={faRepeat}
-              style={{ color: isRepeat ? "var(--color-theme-red)" : "" }}
-            />
-          </button>
+        <Box gap={6}>
+          <IconButton
+            title={getRepeatTypeDisplay(repeatType)}
+            onClick={toggleRepeatType}
+            icon={
+              repeatType === "none" || repeatType === "all" ? faRepeat : fa1
+            }
+            style={{
+              color: repeatType !== "none" ? "var(--color-theme-red)" : "",
+            }}
+          />
+          <IconButton
+            title="Toggle volume control"
+            onClick={() => setShowVolume((prev) => !prev)}
+            icon={faVolumeHigh}
+            style={{ color: showVolume ? "var(--color-theme-red)" : "" }}
+          />
         </Box>
       </Box>
-      <Volume />
+      <Volume show={showVolume} />
     </BoxCol>
   );
 }

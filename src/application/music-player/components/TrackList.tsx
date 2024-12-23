@@ -6,27 +6,24 @@ import {
   useAudioPlayerContext,
 } from "../context/AudioPlayerContext";
 
-import { getTrackTitle } from "../utils";
-import { AddTrack } from "./AddTrack";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { getTrackTitle } from "../utils";
+import { AnimateHeight } from "../../../components/Fade";
 
 export function TrackList() {
   const { trackList, showTrackList } = useAudioPlayerContext();
 
-  if (!showTrackList) {
-    return null;
-  }
-
   return (
-    <Box fillWidth flexDirection="column" gap={4} className={trackListCss}>
-      <ul>
-        {trackList.map((track, index) => (
-          <Track key={track.src} index={index} track={track} />
-        ))}
-      </ul>
-      <AddTrack />
-    </Box>
+    <AnimateHeight show={showTrackList} fillWidth>
+      <Box fillWidth flexDirection="column" gap={4} className={trackListCss}>
+        <ul>
+          {trackList.map((track, index) => (
+            <Track key={track.src} index={index} track={track} />
+          ))}
+        </ul>
+      </Box>
+    </AnimateHeight>
   );
 }
 
@@ -89,7 +86,7 @@ const trackCss = css`
 
 const trackListCss = css`
   border-top: 1px solid #aaa;
-  margin-top: 4px;
+  margin-top: 8px;
   padding-top: 8px;
 
   ul {
