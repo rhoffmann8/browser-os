@@ -10,12 +10,16 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write
+      repository-projects: write
+      pull-requests: write
     steps:
       - name: checkout browser-os
         uses: actions/checkout@v4
         with:
           path: browser-os
-          ref: 'main'
+          ref: "main"
       - name: test4
         run: |
           ls
@@ -24,7 +28,7 @@ jobs:
         with:
           repository: rhoffmann8/rhoffmann8.github.io
           path: website
-          ref: 'master'
+          ref: "master"
       - name: Build static files
         id: build
         run: |
@@ -33,10 +37,18 @@ jobs:
           npm install
           npm run build
       - name: test2
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ls
+          rm -r ./website/assets
+          rm -r ./website/music
+          rm ./website/Hoffmann_Resume.pdf 
+          rm ./website/index.html 
           cp -r ./browser-os/dist/* ./website
           cd ./website
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m 'deploy'
+          git commit -m "generated"
           git push
