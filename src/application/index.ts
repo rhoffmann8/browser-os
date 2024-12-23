@@ -1,4 +1,4 @@
-import { AppId } from "../types/application";
+import { AppId, Application, ApplicationComponent } from "../types/application";
 import { ExternalLink } from "./external-link/ExternalLink";
 import { MemoryGame } from "./memory-game/MemoryGame";
 import { PDFViewer } from "./pdf-viewer/PDFViewer";
@@ -8,7 +8,12 @@ import { Dialog } from "./dialog/Dialog";
 import { MarkdownViewer } from "./markdown-viewer/MarkdownViewer";
 import { MusicPlayer } from "./music-player/MusicPlayer";
 
-export const APPLICATION_MAP = {
+export const APPLICATION_MAP: {
+  [K in AppId]: {
+    title: string;
+    component: ApplicationComponent<Extract<Application, { id: K }>>;
+  };
+} = {
   dialog: { title: "Dialog", component: Dialog },
   "external-link": { title: "", component: ExternalLink },
   "markdown-viewer": { title: "Markdown Viewer", component: MarkdownViewer },
@@ -18,7 +23,9 @@ export const APPLICATION_MAP = {
   "text-editor": { title: "Notes", component: TextEditor },
 };
 
-export function getApplicationComponentFromId<K extends AppId>(key: K) {
+export function getApplicationComponentFromId<K extends AppId>(
+  key: K
+): ApplicationComponent<Extract<Application, { id: K }>> {
   return APPLICATION_MAP[key].component;
 }
 

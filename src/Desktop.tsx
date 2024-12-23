@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { MouseEventHandler, useCallback, useRef } from "react";
+import { MouseEventHandler, useCallback, useEffect, useRef } from "react";
 import { IconDroppableContext } from "./droppable/IconDroppableContext";
 import { WidgetDroppableContext } from "./droppable/WidgetDroppableContext";
 import { DraggableIcon } from "./icon/DraggableIcon";
@@ -9,6 +9,10 @@ import { useContextMenuStore } from "./state/contextMenuState";
 import { useDesktopStore } from "./state/desktopState";
 import { useIconStore } from "./state/iconState";
 import { Widget } from "./widget/Widget";
+import {
+  DESKTOP_ICON_HORIZONTAL_DELTA,
+  DESKTOP_ICON_VERTICAL_DELTA,
+} from "./constants/icons";
 
 const desktopCss = css`
   flex: 1;
@@ -20,14 +24,16 @@ const desktopCss = css`
 `;
 
 export function Desktop() {
+  const widgets = useDesktopStore((state) => state.widgets);
   const background = useDesktopStore((state) => state.background);
   const icons = useIconStore((state) => state.icons);
   const selectedIcons = useIconStore((state) => state.selectedIcons);
+  const setIconPosition = useIconStore((state) => state.setIconPosition);
   const showContextMenu = useContextMenuStore((state) => state.show);
-  const windows = useDesktopStore((state) => state.widgets);
 
-  const desktopContextMenuItems = useDesktopContextMenu();
+  const desktopRef = useRef<HTMLDivElement>(null);
   const iconContextMenuItems = useIconContextMenu();
+  const desktopContextMenuItems = useDesktopContextMenu(desktopRef.current);
 
   const onContextMenu = useCallback(
     (pos: { x: number; y: number }) => {
@@ -45,7 +51,26 @@ export function Desktop() {
     [desktopContextMenuItems, showContextMenu]
   );
 
-  const desktopRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const listener = () => {
+      const currentDesktop = desktopRef.current;
+      if (!currentDesktop) return;
+      icons.forEach((icon) => {
+        setIconPosition(icon.id, {
+          x: Math.min(
+            icon.position.x,
+            currentDesktop.clientWidth - DESKTOP_ICON_HORIZONTAL_DELTA
+          ),
+          y: Math.min(
+            icon.position.y,
+            currentDesktop.clientHeight - DESKTOP_ICON_VERTICAL_DELTA
+          ),
+        });
+      });
+    };
+    window.addEventListener("resize", listener);
+    return () => window.removeEventListener("resize", listener);
+  }, [icons, setIconPosition]);
 
   return (
     <div ref={desktopRef} className={desktopCss} style={{ background }}>
@@ -62,13 +87,15 @@ export function Desktop() {
         <WidgetDroppableContext
           parentRect={desktopRef.current?.getBoundingClientRect()}
         >
-          {windows.map((widget) => (
+          {widgets.map((widget) => (
             <Widget key={widget.id} widget={widget} />
           ))}
         </WidgetDroppableContext>
       </IconDroppableContext>
 
-      <div style={{ marginLeft: 4 }}>OS Version 0.0.1</div>
+      <div style={{ position: "absolute", bottom: 0, left: 4 }}>
+        OS Version 0.0.1
+      </div>
     </div>
   );
 }

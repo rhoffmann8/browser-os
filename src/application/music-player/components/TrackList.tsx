@@ -8,6 +8,8 @@ import {
 
 import { getTrackTitle } from "../utils";
 import { AddTrack } from "./AddTrack";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 export function TrackList() {
   const { trackList, showTrackList } = useAudioPlayerContext();
@@ -20,7 +22,7 @@ export function TrackList() {
     <Box fillWidth flexDirection="column" gap={4} className={trackListCss}>
       <ul>
         {trackList.map((track, index) => (
-          <Track index={index} track={track} />
+          <Track key={track.src} index={index} track={track} />
         ))}
       </ul>
       <AddTrack />
@@ -29,22 +31,61 @@ export function TrackList() {
 }
 
 function Track({ track, index }: { track: Track; index: number }) {
-  const { currentTrack, setTrackIndex, setIsPlaying } = useAudioPlayerContext();
+  const { currentTrack, trackList, setTrackList, setTrackIndex, setIsPlaying } =
+    useAudioPlayerContext();
 
   const displayName = getTrackTitle(track);
   return (
     <li
       key={track.title}
-      className={cx({ active: currentTrack === track })}
+      style={{ position: "relative" }}
+      className={cx(trackCss, { active: currentTrack === track })}
       onClick={() => {
         setTrackIndex(index);
         setIsPlaying(true);
       }}
     >
       <span title={displayName}>{displayName}</span>
+      <button
+        title="Remove"
+        className="trash"
+        onClick={(e) => {
+          e.stopPropagation();
+          const newTrackList = trackList.filter((t) => t.src !== track.src);
+          setTrackList(newTrackList);
+          setTrackIndex(
+            newTrackList.findIndex((t) => t.src === currentTrack?.src)
+          );
+        }}
+      >
+        <FontAwesomeIcon icon={faTrash} />
+      </button>
     </li>
   );
 }
+
+const trackCss = css`
+  .trash {
+    position: absolute;
+    right: 0px;
+    transform: translateY(-50%);
+    top: 50%;
+    height: 24px;
+
+    background: rgb(243, 70, 70);
+    transition: background 100ms ease-in-out;
+
+    visibility: hidden;
+
+    &:hover {
+      background: rgba(243, 70, 70, 0.75);
+    }
+  }
+
+  &:hover .trash {
+    visibility: visible;
+  }
+`;
 
 const trackListCss = css`
   border-top: 1px solid #aaa;

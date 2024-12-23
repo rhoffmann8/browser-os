@@ -21,13 +21,9 @@ export function PowerButtons() {
   );
 }
 
-const reloadButtonGradients = getButtonBackgroundGradientStyles(
-  "#c99300",
-  "color-mix(in srgb, #c99300 70%, transparent)"
-);
+const reloadButtonGradients = getButtonBackgroundGradientStyles("#c99300");
 const powerButtonGradients = getButtonBackgroundGradientStyles(
-  "var(--color-theme-red)",
-  "color-mix(in srgb, var(--color-theme-red) 70%, transparent)"
+  "var(--color-theme-red)"
 );
 
 const powerButtonsCss = css`

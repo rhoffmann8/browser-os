@@ -2,26 +2,26 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Box } from "../../../components/Box";
 import { ChangeHandler, Widget } from "../../../types";
-import { TextEditorApplication } from "../../../types/application";
+import { Application, TextEditorApplication } from "../../../types/application";
 import { toolbarCss } from "../styles";
 import { Note } from "../TextEditor";
 import { deleteFile, writeFile } from "../utils";
 import { OpenButton } from "./toolbar-buttons/OpenButton";
 import { SaveButton } from "./toolbar-buttons/SaveButton";
 
-interface Props {
-  widget: Widget;
+interface Props<A extends Application> {
+  widget: Widget<A>;
   defaultActiveFile: Note | undefined;
   content: string;
   onContentChange: ChangeHandler<string>;
 }
 
-export function Toolbar({
+export function Toolbar<A extends Application>({
   widget,
   defaultActiveFile,
   content,
   onContentChange,
-}: Props) {
+}: Props<A>) {
   const [activeFile, setActiveFile] = useState<Note | undefined>(
     defaultActiveFile
   );

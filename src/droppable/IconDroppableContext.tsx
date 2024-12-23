@@ -1,6 +1,7 @@
 import {
   DndContext,
   DragEndEvent,
+  Modifier,
   PointerSensor,
   useDroppable,
   useSensor,
@@ -58,7 +59,7 @@ export function IconDroppableContext({
   return (
     <DndContext
       onDragEnd={onDragEnd}
-      modifiers={[restrictToWindowEdges]}
+      modifiers={[restrictToWindowEdges, restrictToTaskbarEdge]}
       sensors={[sensor]}
     >
       <div
@@ -72,3 +73,18 @@ export function IconDroppableContext({
     </DndContext>
   );
 }
+
+const restrictToTaskbarEdge: Modifier = (e) => {
+  const { transform, draggingNodeRect, containerNodeRect } = e;
+  if (!draggingNodeRect || !containerNodeRect) {
+    return transform;
+  }
+
+  return {
+    ...transform,
+    y:
+      draggingNodeRect.bottom + transform.y > containerNodeRect.height
+        ? containerNodeRect.height - draggingNodeRect.bottom
+        : transform.y,
+  };
+};

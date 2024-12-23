@@ -1,4 +1,4 @@
-import { StorageKeys } from "../../constants";
+import { StorageKeys } from "../../constants/constants";
 import { updateItemInArray } from "../../utils/array";
 import { getStorageJSON } from "../../utils/storage";
 import { Note } from "./TextEditor";

@@ -8,6 +8,7 @@ import { useContextMenuStore } from "../state/contextMenuState";
 import { useDesktopStore } from "../state/desktopState";
 import { Widget } from "../types";
 import { APPLICATION_MAP } from "../application";
+import { AppId, Application } from "../types/application";
 
 export function OpenApplications() {
   const windows = useDesktopStore((state) => state.widgets);
@@ -62,14 +63,18 @@ const closeButtonCss = css`
   }
 `;
 
-function OpenApplication({ widget }: { widget: Widget }) {
+function OpenApplication<A extends Application>({
+  widget,
+}: {
+  widget: Widget<A>;
+}) {
   const { title, application } = widget;
 
   const showContextMenu = useContextMenuStore((state) => state.show);
 
   const menuItems = useTaskbarApplicationContextMenu(widget);
   const fullTitle = `${title ? `${title} - ` : ""}${
-    APPLICATION_MAP[application.id].title
+    APPLICATION_MAP[application.id as AppId].title
   }`;
 
   return (

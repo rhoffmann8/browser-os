@@ -7,12 +7,17 @@ const buttonCss = css`
   border: none;
   padding: 4px 16px;
   height: 100%;
+  width: 48px;
 
   transition: background 100ms ease-in-out;
   background: transparent;
 
   &:hover {
-    background: #da4949;
+    background: rgb(218, 73, 73);
+  }
+
+  &:active {
+    background: rgb(219, 119, 119);
   }
 `;
 

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useRef } from "react";
 import { useOutsideClick } from "rooks";
 import { Box } from "../../../../components/Box";
-import { StorageKeys } from "../../../../constants";
+import { StorageKeys } from "../../../../constants/constants";
 import { getStorageJSON } from "../../../../utils/storage";
 import { Note } from "../../TextEditor";
 import { deleteButtonCss, openFileMenuCss, openIconCss } from "../../styles";

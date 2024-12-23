@@ -1,6 +1,9 @@
 import { useMemo, useRef, useState } from "react";
 import { Document, Outline, Page, pdfjs } from "react-pdf";
-import { ApplicationComponent } from "../../types/application";
+import {
+  ApplicationComponent,
+  PDFViewerApplication,
+} from "../../types/application";
 
 import { css } from "@emotion/css";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
@@ -12,7 +15,7 @@ import { Box } from "../../components/Box";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export const PDFViewer: ApplicationComponent<"pdf-viewer"> = ({
+export const PDFViewer: ApplicationComponent<PDFViewerApplication> = ({
   params: { src },
   widget,
 }) => {

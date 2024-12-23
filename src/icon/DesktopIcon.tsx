@@ -6,6 +6,7 @@ import { DesktopIcon as DesktopIconType } from "../types";
 import { DesktopIconImage } from "./DesktopIconImage";
 import { IconTitle } from "./IconTitle";
 import { useIconStore } from "../state/iconState";
+import { Application } from "../types/application";
 
 const containerCss = css`
   display: inline-flex;
@@ -13,16 +14,22 @@ const containerCss = css`
   align-items: center;
   justify-content: center;
 
+  width: 60px;
   padding: 4px;
   gap: 4px;
 
   cursor: pointer;
 
-  width: 60px;
+  border: 1px solid transparent;
 
   input {
     height: 20px;
     width: 100%;
+  }
+
+  &:hover,
+  &.selected {
+    border: 1px solid rgb(128, 192, 247);
   }
 
   &:hover {
@@ -34,13 +41,13 @@ const containerCss = css`
   }
 `;
 
-export interface IconProps {
-  icon: DesktopIconType;
+export interface IconProps<A extends Application> {
+  icon: DesktopIconType<A>;
   selected: boolean;
   onContextMenu?: (pos: { x: number; y: number }) => void;
 }
 
-export function DesktopIcon(props: IconProps) {
+export function DesktopIcon<A extends Application>(props: IconProps<A>) {
   const {
     icon: {
       description,
@@ -50,7 +57,7 @@ export function DesktopIcon(props: IconProps) {
       id,
     },
     selected,
-    onContextMenu,
+    // onContextMenu,
   } = props;
   const [title, setTitle] = useState(defaultTitle);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -59,13 +66,13 @@ export function DesktopIcon(props: IconProps) {
 
   const selectIcon = useIconStore((state) => state.selectIcon);
   // const unselectIcon = useIconStore((state) => state.unselectIcon);
-  const addWindow = useDesktopStore((state) => state.addWidget);
+  const addWidget = useDesktopStore((state) => state.addWidget);
 
   const onOpenWindow: MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
       e.stopPropagation();
 
-      addWindow({
+      addWidget({
         title: widget.title,
         application,
         position: widget.position!,
@@ -74,7 +81,7 @@ export function DesktopIcon(props: IconProps) {
       });
     },
     [
-      addWindow,
+      addWidget,
       application,
       widget.dimensions,
       widget.position,
@@ -132,10 +139,10 @@ export function DesktopIcon(props: IconProps) {
       }}
       onDoubleClick={onOpenWindow}
       onContextMenu={(e) => {
-        e.preventDefault();
+        // e.preventDefault();
         e.stopPropagation();
-        onContextMenu?.({ x: e.pageX, y: e.pageY });
-        return false;
+        // onContextMenu?.({ x: e.pageX, y: e.pageY });
+        // return false;
       }}
     >
       <DesktopIconImage icon={props.icon} />

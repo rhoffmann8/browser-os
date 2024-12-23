@@ -1,19 +1,23 @@
 import { css } from "@emotion/css";
-import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import {
+  faGithub,
+  faLinkedin,
+  IconDefinition,
+} from "@fortawesome/free-brands-svg-icons";
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Box, BoxCol } from "../../components/Box";
-import {
-  GITHUB_LINK_APPLICATION,
-  LINKEDIN_LINK_APPLICATION,
-  RESUME_PDF_APPLICATION,
-  ZIndex,
-} from "../../constants";
+import { ZIndex } from "../../constants/constants";
+import { LINKEDIN_LINK_APPLICATION } from "../../constants/applications";
+import { GITHUB_LINK_APPLICATION } from "../../constants/applications";
+import { RESUME_PDF_APPLICATION } from "../../constants/applications";
 import { useDesktopStore } from "../../state/desktopState";
 import { Avatar } from "./Avatar";
 import { PowerButtons } from "./PowerButtons";
+import { WidgetParams } from "../../types";
+import { Application } from "../../types/application";
 
-const widgets = [
+const widgets: (WidgetParams<Application> & { icon: IconDefinition })[] = [
   {
     position: { x: 100, y: 40 },
     application: RESUME_PDF_APPLICATION,
@@ -47,8 +51,9 @@ export function StartMenu({ onItemClick }: { onItemClick: () => void }) {
       </BoxCol>
       <BoxCol padding={"0 0 6rem 0"} style={{ borderLeft: "1px solid #333" }}>
         <ul>
-          {widgets.map((widget) => (
+          {widgets.map((widget, index) => (
             <li
+              key={index}
               onClick={() => {
                 addWidget(widget);
                 onItemClick();

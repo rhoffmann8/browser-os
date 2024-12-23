@@ -4,13 +4,14 @@ import { useCallback, useState } from "react";
 import { getApplicationComponentFromId } from "../application";
 import { BoxCol } from "../components/Box";
 import { useDesktopStore } from "../state/desktopState";
-import { Delta, type Widget } from "../types";
+import { Delta, Widget as WidgetType } from "../types";
+import { AppId, Application, ApplicationComponent } from "../types/application";
 import { WidgetButtons } from "./WidgetButtons";
 import { WidgetContent } from "./WidgetContent";
 import { WidgetHandle } from "./WidgetHandle";
 import { WidgetResizeContainer } from "./WidgetResizeContainer";
 
-export function Widget({ widget }: { widget: Widget }) {
+export function Widget({ widget }: { widget: WidgetType }) {
   const {
     id,
     position,
@@ -53,7 +54,9 @@ export function Widget({ widget }: { widget: Widget }) {
     [id, resizeWindow, setInitialDims]
   );
 
-  const AppComponent = getApplicationComponentFromId(application.id);
+  const AppComponent = getApplicationComponentFromId(
+    application.id as AppId
+  ) as ApplicationComponent<Application>;
 
   return (
     <div
@@ -89,7 +92,7 @@ export function Widget({ widget }: { widget: Widget }) {
             <WidgetButtons onClose={() => widget.close()} />
           </div>
           <WidgetContent>
-            <AppComponent params={application.params as any} widget={widget} />
+            <AppComponent params={application.params} widget={widget} />
           </WidgetContent>
         </BoxCol>
       </WidgetResizeContainer>
@@ -112,7 +115,7 @@ const windowCss = css`
   @keyframes open {
     from {
       opacity: 0;
-      transform: scale(0.85);
+      transform: scale(0.95);
     }
     to {
       opacity: 1;
@@ -123,6 +126,7 @@ const windowCss = css`
 
 const handleContainerCss = css`
   display: flex;
+  gap: 4px;
   background: var(--color-theme-gradient);
 
   cursor: pointer;

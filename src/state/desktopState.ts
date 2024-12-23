@@ -4,7 +4,7 @@ import {
   DEFAULT_WINDOW_HEIGHT,
   DEFAULT_WINDOW_WIDTH,
   StorageKeys,
-} from "../constants";
+} from "../constants/constants";
 import { Delta, Dimensionable, Position, Widget, WidgetParams } from "../types";
 import { getStorageJSON } from "../utils/storage";
 import { updateItemInArray } from "../utils/array";
@@ -14,13 +14,13 @@ interface DesktopState {
   background: string;
   setBackground: (next: string) => void;
 
-  widgets: Widget[];
+  widgets: Widget<Application>[];
   setWidgetPosition: (id: UniqueIdentifier, next: Position) => void;
   setWidgetDimensions: (
     id: UniqueIdentifier,
     next: Dimensionable["dimensions"]
   ) => void;
-  addWidget: (params: WidgetParams) => void;
+  addWidget: <A extends Application>(params: WidgetParams<A>) => void;
   closeWidget: (id: UniqueIdentifier) => void;
   moveToTop: (id: UniqueIdentifier) => void;
   resizeWidget: (id: UniqueIdentifier, delta: Partial<Delta>) => void;
@@ -38,8 +38,9 @@ function getNewStackIndex() {
   return currentStackIndex++;
 }
 
-function loadWidgets(getState: () => DesktopState): Widget[] {
-  const widgets: (WidgetParams & Pick<Widget, "id" | "stackIndex">)[] =
+function loadWidgets(getState: () => DesktopState): Widget<Application>[] {
+  const widgets: (WidgetParams<Application> &
+    Pick<Widget<Application>, "id" | "stackIndex">)[] =
     getStorageJSON(StorageKeys.WIDGETS) ?? [];
   currentStackIndex = widgets.length
     ? Math.max(...widgets.map((w) => w.stackIndex))
@@ -48,8 +49,9 @@ function loadWidgets(getState: () => DesktopState): Widget[] {
 }
 
 function enrichWidgetWithMethods<
-  T extends WidgetParams & Pick<Widget, "id" | "stackIndex">
->(widget: T, get: () => DesktopState): Widget {
+  A extends Application,
+  T extends WidgetParams<A> & Pick<Widget<A>, "id" | "stackIndex">
+>(widget: T, get: () => DesktopState): Widget<A> {
   return {
     ...widget,
     isActive: () => get().isActiveWidget(widget.id),
@@ -84,6 +86,15 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
   setBackground: (next) => set({ background: next }),
   addWidget: (params) =>
     set((state) => {
+      if (params.application.singleInstance) {
+        const existingWidget = state.widgets.find(
+          (w) => w.application.id === params.application.id
+        );
+        if (existingWidget) {
+          return moveToTop(state, existingWidget.id);
+        }
+      }
+
       const id = crypto.randomUUID();
       return {
         widgets: state.widgets.concat(
@@ -116,13 +127,7 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
     }),
   closeWidget: (id) =>
     set((state) => ({ widgets: state.widgets.filter((w) => w.id !== id) })),
-  moveToTop: (id) =>
-    set((state) => ({
-      widgets: updateItemInArray(state.widgets, id, (item) => ({
-        ...item,
-        stackIndex: getNewStackIndex(),
-      })),
-    })),
+  moveToTop: (id) => set((state) => moveToTop(state, id)),
   resizeWidget: (id, { left, top, x, y }) =>
     set((state) => ({
       widgets: updateItemInArray(state.widgets, id, (item) => ({
@@ -158,6 +163,15 @@ export const useDesktopStore = create<DesktopState>((set, get) => ({
       })),
     })),
 }));
+
+function moveToTop(state: DesktopState, id: UniqueIdentifier) {
+  return {
+    widgets: updateItemInArray(state.widgets, id, (item) => ({
+      ...item,
+      stackIndex: getNewStackIndex(),
+    })),
+  };
+}
 
 useDesktopStore.subscribe((state) => {
   localStorage.setItem(StorageKeys.WIDGETS, JSON.stringify(state.widgets));

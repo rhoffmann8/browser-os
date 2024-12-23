@@ -1,8 +1,8 @@
 import { css } from "@emotion/css";
-import { Box } from "../../../components/Box";
-import { useAudioPlayerContext } from "../context/AudioPlayerContext";
+import { Box } from "../../../../components/Box";
+import { useAudioPlayerContext } from "../../context/AudioPlayerContext";
 
-import "./rangeSlider.css";
+import "../rangeSlider.css";
 
 const progressBarCss = css`
   min-width: 100%;

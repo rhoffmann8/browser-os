@@ -13,25 +13,28 @@ export interface Moveable {
   position: Position;
 }
 
-export interface DesktopIcon extends Moveable {
+export interface DesktopIcon<A extends Application> extends Moveable {
   id: UniqueIdentifier;
   title?: string;
   description?: string;
   icon: IconProp;
   iconClassName?: string;
 
-  widget: Partial<WidgetParams>;
+  widget: Partial<WidgetParams<A>>;
 
-  application: Application;
+  application: A;
 }
 
-export interface WidgetParams extends Moveable, Partial<Dimensionable> {
-  application: Application;
+export interface WidgetParams<A extends Application>
+  extends Moveable,
+    Partial<Dimensionable> {
+  application: A;
   title?: string;
   resizable?: boolean;
 }
 
-export interface Widget extends WidgetParams {
+export interface Widget<A extends Application = Application>
+  extends WidgetParams<A> {
   id: UniqueIdentifier;
   stackIndex: number;
 

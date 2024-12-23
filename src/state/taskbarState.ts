@@ -3,7 +3,7 @@ import {
   StorageKeys,
   TASKBAR_WIDGET_CLOCK,
   TASKBAR_WIDGET_NETWORK,
-} from "../constants";
+} from "../constants/constants";
 import { getStorageJSON } from "../utils/storage";
 import { toggleArrayItem } from "../utils/array";
 

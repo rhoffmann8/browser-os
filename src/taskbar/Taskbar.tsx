@@ -7,7 +7,8 @@ import { useContextMenuStore } from "../state/contextMenuState";
 import { OpenApplications } from "./OpenApplications";
 import { StartMenu } from "./start-menu/StartMenu";
 import { TaskbarWidgets } from "./widgets/TaskbarWidgets";
-import { ZIndex } from "../constants";
+import { ZIndex } from "../constants/constants";
+import { getButtonBackgroundGradientStyles } from "../utils/style";
 
 const taskbarCss = css`
   background: var(--color-theme-gradient);
@@ -25,7 +26,7 @@ const taskbarCss = css`
 `;
 
 const startButtonCss = css`
-  background: #666;
+  background: ${getButtonBackgroundGradientStyles("#666").normal};
   border: none;
   border-top-right-radius: 0.2rem;
   border-bottom-right-radius: 0.2rem;

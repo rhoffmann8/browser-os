@@ -1,7 +1,10 @@
 import { useEffect } from "react";
-import { ApplicationComponent } from "../../types/application";
+import {
+  ApplicationComponent,
+  ExternalLinkApplication,
+} from "../../types/application";
 
-export const ExternalLink: ApplicationComponent<"external-link"> = ({
+export const ExternalLink: ApplicationComponent<ExternalLinkApplication> = ({
   widget: appWindow,
   params: { url },
 }) => {

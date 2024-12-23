@@ -10,9 +10,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Box } from "../../../components/Box";
-import { useAudioPlayerContext } from "../context/AudioPlayerContext";
-import { controlsContainerCss } from "../styles";
+import { Box, BoxCol } from "../../../../components/Box";
+import { useAudioPlayerContext } from "../../context/AudioPlayerContext";
+import { controlsContainerCss } from "../../styles";
+import { Volume } from "./Volume";
+import { ControlButton } from "./ControlButton";
 
 const SEEK_SECONDS = 15;
 
@@ -31,6 +33,7 @@ export function Controls() {
     currentTrack,
     isPlaying,
     setIsPlaying,
+    volume,
   } = useAudioPlayerContext();
 
   const [isRepeat, setIsRepeat] = useState(false);
@@ -63,6 +66,13 @@ export function Controls() {
       if (currentAudioRef) currentAudioRef.onended = null;
     };
   }, [audioRef, isRepeat, setTrackIndex, trackIndex, trackList.length]);
+
+  useEffect(() => {
+    const currentAudioRef = audioRef.current;
+    if (currentAudioRef) {
+      currentAudioRef.volume = volume / 100;
+    }
+  }, [audioRef, volume]);
 
   const updateProgress = useCallback(() => {
     if (audioRef.current && progressBarRef.current && duration) {
@@ -106,8 +116,15 @@ export function Controls() {
     };
   }, [isPlaying, startAnimation, updateProgress, audioRef]);
 
+  const onPauseOrPlayClick = useCallback(() => {
+    if (!currentTrack) {
+      setTrackIndex(0);
+    }
+    setIsPlaying((prev) => !prev);
+  }, [currentTrack, setIsPlaying, setTrackIndex]);
+
   return (
-    <>
+    <BoxCol fillWidth>
       <audio
         ref={audioRef}
         key={currentTrack?.src}
@@ -129,8 +146,9 @@ export function Controls() {
           </button>
         </Box>
         <Box gap={6}>
-          <button
+          <ControlButton
             title="Previous track"
+            icon={faBackwardStep}
             onClick={() => {
               if (trackIndex === 0 && isRepeat) {
                 setTrackIndex(trackList.length - 1);
@@ -138,37 +156,33 @@ export function Controls() {
               }
               setTrackIndex((prev) => Math.max(prev - 1, 0));
             }}
-          >
-            <FontAwesomeIcon icon={faBackwardStep} />
-          </button>
-          <button
+          />
+          <ControlButton
             title="Rewind"
+            icon={faFastBackward}
             onClick={() => {
               if (audioRef.current) {
                 audioRef.current.currentTime -= SEEK_SECONDS;
               }
             }}
-          >
-            <FontAwesomeIcon icon={faFastBackward} />
-          </button>
-          <button
+          />
+          <ControlButton
             title={isPlaying ? "Pause" : "Play"}
-            onClick={() => setIsPlaying((prev) => !prev)}
-          >
-            <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} />
-          </button>
-          <button
+            icon={isPlaying ? faPause : faPlay}
+            onClick={onPauseOrPlayClick}
+          />
+          <ControlButton
             title="Fast forward"
+            icon={faFastForward}
             onClick={() => {
               if (audioRef.current) {
                 audioRef.current.currentTime += SEEK_SECONDS;
               }
             }}
-          >
-            <FontAwesomeIcon icon={faFastForward} />
-          </button>
-          <button
+          />
+          <ControlButton
             title="Next track"
+            icon={faForwardStep}
             onClick={() => {
               if (trackIndex === trackList.length - 1 && isRepeat) {
                 setTrackIndex(0);
@@ -176,9 +190,7 @@ export function Controls() {
               }
               setTrackIndex((prev) => Math.min(prev + 1, trackList.length - 1));
             }}
-          >
-            <FontAwesomeIcon icon={faForwardStep} />
-          </button>
+          />
         </Box>
         <Box>
           <button
@@ -192,6 +204,7 @@ export function Controls() {
           </button>
         </Box>
       </Box>
-    </>
+      <Volume />
+    </BoxCol>
   );
 }

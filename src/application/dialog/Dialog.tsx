@@ -1,6 +1,9 @@
 import { css } from "@emotion/css";
 import { Box } from "../../components/Box";
-import { ApplicationComponent } from "../../types/application";
+import {
+  ApplicationComponent,
+  DialogApplication,
+} from "../../types/application";
 
 const dialogCss = css`
   padding: 4px 12px 12px 12px;
@@ -17,7 +20,7 @@ const dialogCss = css`
   }
 `;
 
-export const Dialog: ApplicationComponent<"dialog"> = ({
+export const Dialog: ApplicationComponent<DialogApplication> = ({
   widget,
   params: { message },
 }) => {

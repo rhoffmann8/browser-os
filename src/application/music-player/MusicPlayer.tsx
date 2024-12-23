@@ -2,9 +2,12 @@ import { css } from "@emotion/css";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Box } from "../../components/Box";
-import { ApplicationComponent } from "../../types/application";
-import { Controls } from "./components/Controls";
-import { ProgressBar } from "./components/ProgressBar";
+import {
+  ApplicationComponent,
+  MusicPlayerApplication,
+} from "../../types/application";
+import { Controls } from "./components/controls/Controls";
+import { ProgressBar } from "./components/controls/ProgressBar";
 import { TrackDisplay } from "./components/TrackDisplay";
 import { TrackList } from "./components/TrackList";
 
@@ -44,7 +47,7 @@ const tracks: Track[] = [
   },
 ];
 
-export const MusicPlayer: ApplicationComponent<"music-player"> = ({
+export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
   widget,
 }) => {
   const [trackList, setTrackList] = useState<Track[]>(tracks);
@@ -53,6 +56,7 @@ export const MusicPlayer: ApplicationComponent<"music-player"> = ({
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(1);
+  const [volume, setVolume] = useState(100);
 
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -68,6 +72,12 @@ export const MusicPlayer: ApplicationComponent<"music-player"> = ({
     () => trackList[trackIndex],
     [trackIndex, trackList]
   );
+
+  useEffect(() => {
+    if (!currentTrack) {
+      setIsPlaying(false);
+    }
+  }, [currentTrack]);
 
   return (
     <Box flex={1} alignItems="center" justifyContent="center">
@@ -88,6 +98,8 @@ export const MusicPlayer: ApplicationComponent<"music-player"> = ({
           setDuration,
           isPlaying,
           setIsPlaying,
+          volume,
+          setVolume,
         }}
       >
         <Inner />
