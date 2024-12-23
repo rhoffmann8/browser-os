@@ -1,7 +1,7 @@
 :root {
   --height-range-input: 12px;
   --width-range-input: 12px;
-  --color-range-input: #f34646;
+  --color-range-input: var(--color-theme-red);
 }
 
 input[type="range"] {

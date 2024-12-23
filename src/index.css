@@ -14,7 +14,9 @@
   --color-theme-secondary: #222;
   --color-theme-gradient: linear-gradient(var(--color-theme-primary), var(--color-theme-secondary));
   --color-theme-hover: #444;
-  --color-theme-red: #da4949;
+
+  --color-theme-red-raw: 218, 73, 73; 
+  --color-theme-red: rgb(var(--color-theme-red-raw));
 
   --box-shadow-primary: 0px 0px 16px 0px #444;
 
