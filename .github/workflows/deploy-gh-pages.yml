@@ -25,13 +25,11 @@ jobs:
           repository: rhoffmann8/rhoffmann8.github.io
           path: website
           ref: 'master'
-      - name: test
-        run: |
-          ls
-          cd browser-os
       - name: Build static files
         id: build
         run: |
+          cd browser-os
+          ls -la
           npm install
           npm run build
       - name: test2
