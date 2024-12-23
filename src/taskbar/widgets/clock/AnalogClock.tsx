@@ -58,6 +58,7 @@ export function AnalogClock({ date, show }: { date: Date; show: boolean }) {
     <div className={cx(containerCss, { show })}>
       {Array.from({ length: 12 }).map((_, idx) => (
         <div
+          key={idx}
           className={tickCss}
           style={{ transform: getTickTransform(idx + 1) }}
         >

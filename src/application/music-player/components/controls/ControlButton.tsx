@@ -1,16 +1,14 @@
 import { IconDefinition } from "@fortawesome/free-brands-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { CSSProperties } from "react";
+import { IconButton } from "../../../../components/IconButton";
 
 interface Props {
   title: string;
   icon: IconDefinition;
   onClick: () => void;
+  style?: CSSProperties;
 }
 
-export function ControlButton({ icon, onClick, title }: Props) {
-  return (
-    <button title={title} onClick={onClick}>
-      <FontAwesomeIcon icon={icon} />
-    </button>
-  );
+export function ControlButton({ icon, ...rest }: Props) {
+  return <IconButton icon={icon} {...rest} />;
 }

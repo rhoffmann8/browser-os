@@ -106,8 +106,6 @@ const windowCss = css`
   display: flex;
   flex-direction: column;
 
-  overflow: hidden;
-
   box-shadow: var(--box-shadow-primary);
 
   animation: open 100ms ease-in-out;

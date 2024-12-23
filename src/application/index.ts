@@ -7,6 +7,7 @@ import { TextEditor } from "./text-editor/TextEditor";
 import { Dialog } from "./dialog/Dialog";
 import { MarkdownViewer } from "./markdown-viewer/MarkdownViewer";
 import { MusicPlayer } from "./music-player/MusicPlayer";
+import { VideoPlayer } from "./video-player/VideoPlayer";
 
 export const APPLICATION_MAP: {
   [K in AppId]: {
@@ -21,6 +22,7 @@ export const APPLICATION_MAP: {
   "music-player": { title: "Music", component: MusicPlayer },
   "pdf-viewer": { title: "PDF Viewer", component: PDFViewer },
   "text-editor": { title: "Notes", component: TextEditor },
+  "video-player": { title: "YouTube", component: VideoPlayer },
 };
 
 export function getApplicationComponentFromId<K extends AppId>(

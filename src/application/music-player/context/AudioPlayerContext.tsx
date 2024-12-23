@@ -25,6 +25,8 @@ interface AudioPlayerContext {
   setIsPlaying: ChangeHandler<boolean>;
   volume: number;
   setVolume: ChangeHandler<number>;
+  showAddTrack: boolean;
+  setShowAddTrack: ChangeHandler<boolean>;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContext | undefined>(

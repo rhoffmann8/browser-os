@@ -1,7 +1,7 @@
 import { css } from "@emotion/css";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { Box } from "../../components/Box";
+import { Box, BoxCol } from "../../components/Box";
 import {
   ApplicationComponent,
   MusicPlayerApplication,
@@ -18,6 +18,7 @@ import track3 from "/music/nirvikalpa-new-age-ambient-meditative-227882.mp3";
 import track4 from "/music/weightlessness-213970.mp3";
 
 import { AudioPlayerContext, Track } from "./context/AudioPlayerContext";
+import { AddTrack } from "./components/AddTrack";
 
 const tracks: Track[] = [
   {
@@ -53,6 +54,7 @@ export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
   const [trackList, setTrackList] = useState<Track[]>(tracks);
   const [trackIndex, setTrackIndex] = useState<number>(0);
   const [showTrackList, setShowTrackList] = useState(false);
+  const [showAddTrack, setShowAddTrack] = useState(false);
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(1);
@@ -100,6 +102,8 @@ export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
           setIsPlaying,
           volume,
           setVolume,
+          showAddTrack,
+          setShowAddTrack,
         }}
       >
         <Inner />
@@ -112,21 +116,21 @@ const containerCss = css`
   background: #111;
   padding: 8px;
   color: white;
-  width: 300px;
+  width: 340px;
+
+  overflow: hidden;
 `;
 
 function Inner() {
   return (
-    <Box
-      className={containerCss}
-      flexDirection="column"
-      alignItems="center"
-      gap={8}
-    >
-      <TrackDisplay />
-      <ProgressBar />
-      <Controls />
+    <BoxCol className={containerCss} alignItems="center">
+      <BoxCol fillWidth gap={8}>
+        <TrackDisplay />
+        <ProgressBar />
+        <Controls />
+      </BoxCol>
       <TrackList />
-    </Box>
+      <AddTrack />
+    </BoxCol>
   );
 }

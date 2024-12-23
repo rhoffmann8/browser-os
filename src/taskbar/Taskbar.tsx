@@ -1,14 +1,16 @@
 import { css } from "@emotion/css";
+import { faList } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MouseEventHandler, useCallback, useRef, useState } from "react";
 import { useOutsideClick } from "rooks";
 import { Box } from "../components/Box";
+import { ZIndex } from "../constants/constants";
 import { useTaskbarContextMenu } from "../menu/hooks/useTaskbarContextMenu";
 import { useContextMenuStore } from "../state/contextMenuState";
+import { getButtonBackgroundGradientStyles } from "../utils/style";
 import { OpenApplications } from "./OpenApplications";
 import { StartMenu } from "./start-menu/StartMenu";
 import { TaskbarWidgets } from "./widgets/TaskbarWidgets";
-import { ZIndex } from "../constants/constants";
-import { getButtonBackgroundGradientStyles } from "../utils/style";
 
 const taskbarCss = css`
   background: var(--color-theme-gradient);
@@ -78,7 +80,7 @@ export function Taskbar() {
             className={startButtonCss}
             onClick={() => setShowMenu((prev) => !prev)}
           >
-            Start
+            <FontAwesomeIcon icon={faList} />
           </button>
 
           <OpenApplications />
