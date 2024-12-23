@@ -72,13 +72,13 @@ const trackCss = css`
     top: 50%;
     height: 24px;
 
-    background: rgb(243, 70, 70);
+    background: var(--color-theme-red);
     transition: background 100ms ease-in-out;
 
     visibility: hidden;
 
     &:hover {
-      background: rgba(243, 70, 70, 0.75);
+      background: rgba(var(--color-theme-red-raw), 0.75);
     }
   }
 

@@ -199,7 +199,7 @@ export function Controls() {
           >
             <FontAwesomeIcon
               icon={faRepeat}
-              style={{ color: isRepeat ? "#f34646" : "" }}
+              style={{ color: isRepeat ? "var(--color-theme-red)" : "" }}
             />
           </button>
         </Box>
