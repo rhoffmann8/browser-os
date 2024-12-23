@@ -34,8 +34,9 @@ jobs:
           npm run build
       - name: test2
         run: |
-          cp -r dist/* ../website
-          cd ../website
+          ls
+          cp -r ./browser-os/dist/* ../website
+          cd ./website
           git add .
           git commit -m 'deploy'
           git push
