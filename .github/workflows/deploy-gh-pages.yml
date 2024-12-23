@@ -35,7 +35,7 @@ jobs:
       - name: test2
         run: |
           ls
-          cp -r ./browser-os/dist/* ../website
+          cp -r ./browser-os/dist/* ./website
           cd ./website
           git add .
           git commit -m 'deploy'
