@@ -1,6 +1,7 @@
 import {
   faArrowLeft,
   faArrowRight,
+  faRotateForward,
   faShare,
 } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -13,6 +14,7 @@ interface Props {
   currentVideo: Video;
   onBack: () => void;
   onForward: () => void;
+  onReload: () => void;
   onGo: (url: string | undefined) => void;
   undoStack: Video[];
   redoStack: Video[];
@@ -24,6 +26,7 @@ export function Navigation({
   currentVideo,
   onBack,
   onForward,
+  onReload,
   onGo: providedOnGo,
   undoStack,
   redoStack,
@@ -66,27 +69,37 @@ export function Navigation({
         color: "white",
       }}
     >
-      <IconButton
-        title="Back"
-        icon={faArrowLeft}
-        className={buttonCss}
-        disabled={isBackDisabled}
-        onClick={() => {
-          setInput(createVideoUrl(undoStack[undoStack.length - 2]) ?? "");
-          onBack();
-        }}
-      />
-      <IconButton
-        title="Forward"
-        icon={faArrowRight}
-        className={buttonCss}
-        disabled={isForwardDisabled}
-        onClick={() => {
-          const last = redoStack[redoStack.length - 1];
-          setInput(createVideoUrl(last) ?? "");
-          onForward();
-        }}
-      />
+      <Box gap={12}>
+        <Box gap={4}>
+          <IconButton
+            title="Back"
+            icon={faArrowLeft}
+            className={buttonCss}
+            disabled={isBackDisabled}
+            onClick={() => {
+              setInput(createVideoUrl(undoStack[undoStack.length - 2]) ?? "");
+              onBack();
+            }}
+          />
+          <IconButton
+            title="Forward"
+            icon={faArrowRight}
+            className={buttonCss}
+            disabled={isForwardDisabled}
+            onClick={() => {
+              const last = redoStack[redoStack.length - 1];
+              setInput(createVideoUrl(last) ?? "");
+              onForward();
+            }}
+          />
+        </Box>
+        <IconButton
+          title="Reload"
+          icon={faRotateForward}
+          className={buttonCss}
+          onClick={onReload}
+        />
+      </Box>
       <input
         ref={inputRef}
         className={inputCss}

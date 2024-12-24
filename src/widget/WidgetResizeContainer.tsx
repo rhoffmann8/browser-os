@@ -1,6 +1,6 @@
 import { css } from "@emotion/css";
 import { PropsWithChildren, useCallback, useMemo, useRef } from "react";
-import { Delta } from "../types";
+import { Delta, Widget } from "../types";
 import cx from "classnames";
 
 const boxCss = css`
@@ -13,7 +13,6 @@ const boxCss = css`
     "W . E"
     "SW S SE";
   grid-template-rows: 2px auto 2px;
-  grid-template-columns: 2px auto 2px;
   background-color: #333;
 
   .resize-handle {
@@ -48,6 +47,7 @@ const boxCss = css`
 `;
 
 interface Props {
+  widget: Widget;
   onResize: (delta: Partial<Delta>) => void;
   disabled?: boolean;
 }
@@ -56,6 +56,7 @@ type ResizeDirection = "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
 
 export function WidgetResizeContainer({
   children,
+  widget,
   onResize,
   disabled,
 }: PropsWithChildren<Props>) {
@@ -123,7 +124,17 @@ export function WidgetResizeContainer({
   );
 
   return (
-    <div className={boxCss}>
+    <div
+      className={boxCss}
+      style={{
+        // if width provided, shrink to width (avoids needing overflow: hidden on title)
+        gridTemplateColumns: `2px ${
+          typeof widget.dimensions?.width === "number"
+            ? `${widget.dimensions.width}px`
+            : "auto"
+        } 2px`,
+      }}
+    >
       {handles.slice(0, 4)}
       {children}
       {handles.slice(4)}

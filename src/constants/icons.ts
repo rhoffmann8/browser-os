@@ -1,12 +1,9 @@
-import {
-  faGithub,
-  faLinkedin,
-  faYoutube,
-} from "@fortawesome/free-brands-svg-icons";
+import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import {
   faChessBoard,
   faEnvelope,
   faFilePdf,
+  faFilm,
   faInfoCircle,
   faMusic,
   faPencil,
@@ -139,14 +136,16 @@ export function createDefaultIcons(): DesktopIcon<Application>[] {
     }),
     createIcon({
       icon: {
-        title: "YouTube",
+        title: "a thing I made",
+        description: "5 minutes of fame in 2011",
         application: {
           id: "video-player",
           params: {
-            url: "https://www.youtube.com/watch?v=lZZvilITFdw",
+            url: "https://www.youtube.com/watch?v=Zu8BcbzhPNE",
+            start: 6,
           },
         },
-        icon: faYoutube,
+        icon: faFilm,
         position: generateIconPos(),
       },
       widget: {
@@ -155,6 +154,20 @@ export function createDefaultIcons(): DesktopIcon<Application>[] {
         resizable: true,
       },
     }),
+    // createIcon({
+    //   icon: {
+    //     title: "Stonks",
+    //     application: {
+    //       id: "stonks",
+    //       params: { symbol: "GME" },
+    //     },
+    //     icon: faChartLine,
+    //     position: generateIconPos(),
+    //   },
+    //   widget: {
+    //     position: { x: 400, y: 100 },
+    //   },
+    // }),
   ];
 }
 

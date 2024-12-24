@@ -56,7 +56,8 @@ export const toolbarCss = css`
 export const buttonMenuCss = css`
   position: absolute;
   left: 2px;
-  top: 12px;
+  top: 24px;
+  z-index: 1;
 
   border: 1px solid #888;
   background: #eee;

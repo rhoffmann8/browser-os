@@ -14,7 +14,7 @@ export function Volume({ show }: { show: boolean }) {
     <AnimateHeight show={show}>
       <Box fillWidth gap={4} padding="8px 0 0 0" alignItems="center">
         <FontAwesomeIcon icon={faVolumeOff} />
-        <Tooltip id={tooltipId} opacity={1} />
+        <Tooltip id={tooltipId} opacity={1} style={{ zIndex: 1 }} />
         <a
           data-tooltip-id={tooltipId}
           data-tooltip-content={`Volume ${volume}%`}

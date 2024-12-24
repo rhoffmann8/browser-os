@@ -9,8 +9,8 @@ export interface Track {
 
 interface AudioPlayerContext {
   trackIndex: number;
-  setTrackIndex: ChangeHandler<number>;
   currentTrack?: Track;
+  setCurrentTrack: ChangeHandler<Track | undefined>;
   trackList: Track[];
   setTrackList: ChangeHandler<Track[]>;
   showTrackList: boolean;
@@ -25,8 +25,8 @@ interface AudioPlayerContext {
   setIsPlaying: ChangeHandler<boolean>;
   volume: number;
   setVolume: ChangeHandler<number>;
-  showAddTrack: boolean;
-  setShowAddTrack: ChangeHandler<boolean>;
+  showAddTrackUrl: boolean;
+  setShowAddTrackUrl: ChangeHandler<boolean>;
 }
 
 export const AudioPlayerContext = createContext<AudioPlayerContext | undefined>(

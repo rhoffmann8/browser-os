@@ -5,11 +5,17 @@ export function randomRgba(opacity: number) {
   return `rgba(${r},${g},${b},${opacity})`;
 }
 
+export function setBackgroundOpacity(bgColor: string, opacity: number) {
+  return `color-mix(in srgb, ${bgColor} ${Math.floor(
+    opacity * 100
+  )}%, transparent)`;
+}
+
 export function getButtonBackgroundGradientStyles(
   color1: string,
   color2?: string
 ) {
-  color2 = color2 ?? `color-mix(in srgb, ${color1} 70%, transparent)`;
+  color2 = color2 ?? setBackgroundOpacity(color1, 0.3);
   const normal = `linear-gradient(${color1}, ${color2})`;
   const pressed = `linear-gradient(${color2}, ${color1})`;
   return { normal, pressed };

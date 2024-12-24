@@ -8,6 +8,7 @@ import { Dialog } from "./dialog/Dialog";
 import { MarkdownViewer } from "./markdown-viewer/MarkdownViewer";
 import { MusicPlayer } from "./music-player/MusicPlayer";
 import { VideoPlayer } from "./video-player/VideoPlayer";
+import { Stonks } from "./stonks/Stonks";
 
 export const APPLICATION_MAP: {
   [K in AppId]: {
@@ -21,6 +22,7 @@ export const APPLICATION_MAP: {
   "memory-game": { title: "Memory", component: MemoryGame },
   "music-player": { title: "Music", component: MusicPlayer },
   "pdf-viewer": { title: "PDF Viewer", component: PDFViewer },
+  stonks: { title: "Stonks", component: Stonks },
   "text-editor": { title: "Notes", component: TextEditor },
   "video-player": { title: "YouTube", component: VideoPlayer },
 };

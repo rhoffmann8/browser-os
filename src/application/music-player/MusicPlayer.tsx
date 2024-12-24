@@ -52,7 +52,7 @@ export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
   widget,
 }) => {
   const [trackList, setTrackList] = useState<Track[]>(tracks);
-  const [trackIndex, setTrackIndex] = useState<number>(0);
+  const [currentTrack, setCurrentTrack] = useState<Track>();
   const [showTrackList, setShowTrackList] = useState(false);
   const [showAddTrack, setShowAddTrack] = useState(false);
 
@@ -65,15 +65,15 @@ export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressBarRef = useRef<HTMLInputElement>(null);
 
+  const trackIndex = useMemo(
+    () => trackList.findIndex((t) => t === currentTrack),
+    [currentTrack, trackList]
+  );
+
   useEffect(() => {
     widget.setTitle(trackList[trackIndex]?.title ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trackList, trackIndex, widget.setTitle]);
-
-  const currentTrack = useMemo(
-    () => trackList[trackIndex],
-    [trackIndex, trackList]
-  );
 
   useEffect(() => {
     if (!currentTrack) {
@@ -87,11 +87,11 @@ export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
         value={{
           audioRef,
           progressBarRef,
+          trackIndex,
           currentTrack,
           trackList,
           setTrackList,
-          trackIndex,
-          setTrackIndex,
+          setCurrentTrack,
           showTrackList,
           setShowTrackList,
           currentTime,
@@ -102,8 +102,8 @@ export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
           setIsPlaying,
           volume,
           setVolume,
-          showAddTrack,
-          setShowAddTrack,
+          showAddTrackUrl: showAddTrack,
+          setShowAddTrackUrl: setShowAddTrack,
         }}
       >
         <Inner />
@@ -117,8 +117,6 @@ const containerCss = css`
   padding: 8px;
   color: white;
   width: 340px;
-
-  overflow: hidden;
 `;
 
 function Inner() {
@@ -129,8 +127,8 @@ function Inner() {
         <ProgressBar />
         <Controls />
       </BoxCol>
-      <TrackList />
       <AddTrack />
+      <TrackList />
     </BoxCol>
   );
 }

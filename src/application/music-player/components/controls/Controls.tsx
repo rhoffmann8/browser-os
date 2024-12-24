@@ -1,6 +1,6 @@
+import { css } from "@emotion/css";
 import {
   fa1,
-  faAdd,
   faBackwardStep,
   faFastBackward,
   faFastForward,
@@ -11,23 +11,30 @@ import {
   faRepeat,
   faVolumeHigh,
 } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { ID3Tag } from "id3js/lib/id3Tag";
+import {
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Box, BoxCol } from "../../../../components/Box";
 import { IconButton } from "../../../../components/IconButton";
 import { useAudioPlayerContext } from "../../context/AudioPlayerContext";
 import { controlsContainerCss } from "../../styles";
-import { getRepeatTypeDisplay } from "../../utils";
+import { getRepeatTypeDisplay, parseUploadedFiles } from "../../utils";
 import { useAudioControls } from "../hooks/useAudioControls";
+import { AddTrackButton } from "./AddTrackButton";
 import { Volume } from "./Volume";
 
-const SEEK_SECONDS = 15;
+const SEEK_SECONDS = 10;
 
 export function Controls() {
   const {
     audioRef,
     trackList,
-    trackIndex,
-    setTrackIndex,
+    setCurrentTrack,
     setCurrentTime,
     progressBarRef,
     duration,
@@ -35,9 +42,9 @@ export function Controls() {
     setShowTrackList,
     currentTrack,
     isPlaying,
+    setIsPlaying,
     volume,
-    showAddTrack,
-    setShowAddTrack,
+    setTrackList,
   } = useAudioPlayerContext();
 
   const {
@@ -56,17 +63,18 @@ export function Controls() {
     const currentAudioRef = audioRef.current;
     if (currentAudioRef) {
       currentAudioRef.onended = () => {
+        const trackIndex = trackList.findIndex((t) => t === currentTrack);
         if (trackIndex === trackList.length - 1 && repeatType === "all") {
-          setTrackIndex(0);
+          setCurrentTrack(trackList[0]);
         } else if (trackIndex < trackList.length) {
           if (repeatType === "one") {
             currentAudioRef.currentTime = 0;
             currentAudioRef.play();
           } else {
-            setTrackIndex((prev) => prev + 1);
+            nextTrack();
           }
         } else {
-          setTrackIndex(-1);
+          setCurrentTrack(undefined);
         }
       };
     }
@@ -74,7 +82,15 @@ export function Controls() {
     return () => {
       if (currentAudioRef) currentAudioRef.onended = null;
     };
-  }, [audioRef, repeatType, setTrackIndex, trackIndex, trackList.length]);
+  }, [
+    audioRef,
+    currentTrack,
+    nextTrack,
+    repeatType,
+    setCurrentTrack,
+    trackList,
+    trackList.length,
+  ]);
 
   useEffect(() => {
     const currentAudioRef = audioRef.current;
@@ -125,6 +141,43 @@ export function Controls() {
     };
   }, [isPlaying, startAnimation, updateProgress, audioRef]);
 
+  const fileUploadRef = useRef<HTMLInputElement>(null);
+  const clearFileInput = () => {
+    if (fileUploadRef.current) {
+      fileUploadRef.current.value = "";
+    }
+  };
+
+  const onAddTracks = useCallback(
+    (filesToAdd: { tags: ID3Tag | null; src: string; title: string }[]) => {
+      const newTrackList = [
+        ...trackList,
+        ...filesToAdd.map(({ tags, src, title }) => ({
+          src,
+          author: tags?.artist ?? "",
+          title: title ?? src,
+        })),
+      ];
+      setTrackList(newTrackList);
+      setCurrentTrack(newTrackList[trackList.length]);
+      setIsPlaying(true);
+      clearFileInput();
+    },
+    [setCurrentTrack, setIsPlaying, setTrackList, trackList]
+  );
+
+  const onUploadFile: ChangeEventHandler<HTMLInputElement> = useCallback(
+    async (e) => {
+      const filesToAdd = await parseUploadedFiles(
+        e.currentTarget.files,
+        trackList
+      );
+      clearFileInput();
+      onAddTracks(filesToAdd);
+    },
+    [onAddTracks, trackList]
+  );
+
   return (
     <BoxCol fillWidth>
       <audio
@@ -145,12 +198,7 @@ export function Controls() {
             icon={faList}
             style={{ color: showTrackList ? "var(--color-theme-red)" : "" }}
           />
-          <IconButton
-            title="Toggle add track"
-            onClick={() => setShowAddTrack((prev) => !prev)}
-            icon={faAdd}
-            style={{ color: showAddTrack ? "var(--color-theme-red)" : "" }}
-          />
+          <AddTrackButton fileUploadRef={fileUploadRef} />
         </Box>
         <Box gap={6}>
           <IconButton
@@ -197,8 +245,20 @@ export function Controls() {
             style={{ color: showVolume ? "var(--color-theme-red)" : "" }}
           />
         </Box>
+        <input
+          ref={fileUploadRef}
+          className={fileUploadCss}
+          type="file"
+          onChange={onUploadFile}
+          multiple
+        />
       </Box>
       <Volume show={showVolume} />
     </BoxCol>
   );
 }
+
+const fileUploadCss = css`
+  position: absolute;
+  visibility: hidden;
+`;

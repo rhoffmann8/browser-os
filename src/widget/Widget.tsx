@@ -78,10 +78,11 @@ export function Widget({ widget }: { widget: WidgetType }) {
       }}
     >
       <WidgetResizeContainer
+        widget={widget}
         onResize={onWidgetResize}
         disabled={resizable === false}
       >
-        <BoxCol flex={1} overflow="hidden">
+        <BoxCol flex={1}>
           <div className={handleContainerCss}>
             <WidgetHandle
               widget={widget}
@@ -126,6 +127,7 @@ const handleContainerCss = css`
   display: flex;
   gap: 4px;
   background: var(--color-theme-gradient);
+  overflow: hidden;
 
   cursor: pointer;
 `;

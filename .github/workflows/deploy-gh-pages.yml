@@ -20,9 +20,6 @@ jobs:
         with:
           path: browser-os
           ref: "main"
-      - name: test4
-        run: |
-          ls
       - name: checkout rhoffmann8.github.io
         uses: actions/checkout@v4
         with:
@@ -37,7 +34,7 @@ jobs:
           ls
           npm install
           npm run build
-      - name: test2
+      - name: Deploy to rhoffmann8.github.io
         run: |
           ls
           rm -r ./website/assets

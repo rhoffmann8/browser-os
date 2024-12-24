@@ -1,5 +1,11 @@
 import { css } from "@emotion/css";
-import { MouseEventHandler, useCallback, useEffect, useRef } from "react";
+import {
+  DragEventHandler,
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { IconDroppableContext } from "./droppable/IconDroppableContext";
 import { WidgetDroppableContext } from "./droppable/WidgetDroppableContext";
 import { DraggableIcon } from "./icon/DraggableIcon";
@@ -72,8 +78,16 @@ export function Desktop() {
     return () => window.removeEventListener("resize", listener);
   }, [icons, setIconPosition]);
 
+  const { onDrop, onDragOver } = useExternalDroppable();
+
   return (
-    <div ref={desktopRef} className={desktopCss} style={{ background }}>
+    <div
+      ref={desktopRef}
+      className={desktopCss}
+      style={{ background }}
+      onDragOver={onDragOver}
+      onDrop={onDrop}
+    >
       <IconDroppableContext onContextMenu={onViewportContextMenu}>
         {icons.map((icon) => (
           <DraggableIcon
@@ -98,4 +112,28 @@ export function Desktop() {
       </div>
     </div>
   );
+}
+
+function useExternalDroppable() {
+  const onDrop: DragEventHandler<HTMLDivElement> = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!e.dataTransfer.items.length) return;
+
+    [...e.dataTransfer.items].forEach((item, i) => {
+      // If dropped items aren't files, reject them
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        if (!file) return;
+        console.log(`… file[${i}].name = ${file.name}`);
+      }
+    });
+  }, []);
+
+  const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((e) => {
+    e.preventDefault();
+  }, []);
+
+  return { onDragOver, onDrop };
 }

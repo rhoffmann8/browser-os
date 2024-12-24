@@ -9,14 +9,17 @@ import {
 } from "../../types/application";
 import { Navigation } from "./Navigation";
 import { createVideoUrl, extractVideoFromUrl, Video } from "./utils";
+import { useForceUpdate } from "../../hooks/useForceUpdate";
 
 export const VideoPlayer: ApplicationComponent<VideoPlayerApplication> = ({
   widget,
-  params: { url: defaultUrl },
+  params: { url: defaultUrl, start: defaultStart },
 }) => {
   const [undoStack, setUndoStack] = useState<Video[]>(() => {
     const { videoId, playlistId } = extractVideoFromUrl(defaultUrl) ?? {};
-    return videoId ? [{ videoId, playlistId }] : [];
+    return videoId
+      ? [{ videoId, playlistId, params: { start: defaultStart } }]
+      : [];
   });
   const [redoStack, setRedoStack] = useState<Video[]>([]);
   const currentVideo = useMemo(
@@ -61,6 +64,8 @@ export const VideoPlayer: ApplicationComponent<VideoPlayerApplication> = ({
     widget.setTitle(title);
   }, [widget]);
 
+  const { forceUpdate, updateCount: playerKey } = useForceUpdate();
+
   return (
     <BoxCol fillWidth>
       <Navigation
@@ -70,14 +75,23 @@ export const VideoPlayer: ApplicationComponent<VideoPlayerApplication> = ({
         onGo={onGo}
         onBack={onBack}
         onForward={onForward}
+        onReload={forceUpdate}
         undoStack={undoStack}
         redoStack={redoStack}
       />
       <Div className={videoContainerCss} fillHeight fillWidth>
         <ReactPlayer
+          key={playerKey}
           playing
           controls
           url={createVideoUrl(currentVideo) ?? undefined}
+          config={
+            currentVideo.params
+              ? {
+                  youtube: { playerVars: currentVideo?.params },
+                }
+              : undefined
+          }
           ref={reactPlayerRef}
           height="100%"
           width="100%"

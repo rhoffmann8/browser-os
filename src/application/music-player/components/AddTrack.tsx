@@ -3,17 +3,16 @@ import { faAdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as id3 from "id3js";
 import { ID3Tag } from "id3js/lib/id3Tag";
-import { ChangeEventHandler, useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import { BoxCol } from "../../../components/Box";
-import { Div } from "../../../components/Div";
+import { AnimateHeight } from "../../../components/Fade";
 import { useAudioPlayerContext } from "../context/AudioPlayerContext";
 import { getButtonCss } from "../styles";
-import { getErrorMessage } from "../../../utils/error";
-import { AnimateHeight } from "../../../components/Fade";
 
 export function AddTrack() {
-  const { trackList, setTrackList, showAddTrack } = useAudioPlayerContext();
+  const { trackList, setTrackList, showAddTrackUrl, setShowAddTrackUrl } =
+    useAudioPlayerContext();
 
   const [addTrackUrl, setAddTrackUrl] = useState("");
 
@@ -38,24 +37,9 @@ export function AddTrack() {
         },
       ]);
       setAddTrackUrl("");
+      setShowAddTrackUrl(false);
     },
-    [setTrackList, trackList]
-  );
-
-  const onUploadFile: ChangeEventHandler<HTMLInputElement> = useCallback(
-    async (e) => {
-      const files = e.currentTarget.files;
-      if (!files || !files.length) return;
-      const file = files[0];
-      try {
-        const tags = await id3.fromFile(file);
-        const src = URL.createObjectURL(file);
-        onAddTrack(tags, src);
-      } catch (e) {
-        toast.error(`Error uploading file: ${getErrorMessage(e)}`);
-      }
-    },
-    [onAddTrack]
+    [setShowAddTrackUrl, setTrackList, trackList]
   );
 
   const onAddTrackClick = useCallback(async () => {
@@ -63,10 +47,8 @@ export function AddTrack() {
     onAddTrack(tags, addTrackUrl);
   }, [addTrackUrl, onAddTrack]);
 
-  const fileUploadRef = useRef<HTMLInputElement>(null);
-
   return (
-    <AnimateHeight show={showAddTrack} fillWidth>
+    <AnimateHeight show={showAddTrackUrl} fillWidth>
       <BoxCol className={containerCss}>
         <label className={labelCss}>
           Enter URL
@@ -78,25 +60,6 @@ export function AddTrack() {
           <button className={buttonGradientCss} onClick={onAddTrackClick}>
             <FontAwesomeIcon icon={faAdd} />
           </button>
-        </label>
-        <Div fillWidth style={{ textAlign: "center" }}>
-          or
-        </Div>
-        <label className={labelCss} style={{ flexDirection: "column" }}>
-          <button
-            className={buttonGradientCss}
-            style={{ flex: 1, padding: 4 }}
-            onClick={() => fileUploadRef.current?.click()}
-          >
-            Upload file
-          </button>
-          <input
-            ref={fileUploadRef}
-            className={fileUploadCss}
-            type="file"
-            onChange={onUploadFile}
-            style={{ flex: 1 }}
-          />
         </label>
       </BoxCol>
     </AnimateHeight>
@@ -123,8 +86,3 @@ const buttonGradientCss = getButtonCss(
   "var(--color-theme-primary)",
   "var(--color-theme-secondary)"
 );
-
-const fileUploadCss = css`
-  position: absolute;
-  visibility: hidden;
-`;
