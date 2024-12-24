@@ -26,10 +26,10 @@ const trackDisplayCss = css`
       transform: translateX(100%);
     }
     50% {
-      transform: translateX(-50%);
+      transform: translateX(-25%);
     }
     100% {
-      transform: translateX(-200%);
+      transform: translateX(-150%);
     }
   }
 `;

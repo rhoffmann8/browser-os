@@ -1,6 +1,7 @@
 export type Video = {
   videoId?: string | null;
   playlistId?: string | null;
+  params?: any;
 };
 
 export function extractVideoFromUrl(urlOrVideoId: string): Video | null {

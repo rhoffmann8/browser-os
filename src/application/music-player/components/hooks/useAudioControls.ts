@@ -7,10 +7,11 @@ export function useAudioControls() {
   const {
     audioRef,
     currentTrack,
-    setTrackIndex,
+    setCurrentTrack,
     setIsPlaying,
-    trackIndex,
     trackList,
+    trackIndex,
+    duration,
     setDuration,
     progressBarRef,
   } = useAudioPlayerContext();
@@ -21,19 +22,25 @@ export function useAudioControls() {
   const onLoadedMetadata = useCallback(() => {
     const seconds = audioRef.current?.duration;
     if (seconds !== undefined) {
-      setDuration(seconds);
+      if (seconds === duration) {
+        // hack for a bug where two songs with same duration will cause player to pause when switching
+        setDuration(0);
+        setTimeout(() => setDuration(seconds));
+      } else {
+        setDuration(seconds);
+      }
       if (progressBarRef.current) {
         progressBarRef.current.max = seconds.toString();
       }
     }
-  }, [audioRef, progressBarRef, setDuration]);
+  }, [audioRef, duration, progressBarRef, setDuration]);
 
   const togglePlay = useCallback(() => {
     if (!currentTrack) {
-      setTrackIndex(0);
+      setCurrentTrack(trackList[0]);
     }
     setIsPlaying((prev) => !prev);
-  }, [currentTrack, setIsPlaying, setTrackIndex]);
+  }, [currentTrack, setCurrentTrack, setIsPlaying, trackList]);
 
   const seek = useCallback(
     (time: number) => {
@@ -50,11 +57,11 @@ export function useAudioControls() {
 
   const prevTrack = useCallback(() => {
     if (trackIndex === 0 && repeatType) {
-      setTrackIndex(trackList.length - 1);
+      setCurrentTrack(trackList[trackList.length - 1]);
       return;
     }
-    setTrackIndex((prev) => Math.max(prev - 1, 0));
-  }, [repeatType, setTrackIndex, trackIndex, trackList.length]);
+    setCurrentTrack(() => trackList[Math.max(trackIndex - 1, 0)]);
+  }, [repeatType, setCurrentTrack, trackIndex, trackList]);
 
   const nextTrack = useCallback(() => {
     if (repeatType === "one") {
@@ -64,12 +71,16 @@ export function useAudioControls() {
 
     const isLastTrack = trackIndex === trackList.length - 1;
     if (isLastTrack && repeatType === "all") {
-      setTrackIndex(0);
+      setCurrentTrack(trackList[0]);
+      return;
+    } else if (isLastTrack) {
       return;
     }
 
-    setTrackIndex((prev) => Math.min(prev + 1, trackList.length - 1));
-  }, [repeatSong, repeatType, setTrackIndex, trackIndex, trackList.length]);
+    setCurrentTrack(
+      () => trackList[Math.min(trackIndex + 1, trackList.length - 1)]
+    );
+  }, [repeatSong, repeatType, setCurrentTrack, trackIndex, trackList]);
 
   const toggleRepeatType = useCallback(() => {
     setRepeatType((prev) =>

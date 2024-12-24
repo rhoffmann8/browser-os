@@ -14,6 +14,7 @@ export type Application =
   | MemoryGameApplication
   | MusicPlayerApplication
   | PDFViewerApplication
+  | StonksApplication
   | TextEditorApplication
   | VideoPlayerApplication;
 
@@ -54,7 +55,12 @@ export interface MarkdownViewerApplication extends BaseApplication {
 
 export interface VideoPlayerApplication extends BaseApplication {
   id: "video-player";
-  params: { url: string };
+  params: { url: string; start?: number };
+}
+
+export interface StonksApplication extends BaseApplication {
+  id: "stonks";
+  params: { symbol?: string };
 }
 
 export type AppId = Application["id"];
