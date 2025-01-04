@@ -1,21 +1,17 @@
-import { DesktopIcon, WidgetParams } from "../types";
-import { Application } from "../types/application";
+import { DesktopIcon, WidgetSettings } from "../types/widget";
 
-type CreateIconProps<A extends Application> = {
-  icon: Omit<DesktopIcon<A>, "id" | "widget">;
-  widget: Partial<WidgetParams<A>>;
+type CreateIconProps = {
+  icon: Omit<DesktopIcon, "id" | "widget">;
+  widget: WidgetSettings;
 };
 
-export function createIcon<A extends Application>(
-  props: CreateIconProps<A>
-): DesktopIcon<A> {
+export function createIcon(props: CreateIconProps): DesktopIcon {
   const { icon, widget } = props;
 
   return {
     id: crypto.randomUUID(),
     title: icon.title,
     description: icon.description,
-    application: icon.application,
     icon: icon.icon,
     iconClassName: icon.iconClassName,
     position: icon.position,

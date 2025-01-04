@@ -1,10 +1,7 @@
 import { css } from "@emotion/css";
 import { useCallback, useState } from "react";
 import { Box, BoxCol } from "../../components/Box";
-import {
-  ApplicationComponent,
-  MemoryGameApplication,
-} from "../../types/application";
+import { ApplicationComponent } from "../../types/application";
 import { Board } from "./Board";
 
 import "./styles.css";
@@ -21,7 +18,7 @@ const gameContainerCss = css`
   padding: 24px;
 `;
 
-export const MemoryGame: ApplicationComponent<MemoryGameApplication> = () => {
+export const MemoryGame: ApplicationComponent = () => {
   const [screen, setScreen] = useState(Screen.START);
   const [moveCount, setMoveCount] = useState(0);
 

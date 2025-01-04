@@ -1,23 +1,23 @@
 import { faFloppyDisk } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  useState,
-  useRef,
+  KeyboardEventHandler,
   MouseEventHandler,
   useCallback,
-  KeyboardEventHandler,
+  useRef,
+  useState,
 } from "react";
 import { useOutsideClick } from "rooks";
 import { Box } from "../../../../components/Box";
-import { Note } from "../../TextEditor";
+import { Widget } from "../../../../types/widget";
 import { saveIconCss, saveInputContainerCss, saveMenuCss } from "../../styles";
 
 interface Props {
-  activeFile: Note | undefined;
-  onSave: (id: string | undefined, title: string) => void;
+  widget: Widget;
+  onSave: (title: string) => void;
 }
 
-export function SaveButton({ activeFile, onSave }: Props) {
+export function SaveButton({ widget, onSave }: Props) {
   const [showSaveMenu, setShowSaveMenu] = useState(false);
   const [showSaveInput, setShowSaveInput] = useState(false);
   const [saveInput, setSaveInput] = useState("");
@@ -31,14 +31,14 @@ export function SaveButton({ activeFile, onSave }: Props) {
   const onSaveMenuSaveClick: MouseEventHandler = useCallback(
     (e) => {
       e.stopPropagation();
-      if (!activeFile) {
+      if (!widget.filePath) {
         return;
       }
 
       setShowSaveMenu(false);
-      onSave(activeFile.id, activeFile.title);
+      onSave(widget.filePath);
     },
-    [activeFile, onSave]
+    [onSave, widget.filePath]
   );
 
   const onSaveMenuSaveAsClick: MouseEventHandler = (e) => {
@@ -52,7 +52,7 @@ export function SaveButton({ activeFile, onSave }: Props) {
   };
 
   const onSaveInputSaveClick = () => {
-    onSave(undefined, saveInput);
+    onSave(`/notes/${saveInput}.txt`);
     setShowSaveMenu(false);
     setShowSaveInput(false);
     setSaveInput("");
@@ -80,7 +80,7 @@ export function SaveButton({ activeFile, onSave }: Props) {
       </button>
       {showSaveMenu && (
         <ul className={saveMenuCss} ref={saveMenuRef}>
-          {activeFile && <li onClick={onSaveMenuSaveClick}>Save</li>}
+          {widget.filePath && <li onClick={onSaveMenuSaveClick}>Save</li>}
           <li onClick={onSaveMenuSaveAsClick}>Save as...</li>
         </ul>
       )}

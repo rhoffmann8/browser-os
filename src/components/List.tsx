@@ -12,7 +12,7 @@ import {
   useState,
 } from "react";
 import { stopEvent } from "../utils/event";
-import { Position } from "../types";
+import { Position } from "../types/widget";
 import { useOutsideClick } from "rooks";
 import { Div } from "./Div";
 
@@ -49,7 +49,7 @@ export function List<T = any>(props: Props<T>) {
       ${shadow
         ? "box-shadow: 0px 1px 2px 0px var(--color-theme-secondary);"
         : ""}
-      ${border ? "bord er: 1px solid var(--color-theme-primary);" : ""}
+      ${border ? "border: 1px solid var(--color-theme-primary);" : ""}
 
       &:focus {
         outline: 1px solid #aaa;

@@ -23,3 +23,12 @@ export function toggleArrayItem<T>(arr: T[], itemToToggle: T) {
 export function wait(timeout: number) {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 }
+
+export function omitBy(
+  obj: Record<string, any>,
+  keys: UniqueIdentifier[]
+): Record<string, any> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([key]) => !keys.includes(key))
+  );
+}

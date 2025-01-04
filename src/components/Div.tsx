@@ -73,7 +73,7 @@ export const Div = forwardRef<HTMLDivElement, PropsWithChildren<DivProps>>(
         ${justifyContent ? `justify-content: ${justifyContent};` : ""}
         ${alignSelf ? `align-self: ${alignSelf};` : ""}
         ${justifySelf ? `justify-self: ${justifySelf};` : ""}
-        ${gap ? `gap: ${gap}px;` : ""}
+        ${gap ? `gap: ${typeof gap === "number" ? `${gap}px` : gap};` : ""}
 
         ${padding
           ? typeof padding === "number"

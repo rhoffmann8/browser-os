@@ -1,60 +1,34 @@
-import { useState } from "react";
 import { toast } from "react-toastify";
 import { Box } from "../../../components/Box";
-import { ChangeHandler, Widget } from "../../../types";
-import { Application, TextEditorApplication } from "../../../types/application";
+import { useSetWidgetFilePath } from "../../../state/widgetState";
+import { ChangeHandler, Widget } from "../../../types/widget";
+import { getErrorMessage } from "../../../utils/error";
 import { toolbarCss } from "../styles";
-import { Note } from "../TextEditor";
-import { deleteFile, writeFile } from "../utils";
-import { OpenButton } from "./toolbar-buttons/OpenButton";
+import { saveFile } from "../utils";
 import { SaveButton } from "./toolbar-buttons/SaveButton";
 
-interface Props<A extends Application> {
-  widget: Widget<A>;
-  defaultActiveFile: Note | undefined;
+interface Props {
+  widget: Widget;
   content: string;
   onContentChange: ChangeHandler<string>;
 }
 
-export function Toolbar<A extends Application>({
-  widget,
-  defaultActiveFile,
-  content,
-  onContentChange,
-}: Props<A>) {
-  const [activeFile, setActiveFile] = useState<Note | undefined>(
-    defaultActiveFile
-  );
+export function Toolbar({ widget, content }: Props) {
+  const { id } = widget;
+  const setWidgetFilePath = useSetWidgetFilePath();
 
   return (
     <Box className={toolbarCss}>
       <SaveButton
-        activeFile={activeFile}
-        onSave={(id, title) => {
-          const savedFile = writeFile(id, title, content);
-          setActiveFile(savedFile);
-          widget.setTitle(title);
-          widget.setApplication({
-            ...widget.application,
-            params: { ...widget.application.params, activeFile: savedFile },
-          } as TextEditorApplication);
-
-          toast.success(`${savedFile.title} saved`, { autoClose: 2000 });
-        }}
-      />
-      <OpenButton
-        onDeleteFile={(note) => {
-          deleteFile(note.id);
-          if (note.id === activeFile?.id) {
-            setActiveFile(undefined);
-            widget.setTitle("<unsaved>");
+        widget={widget}
+        onSave={async (path) => {
+          try {
+            await saveFile(`${path}`, content);
+            setWidgetFilePath(id, path);
+            toast.success(`${path} saved`, { autoClose: 2000 });
+          } catch (e) {
+            toast.error(`Failed to save file: ${getErrorMessage(e)}`);
           }
-          toast.success(`${note.title} deleted`, { autoClose: 2000 });
-        }}
-        onOpen={(note) => {
-          setActiveFile(note);
-          onContentChange(note.content);
-          widget.setTitle(note.title);
         }}
       />
     </Box>

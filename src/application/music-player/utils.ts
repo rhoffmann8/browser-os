@@ -26,15 +26,18 @@ export async function parseUploadedFiles(
   const validFiles = [...files].filter((file) => file.type.startsWith("audio"));
   await Promise.all(
     [...validFiles].map(async (file) => {
+      let tags: ID3Tag | null = null;
       try {
-        const tags = await id3.fromFile(file);
-        const src = URL.createObjectURL(file);
-        const alreadyUploaded = trackList.find((t) => t.src === src);
-        if (!alreadyUploaded) {
-          filesToAdd.push({ tags, src, title: tags?.title ?? file.name });
-        }
+        tags = await id3.fromFile(file);
       } catch (e) {
-        toast.error(`Error uploading file ${file.name}: ${getErrorMessage(e)}`);
+        toast.error(
+          `Error reading tags for ${file.name}: ${getErrorMessage(e)}`
+        );
+      }
+      const src = URL.createObjectURL(file);
+      const alreadyUploaded = trackList.find((t) => t.src === src);
+      if (!alreadyUploaded) {
+        filesToAdd.push({ tags, src, title: tags?.title ?? file.name });
       }
     })
   );

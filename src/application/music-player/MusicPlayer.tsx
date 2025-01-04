@@ -1,58 +1,28 @@
 import { css } from "@emotion/css";
-import { useEffect, useMemo, useRef, useState } from "react";
+import * as id3 from "id3js";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { Box, BoxCol } from "../../components/Box";
-import {
-  ApplicationComponent,
-  MusicPlayerApplication,
-} from "../../types/application";
+import { ApplicationComponent } from "../../types/application";
 import { Controls } from "./components/controls/Controls";
 import { ProgressBar } from "./components/controls/ProgressBar";
 import { TrackDisplay } from "./components/TrackDisplay";
 import { TrackList } from "./components/TrackList";
 
-import track5 from "/music/majestic-sky-healing-meditative-cello-and-piano-230090.mp3";
-import track1 from "/music/meditation-ambience-262905.mp3";
-import track2 from "/music/meditation-for-relax-new-age-ambient-meditative-241462.mp3";
-import track3 from "/music/nirvikalpa-new-age-ambient-meditative-227882.mp3";
-import track4 from "/music/weightlessness-213970.mp3";
-
-import { AudioPlayerContext, Track } from "./context/AudioPlayerContext";
+import { ID3Tag } from "id3js/lib/id3Tag";
+import {
+  useSetWidgetDimensions,
+  useWidgetStore,
+} from "../../state/widgetState";
 import { AddTrack } from "./components/AddTrack";
+import { AudioPlayerContext, Track } from "./context/AudioPlayerContext";
 
-const tracks: Track[] = [
-  {
-    title: "Meditation Ambience",
-    src: track1,
-    author: "Josef Surikov",
-  },
-  {
-    title: "Meditation For Relax",
-    src: track2,
-    author: "Ashot Danielyan",
-  },
-  {
-    title: "Nirvikalpa",
-    src: track3,
-    author: "Ashot Danielyan",
-  },
-  {
-    title: "Weightlessness",
-    src: track4,
-    author: "Sergei Chetvertnykh",
-  },
-  {
-    title: "Majestic Sky",
-    src: track5,
-    author: "Noru",
-  },
-];
+export const MusicPlayer: ApplicationComponent = ({ widget }) => {
+  const { filePath } = widget;
+  const [prevFilePath, setPrevFilePath] = useState<string | undefined>();
+  const [trackList, setTrackList] = useState<Track[]>([]);
 
-export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
-  widget,
-}) => {
-  const [trackList, setTrackList] = useState<Track[]>(tracks);
-  const [currentTrack, setCurrentTrack] = useState<Track>();
+  const [currentTrack, setCurrentTrack] = useState<Track | undefined>();
   const [showTrackList, setShowTrackList] = useState(false);
   const [showAddTrack, setShowAddTrack] = useState(false);
 
@@ -60,7 +30,7 @@ export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
   const [duration, setDuration] = useState(1);
   const [volume, setVolume] = useState(100);
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(!!filePath);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressBarRef = useRef<HTMLInputElement>(null);
@@ -70,10 +40,58 @@ export const MusicPlayer: ApplicationComponent<MusicPlayerApplication> = ({
     [currentTrack, trackList]
   );
 
+  const setTitle = useWidgetStore((state) => state.setWidgetTitle);
+  const setWidgetDimensions = useSetWidgetDimensions();
+
+  const loadFromFilePath = useCallback(async () => {
+    if (!filePath) return;
+    let tags: ID3Tag | null = null;
+    try {
+      tags = await id3.fromUrl(filePath);
+    } catch {
+      // toast.error("Error loading tags: " + getErrorMessage(e));
+    }
+
+    const trackFromFilePath: Track | undefined = filePath
+      ? {
+          src: filePath,
+          title: tags?.title ?? filePath.split("/").at(-1)!,
+          author: tags?.artist ?? "",
+        }
+      : undefined;
+
+    if (trackFromFilePath) {
+      setTrackList((prev) =>
+        prev.find((t) => t.src === trackFromFilePath.src)
+          ? prev
+          : prev.concat(trackFromFilePath)
+      );
+
+      setTimeout(() => {
+        const existingTrack = trackList.find(
+          (t) => t.src === trackFromFilePath.src
+        );
+        setCurrentTrack(existingTrack ?? trackFromFilePath);
+        setIsPlaying(true);
+      });
+    }
+  }, [filePath, trackList]);
+
   useEffect(() => {
-    widget.setTitle(trackList[trackIndex]?.title ?? "");
+    if (prevFilePath !== filePath) {
+      loadFromFilePath();
+      setPrevFilePath(filePath);
+    }
+  }, [filePath, loadFromFilePath, prevFilePath]);
+
+  useEffect(() => {
+    setTitle(widget.id, trackList[trackIndex]?.title ?? "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trackList, trackIndex, widget.setTitle]);
+  }, [trackList, trackIndex, widget.id]);
+
+  useEffect(() => {
+    setWidgetDimensions(widget.id, { width: 340 });
+  }, [setWidgetDimensions, widget.id]);
 
   useEffect(() => {
     if (!currentTrack) {

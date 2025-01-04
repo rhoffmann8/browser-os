@@ -2,7 +2,7 @@ import { css } from "@emotion/css";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { useOutsideClick } from "rooks";
 import { useContextMenuStore } from "../state/contextMenuState";
-import { Position } from "../types";
+import { Position } from "../types/widget";
 import { ZIndex } from "../constants/constants";
 
 const menuCss = css`

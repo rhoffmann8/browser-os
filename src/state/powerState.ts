@@ -26,15 +26,16 @@ export const usePowerStore = create<PowerState>((set) => {
       set({ powerState: PowerEnum.On });
     },
     powerOff: async () => {
-      toast.info("Powering off...", { autoClose: 500 });
+      toast.info("Powering off...", { autoClose: 250 });
       set({ powerState: PowerEnum.PoweringOff });
-      await wait(1200);
+      await wait(750);
       set({ powerState: PowerEnum.Off });
     },
     reboot: async () => {
       toast.info("Restarting...", { autoClose: 500 });
       set({ powerState: PowerEnum.Rebooting });
-      await wait(1000);
+      await wait(500);
+      localStorage.clear();
       window.location.reload();
     },
   };

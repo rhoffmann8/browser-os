@@ -1,16 +1,18 @@
 import { useEffect } from "react";
-import {
-  ApplicationComponent,
-  ExternalLinkApplication,
-} from "../../types/application";
+import { ApplicationComponent } from "../../types/application";
+import { useWidgetStore } from "../../state/widgetState";
 
-export const ExternalLink: ApplicationComponent<ExternalLinkApplication> = ({
-  widget: appWindow,
-  params: { url },
-}) => {
+export const ExternalLink: ApplicationComponent = ({ widget: widget }) => {
+  const {
+    id,
+    params: { url },
+  } = widget;
+
+  const close = useWidgetStore((state) => state.closeWidget);
+
   useEffect(() => {
     window.open(url);
-    appWindow.close();
+    close(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

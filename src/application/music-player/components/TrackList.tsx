@@ -163,7 +163,9 @@ function Track({ track }: { track: Track }) {
       ref={ref}
       key={track.title}
       style={{ position: "relative" }}
-      className={cx(trackCss, "track", { active: currentTrack === track })}
+      className={cx(trackCss, "track", {
+        active: currentTrack?.src === track.src,
+      })}
     >
       <span title={displayName}>{displayName}</span>
       <button title="Remove" className="trash" onClick={onRemove}>

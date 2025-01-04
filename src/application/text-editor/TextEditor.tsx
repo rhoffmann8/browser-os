@@ -1,49 +1,50 @@
 import { useEffect, useRef, useState } from "react";
 import { BoxCol } from "../../components/Box";
-import { useDesktopStore } from "../../state/desktopState";
-import {
-  ApplicationComponent,
-  TextEditorApplication,
-} from "../../types/application";
+import { useAutosizeOnLoad } from "../../hooks/useAutosizeOnLoad";
+import { useWidgetStore } from "../../state/widgetState";
+import { ApplicationComponent } from "../../types/application";
 import { Toolbar } from "./components/Toolbar";
 import { editorCss } from "./styles";
+import { getFile } from "./utils";
 
 const WIDGET_TITLE_UNSAVED = "<unsaved>";
 
 export type Note = { id: string; title: string; content: string };
 
-export const TextEditor: ApplicationComponent<TextEditorApplication> = ({
-  params: { readonly, activeFile: defaultActiveFile },
-  widget,
-}) => {
-  const setWidgetTitle = useDesktopStore((state) => state.setWidgetTitle);
+export const TextEditor: ApplicationComponent = ({ widget }) => {
+  const { id, filePath } = widget;
+
+  const setWidgetTitle = useWidgetStore((state) => state.setWidgetTitle);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const [content, setContent] = useState(defaultActiveFile?.content ?? "");
+  const [content, setContent] = useState<string>("");
+
+  useAutosizeOnLoad(widget, { width: 500, height: 300 });
+
+  useEffect(() => {
+    if (!filePath) {
+      setWidgetTitle(id, WIDGET_TITLE_UNSAVED);
+      return;
+    }
+
+    getFile(filePath).then((content) => {
+      if (content) {
+        setContent(content);
+        setWidgetTitle(id, filePath?.split("/").at(-1));
+      }
+    });
+  }, [filePath, id, setWidgetTitle]);
+
+  useEffect(() => {
+    setWidgetTitle(id, filePath?.split("/").at(-1));
+  }, [id, setWidgetTitle, filePath]);
 
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 100);
   }, []);
 
-  useEffect(() => {
-    if (!defaultActiveFile) {
-      setWidgetTitle(widget.id, WIDGET_TITLE_UNSAVED);
-    } else {
-      setWidgetTitle(widget.id, defaultActiveFile.title);
-    }
-  }, [defaultActiveFile, setWidgetTitle, widget.id]);
-
-  if (readonly) {
-    return <div className={editorCss}>{content}</div>;
-  }
-
   return (
     <BoxCol fillWidth className={editorCss}>
-      <Toolbar
-        widget={widget}
-        defaultActiveFile={defaultActiveFile}
-        content={content}
-        onContentChange={setContent}
-      />
+      <Toolbar widget={widget} content={content} onContentChange={setContent} />
       <textarea
         ref={inputRef}
         placeholder="Your text goes here"

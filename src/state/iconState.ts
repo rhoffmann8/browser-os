@@ -1,24 +1,22 @@
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { create } from "zustand";
-import { DesktopIcon, Position } from "../types";
 import { StorageKeys } from "../constants/constants";
 import {
-  DEFAULT_ICONS,
+  createDefaultIcons,
   DESKTOP_ICON_HORIZONTAL_DELTA,
   DESKTOP_ICON_VERTICAL_DELTA,
 } from "../constants/icons";
-import { createDefaultIcons } from "../constants/icons";
-import { getStorageJSON } from "../utils/storage";
-import { faNoteSticky } from "@fortawesome/free-solid-svg-icons";
+import { DesktopIcon, Position } from "../types/widget";
 import { updateItemInArray } from "../utils/array";
-import { Application } from "../types/application";
+import { getStorageJSON } from "../utils/storage";
 
 interface IconState {
-  icons: DesktopIcon<Application>[];
+  icons: DesktopIcon[];
+  setIcons: (icons: DesktopIcon[]) => void;
   selectedIcons: Set<UniqueIdentifier>;
   autoLayout: (container: HTMLDivElement | null) => void;
-  addIcon: (icon: DesktopIcon<Application>) => void;
+  addIcon: (icon: DesktopIcon) => void;
   selectIcon: (id: UniqueIdentifier, append: boolean) => void;
   unselectIcon: (id: UniqueIdentifier, unappend: boolean) => void;
   unselectAll: () => void;
@@ -27,41 +25,11 @@ interface IconState {
   resetIconsToDefault: () => void;
 }
 
-// TODO: Need pointers to files
-function getNoteIcons() {
-  return [];
-
-  return (getStorageJSON(StorageKeys.NOTES) as any[]).map(
-    (note, idx) =>
-      ({
-        id: crypto.randomUUID(),
-        title: note.title,
-        application: {
-          id: "text-editor",
-          params: { activeFile: note },
-        },
-        icon: faNoteSticky,
-        position: { x: 300, y: idx * 90 + 10 },
-        widget: {
-          application: {
-            id: "text-editor",
-            params: { activeFile: note },
-          },
-          dimensions: { height: 300, width: 500 },
-          position: { x: 100, y: 100 },
-        },
-      } as DesktopIcon<Application>)
-  );
-}
-
-function autoLayoutIcons(
-  container: HTMLDivElement,
-  icons: DesktopIcon<Application>[]
-) {
+function autoLayoutIcons(container: HTMLDivElement, icons: DesktopIcon[]) {
   const rows = Math.floor(container.clientHeight / 90);
   const columns = Math.floor(container.clientWidth / 80);
 
-  const ret: DesktopIcon<Application>[] = [];
+  const ret: DesktopIcon[] = [];
   let currIconIndex = 0;
   for (let j = 0; currIconIndex < icons.length && j < columns; j++) {
     for (let i = 0; currIconIndex < icons.length && i < rows; i++) {
@@ -80,9 +48,8 @@ function autoLayoutIcons(
 }
 
 export const useIconStore = create<IconState>((set) => ({
-  icons: (getStorageJSON(StorageKeys.ICONS) ?? DEFAULT_ICONS).concat(
-    getNoteIcons()
-  ),
+  icons: getStorageJSON(StorageKeys.ICONS) ?? [],
+  setIcons: (icons) => set({ icons }),
   selectedIcons: new Set(),
   addIcon: (icon) => set((state) => ({ icons: state.icons.concat(icon) })),
   autoLayout: (container: HTMLDivElement | null) =>
@@ -124,8 +91,7 @@ export const useIconStore = create<IconState>((set) => ({
         })),
       };
     }),
-  resetIconsToDefault: () =>
-    set({ icons: createDefaultIcons().concat(getNoteIcons()) }),
+  resetIconsToDefault: () => set({ icons: createDefaultIcons() }),
 }));
 
 useIconStore.subscribe((state) => {

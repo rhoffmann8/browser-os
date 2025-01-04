@@ -1,10 +1,7 @@
 import { css } from "@emotion/css";
 import Markdown from "react-markdown";
-import {
-  ApplicationComponent,
-  MarkdownViewerApplication,
-} from "../../types/application";
 import remarkGfm from "remark-gfm";
+import { ApplicationComponent } from "../../types/application";
 
 const containerCss = css`
   height: 100%;
@@ -12,9 +9,11 @@ const containerCss = css`
   padding: 4px;
 `;
 
-export const MarkdownViewer: ApplicationComponent<
-  MarkdownViewerApplication
-> = ({ params: { content } }) => {
+export const MarkdownViewer: ApplicationComponent = ({
+  widget: {
+    params: { content },
+  },
+}) => {
   return (
     <div className={containerCss}>
       <Markdown

@@ -3,18 +3,16 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { BoxCol } from "../../components/Box";
 import { Div } from "../../components/Div";
-import {
-  ApplicationComponent,
-  VideoPlayerApplication,
-} from "../../types/application";
+import { useForceUpdate } from "../../hooks/useForceUpdate";
+import { useSetWidgetTitle } from "../../state/widgetState";
+import { ApplicationComponent } from "../../types/application";
 import { Navigation } from "./Navigation";
 import { createVideoUrl, extractVideoFromUrl, Video } from "./utils";
-import { useForceUpdate } from "../../hooks/useForceUpdate";
 
-export const VideoPlayer: ApplicationComponent<VideoPlayerApplication> = ({
-  widget,
-  params: { url: defaultUrl, start: defaultStart },
-}) => {
+export const VideoPlayer: ApplicationComponent = ({ widget }) => {
+  const {
+    params: { url: defaultUrl, start: defaultStart },
+  } = widget;
   const [undoStack, setUndoStack] = useState<Video[]>(() => {
     const { videoId, playlistId } = extractVideoFromUrl(defaultUrl) ?? {};
     return videoId
@@ -56,13 +54,15 @@ export const VideoPlayer: ApplicationComponent<VideoPlayerApplication> = ({
     });
   }, [redoStack]);
 
+  const setTitle = useSetWidgetTitle();
+
   const reactPlayerRef = useRef<ReactPlayer>(null);
   const updateWidgetTitle = useCallback(() => {
     const internalPlayer = reactPlayerRef.current?.getInternalPlayer();
     if (!internalPlayer) return;
     const { title } = internalPlayer.getVideoData();
-    widget.setTitle(title);
-  }, [widget]);
+    setTitle(widget.id, title);
+  }, [setTitle, widget.id]);
 
   const { forceUpdate, updateCount: playerKey } = useForceUpdate();
 

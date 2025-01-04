@@ -7,14 +7,14 @@ import {
 } from "@dnd-kit/core";
 
 import { PropsWithChildren, useCallback } from "react";
-import { useDesktopStore } from "../state/desktopState";
+import { useWidgetStore } from "../state/widgetState";
 
 export function WidgetDroppableContext({
   children,
 }: PropsWithChildren<{ parentRect: ClientRect | undefined }>) {
   const { setNodeRef } = useDroppable({ id: "window-droppable" });
 
-  const setWidgetPosition = useDesktopStore((state) => state.setWidgetPosition);
+  const setWidgetPosition = useWidgetStore((state) => state.setWidgetPosition);
 
   const onDragEnd = useCallback(
     (e: DragEndEvent) => {
@@ -27,7 +27,7 @@ export function WidgetDroppableContext({
         return;
       }
 
-      setWidgetPosition(e.active.id, {
+      setWidgetPosition(e.active.id as string, {
         x: translated.left,
         y: translated.top,
       });

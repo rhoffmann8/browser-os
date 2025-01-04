@@ -5,17 +5,16 @@ import cx from "classnames";
 import { Box } from "../components/Box";
 import { useTaskbarApplicationContextMenu } from "../menu/hooks/useTaskbarContextMenu";
 import { useContextMenuStore } from "../state/contextMenuState";
-import { useDesktopStore } from "../state/desktopState";
-import { Widget } from "../types";
-import { APPLICATION_MAP } from "../application";
-import { AppId, Application } from "../types/application";
+import { useWidgetStore } from "../state/widgetState";
+import { Widget } from "../types/widget";
+import { getApplicationFromId } from "../types/application";
 
 export function OpenApplications() {
-  const windows = useDesktopStore((state) => state.widgets);
+  const widgets = useWidgetStore((state) => state.widgets);
 
   return (
     <Box padding={"0 8px"} overflowY="hidden">
-      {windows.map((w) => (
+      {Object.values(widgets).map((w) => (
         <OpenApplication key={w.id} widget={w} />
       ))}
     </Box>
@@ -63,27 +62,25 @@ const closeButtonCss = css`
   }
 `;
 
-function OpenApplication<A extends Application>({
-  widget,
-}: {
-  widget: Widget<A>;
-}) {
-  const { title, application } = widget;
-
+function OpenApplication({ widget }: { widget: Widget }) {
+  const { id, title, applicationId } = widget;
+  const application = getApplicationFromId(applicationId);
   const showContextMenu = useContextMenuStore((state) => state.show);
 
+  const isActiveWidget = useWidgetStore((state) => state.isActiveWidget);
+  const moveToTop = useWidgetStore((state) => state.moveToTop);
+  const close = useWidgetStore((state) => state.closeWidget);
+
   const menuItems = useTaskbarApplicationContextMenu(widget);
-  const fullTitle = `${title ? `${title} - ` : ""}${
-    APPLICATION_MAP[application.id as AppId].title
-  }`;
+  const fullTitle = `${title ? `${title} - ` : ""}${application.title}`;
 
   return (
     <Box
       key={widget.id}
       title={fullTitle}
       gap={8}
-      className={cx(containerCss, { active: widget.isActive() })}
-      onClick={() => widget.moveToTop()}
+      className={cx(containerCss, { active: isActiveWidget(id) })}
+      onClick={() => moveToTop(id)}
       onContextMenu={(e) => {
         e.preventDefault();
         showContextMenu(menuItems, { x: e.clientX, y: e.clientY });
@@ -97,7 +94,7 @@ function OpenApplication<A extends Application>({
         className={closeButtonCss}
         onClick={(e) => {
           e.stopPropagation();
-          widget.close();
+          close(id);
         }}
       >
         <FontAwesomeIcon icon={faXmark} />

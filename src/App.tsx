@@ -1,11 +1,25 @@
-import { PropsWithChildren, useEffect } from "react";
 import { BrowserView, MobileView } from "react-device-detect";
-import { Slide, toast, ToastContainer } from "react-toastify";
+import { Slide, ToastContainer } from "react-toastify";
 import { ZIndex } from "./constants/constants";
-import { Mobile } from "./views/MobileView";
 import { DesktopView } from "./views/DesktopView";
+import { Mobile } from "./views/MobileView";
+import { ErrorBoundary } from "./system/components/ErrorBoundary";
+import { InitializationBoundary } from "./system/components/InitializationBoundary";
+import { configureSingle } from "@zenfs/core";
+import { WebStorage } from "@zenfs/dom";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [backendInitialized, setBackendInitialized] = useState(false);
+
+  useEffect(() => {
+    configureSingle({ backend: WebStorage }).then(() =>
+      setBackendInitialized(true)
+    );
+  }, []);
+
+  if (!backendInitialized) return null;
+
   return (
     <>
       <ToastContainer
@@ -17,31 +31,18 @@ function App() {
         style={{ zIndex: ZIndex.Toast }}
       />
       <ErrorBoundary>
-        <BrowserView>
-          <DesktopView />
-        </BrowserView>
+        <InitializationBoundary>
+          <BrowserView>
+            <DesktopView />
+          </BrowserView>
 
-        <MobileView>
-          <Mobile />
-        </MobileView>
+          <MobileView>
+            <Mobile />
+          </MobileView>
+        </InitializationBoundary>
       </ErrorBoundary>
     </>
   );
-}
-
-function ErrorBoundary({ children }: PropsWithChildren) {
-  useGlobalErrorHandling();
-
-  return <>{children}</>;
-}
-
-function useGlobalErrorHandling() {
-  useEffect(() => {
-    const listener = (e: ErrorEvent) => toast.error(e.message);
-    window.addEventListener("error", listener);
-
-    return () => window.removeEventListener("error", listener);
-  }, []);
 }
 
 export default App;

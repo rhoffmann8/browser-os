@@ -1,30 +1,40 @@
 import { useDraggable } from "@dnd-kit/core";
 import { css } from "@emotion/css";
 import { useCallback, useState } from "react";
-import { getApplicationComponentFromId } from "../application";
 import { BoxCol } from "../components/Box";
-import { useDesktopStore } from "../state/desktopState";
-import { Delta, Widget as WidgetType } from "../types";
-import { AppId, Application, ApplicationComponent } from "../types/application";
+import {
+  useCloseWidget,
+  useIsActiveWidget,
+  useMoveWidgetToTop,
+  useSetWidgetDimensions,
+  useWidgetStore,
+} from "../state/widgetState";
+import { Delta, Widget as WidgetType } from "../types/widget";
 import { WidgetButtons } from "./WidgetButtons";
 import { WidgetContent } from "./WidgetContent";
 import { WidgetHandle } from "./WidgetHandle";
 import { WidgetResizeContainer } from "./WidgetResizeContainer";
+import { getApplicationFromId } from "../types/application";
 
 export function Widget({ widget }: { widget: WidgetType }) {
   const {
     id,
     position,
-    application,
-    resizable,
+    applicationId,
+    isResizable: resizable,
     dimensions: { height, width } = {},
     stackIndex,
   } = widget;
 
+  const close = useCloseWidget();
+  const isActiveWidget = useIsActiveWidget();
+  const moveToTop = useMoveWidgetToTop();
+  const setWidgetDimensions = useSetWidgetDimensions();
+
   const { attributes, listeners, setNodeRef, transform, setActivatorNodeRef } =
     useDraggable({ id });
 
-  const resizeWindow = useDesktopStore((state) => state.resizeWidget);
+  const resizeWindow = useWidgetStore((state) => state.resizeWidget);
 
   const draggableStyle = transform
     ? {
@@ -40,9 +50,9 @@ export function Widget({ widget }: { widget: WidgetType }) {
       widget.dimensions?.width === undefined
     ) {
       const dims = containerRef.getBoundingClientRect();
-      widget.resize({ height: dims.height, width: dims.width });
+      setWidgetDimensions(id, { height: dims.height, width: dims.width });
     }
-  }, [containerRef, widget]);
+  }, [containerRef, id, setWidgetDimensions, widget]);
 
   const onWidgetResize = useCallback(
     (delta: Partial<Delta>) => {
@@ -54,9 +64,7 @@ export function Widget({ widget }: { widget: WidgetType }) {
     [id, resizeWindow, setInitialDims]
   );
 
-  const AppComponent = getApplicationComponentFromId(
-    application.id as AppId
-  ) as ApplicationComponent<Application>;
+  const AppComponent = getApplicationFromId(applicationId).component;
 
   return (
     <div
@@ -66,14 +74,14 @@ export function Widget({ widget }: { widget: WidgetType }) {
       }}
       className={windowCss}
       onContextMenu={(e) => e.stopPropagation()}
-      onMouseDown={() => widget.moveToTop()}
+      onMouseDown={() => moveToTop(id)}
       style={{
         height,
         width,
         top: position?.y ?? 0,
         left: position?.x ?? 0,
         zIndex: stackIndex,
-        filter: widget.isActive() ? undefined : "brightness(0.95)",
+        filter: isActiveWidget(id) ? undefined : "brightness(0.95)",
         ...draggableStyle,
       }}
     >
@@ -90,10 +98,10 @@ export function Widget({ widget }: { widget: WidgetType }) {
               attributes={attributes}
               listeners={listeners}
             />
-            <WidgetButtons onClose={() => widget.close()} />
+            <WidgetButtons onClose={() => close(id)} />
           </div>
           <WidgetContent>
-            <AppComponent params={application.params} widget={widget} />
+            <AppComponent widget={widget} />
           </WidgetContent>
         </BoxCol>
       </WidgetResizeContainer>

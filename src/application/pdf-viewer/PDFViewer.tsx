@@ -1,37 +1,25 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Document, Outline, Page, pdfjs } from "react-pdf";
-import {
-  ApplicationComponent,
-  PDFViewerApplication,
-} from "../../types/application";
+import { ApplicationComponent } from "../../types/application";
 
 import { css } from "@emotion/css";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { PageCallback } from "react-pdf/dist/esm/shared/types.js";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import { Box } from "../../components/Box";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export const PDFViewer: ApplicationComponent<PDFViewerApplication> = ({
-  params: { src },
-  widget,
-}) => {
+export const PDFViewer: ApplicationComponent = ({ widget }) => {
+  const {
+    params: { src },
+  } = widget;
   const [, setNumPages] = useState<number>();
   const [pageNumber] = useState<number>(1);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
-  }
-
-  const initializedRef = useRef(false);
-  function onPageLoadSuccess({ height, width }: PageCallback) {
-    if (!initializedRef.current) {
-      initializedRef.current = true;
-      widget.resize({ height, width });
-    }
   }
 
   const loadingEl = useMemo(
@@ -51,11 +39,7 @@ export const PDFViewer: ApplicationComponent<PDFViewerApplication> = ({
         loading={loadingEl}
       >
         <Outline />
-        <Page
-          pageNumber={pageNumber}
-          onLoadSuccess={onPageLoadSuccess}
-          height={widget.dimensions?.height}
-        />
+        <Page pageNumber={pageNumber} height={widget.dimensions?.height} />
       </Document>
       <button
         title="Download"

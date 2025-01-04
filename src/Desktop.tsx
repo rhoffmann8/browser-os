@@ -6,19 +6,19 @@ import {
   useEffect,
   useRef,
 } from "react";
-import { IconDroppableContext } from "./droppable/IconDroppableContext";
-import { WidgetDroppableContext } from "./droppable/WidgetDroppableContext";
-import { DraggableIcon } from "./icon/DraggableIcon";
-import { useDesktopContextMenu } from "./menu/hooks/useDesktopContextMenu";
-import { useIconContextMenu } from "./menu/hooks/useIconContextMenu";
-import { useContextMenuStore } from "./state/contextMenuState";
-import { useDesktopStore } from "./state/desktopState";
-import { useIconStore } from "./state/iconState";
-import { Widget } from "./widget/Widget";
 import {
   DESKTOP_ICON_HORIZONTAL_DELTA,
   DESKTOP_ICON_VERTICAL_DELTA,
 } from "./constants/icons";
+import { IconDroppableContext } from "./droppable/IconDroppableContext";
+import { WidgetDroppableContext } from "./droppable/WidgetDroppableContext";
+import { Draggable } from "./components/Draggable";
+import { useDesktopContextMenu } from "./menu/hooks/useDesktopContextMenu";
+import { useContextMenuStore } from "./state/contextMenuState";
+import { loadWidgets, useWidgetStore } from "./state/widgetState";
+import { useIconStore } from "./state/iconState";
+import { Widget } from "./widget/Widget";
+import { DesktopIcon } from "./icon/DesktopIcon";
 
 const desktopCss = css`
   flex: 1;
@@ -30,23 +30,29 @@ const desktopCss = css`
 `;
 
 export function Desktop() {
-  const widgets = useDesktopStore((state) => state.widgets);
-  const background = useDesktopStore((state) => state.background);
+  const widgets = useWidgetStore((state) => state.widgets);
+  const setWidgets = useWidgetStore((state) => state.setWidgets);
+  const background = useWidgetStore((state) => state.background);
   const icons = useIconStore((state) => state.icons);
   const selectedIcons = useIconStore((state) => state.selectedIcons);
   const setIconPosition = useIconStore((state) => state.setIconPosition);
   const showContextMenu = useContextMenuStore((state) => state.show);
+  const addWidget = useWidgetStore((state) => state.addWidget);
+
+  useEffect(() => {
+    setWidgets(loadWidgets());
+  }, [setWidgets]);
 
   const desktopRef = useRef<HTMLDivElement>(null);
-  const iconContextMenuItems = useIconContextMenu();
+  // const iconContextMenuItems = useIconContextMenu();
   const desktopContextMenuItems = useDesktopContextMenu(desktopRef.current);
 
-  const onContextMenu = useCallback(
-    (pos: { x: number; y: number }) => {
-      showContextMenu(iconContextMenuItems, pos);
-    },
-    [iconContextMenuItems, showContextMenu]
-  );
+  // const onContextMenu = useCallback(
+  //   (pos: { x: number; y: number }) => {
+  //     showContextMenu(iconContextMenuItems, pos);
+  //   },
+  //   [iconContextMenuItems, showContextMenu]
+  // );
 
   const onViewportContextMenu: MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
@@ -80,6 +86,8 @@ export function Desktop() {
 
   const { onDrop, onDragOver } = useExternalDroppable();
 
+  const selectIcon = useIconStore((state) => state.selectIcon);
+
   return (
     <div
       ref={desktopRef}
@@ -90,18 +98,26 @@ export function Desktop() {
     >
       <IconDroppableContext onContextMenu={onViewportContextMenu}>
         {icons.map((icon) => (
-          <DraggableIcon
+          <Draggable
             key={icon.id}
-            icon={icon}
-            selected={selectedIcons.has(icon.id)}
-            onContextMenu={onContextMenu}
-          />
+            id={icon.id}
+            left={icon.position.x}
+            top={icon.position.y}
+          >
+            <DesktopIcon
+              icon={icon}
+              selected={selectedIcons.has(icon.id)}
+              onClick={selectIcon}
+              // onContextMenu={onContextMenu}
+              onDoubleClick={addWidget}
+            />
+          </Draggable>
         ))}
 
         <WidgetDroppableContext
           parentRect={desktopRef.current?.getBoundingClientRect()}
         >
-          {widgets.map((widget) => (
+          {Object.values(widgets).map((widget) => (
             <Widget key={widget.id} widget={widget} />
           ))}
         </WidgetDroppableContext>

@@ -1,11 +1,16 @@
 import { useDraggable } from "@dnd-kit/core";
-import { DesktopIcon, IconProps } from "./DesktopIcon";
-import { Application } from "../types/application";
+import { PropsWithChildren } from "react";
 
-export function DraggableIcon<A extends Application>(props: IconProps<A>) {
-  const { icon } = props;
+interface DraggableProps {
+  id: string;
+  left: number;
+  top: number;
+}
+
+export function Draggable(props: PropsWithChildren<DraggableProps>) {
+  const { id, left, top, children } = props;
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: icon.id,
+    id: id,
   });
 
   const draggableStyle = transform
@@ -19,14 +24,14 @@ export function DraggableIcon<A extends Application>(props: IconProps<A>) {
       ref={setNodeRef}
       style={{
         position: "absolute",
-        top: icon.position.y,
-        left: icon.position.x,
+        top,
+        left,
         ...draggableStyle,
       }}
       {...listeners}
       {...attributes}
     >
-      <DesktopIcon {...props} />
+      {children}
     </div>
   );
 }

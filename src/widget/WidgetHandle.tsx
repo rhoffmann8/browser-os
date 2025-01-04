@@ -2,9 +2,8 @@ import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { css } from "@emotion/css";
 import { forwardRef } from "react";
-import { Widget } from "../types";
-import { APPLICATION_MAP } from "../application";
-import { AppId, Application } from "../types/application";
+import { Widget } from "../types/widget";
+import { getApplicationFromId } from "../types/application";
 
 const handleCss = css`
   flex: 1;
@@ -16,17 +15,16 @@ const handleCss = css`
   text-overflow: ellipsis;
 `;
 
-interface Props<A extends Application> {
-  widget: Widget<A>;
+interface Props {
+  widget: Widget;
   attributes: DraggableAttributes;
   listeners?: SyntheticListenerMap;
 }
 
-export const WidgetHandle = forwardRef<HTMLDivElement, Props<Application>>(
-  ({ widget: { title, application }, attributes, listeners }, ref) => {
-    const displayTitle = `${title ? `${title} - ` : ""}${
-      APPLICATION_MAP[application.id as AppId].title
-    }`;
+export const WidgetHandle = forwardRef<HTMLDivElement, Props>(
+  ({ widget: { title, applicationId }, attributes, listeners }, ref) => {
+    const application = getApplicationFromId(applicationId);
+    const displayTitle = `${title ? `${title} - ` : ""}${application.title}`;
     return (
       <div
         ref={ref}
