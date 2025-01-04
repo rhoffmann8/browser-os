@@ -37,6 +37,7 @@ const startButtonCss = css`
   color: white;
   font-size: 1rem;
   padding: 0 24px;
+  transition: opacity 100ms ease-in-out;
 
   &:hover {
     opacity: 0.75;
@@ -73,7 +74,7 @@ export function Taskbar() {
 
   return (
     <div ref={containerRef}>
-      {showMenu && <StartMenu onItemClick={onItemClick} />}
+      <StartMenu show={showMenu} onItemClick={onItemClick} />
       <Box className={taskbarCss} justifyContent="space-between">
         <Box overflowX="hidden">
           <button

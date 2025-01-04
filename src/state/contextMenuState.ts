@@ -1,10 +1,11 @@
 import { create } from "zustand";
-import { Position } from "../types";
+import { Position } from "../types/widget";
 import { ReactNode } from "react";
 
 export type ContextMenuItem = {
   id: string;
   title: ReactNode;
+  disabled?: boolean;
   onClick: (...args: any[]) => any;
 };
 

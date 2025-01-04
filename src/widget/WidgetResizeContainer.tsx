@@ -1,7 +1,9 @@
 import { css } from "@emotion/css";
 import { PropsWithChildren, useCallback, useMemo, useRef } from "react";
-import { Delta, Widget } from "../types";
+import { Delta, Widget } from "../types/widget";
 import cx from "classnames";
+
+const RESIZE_HANDLE_WIDTH = 2;
 
 const boxCss = css`
   height: 100%;
@@ -128,11 +130,11 @@ export function WidgetResizeContainer({
       className={boxCss}
       style={{
         // if width provided, shrink to width (avoids needing overflow: hidden on title)
-        gridTemplateColumns: `2px ${
+        gridTemplateColumns: `${RESIZE_HANDLE_WIDTH}px ${
           typeof widget.dimensions?.width === "number"
-            ? `${widget.dimensions.width}px`
+            ? `${widget.dimensions.width - RESIZE_HANDLE_WIDTH * 2}px`
             : "auto"
-        } 2px`,
+        } ${RESIZE_HANDLE_WIDTH}px`,
       }}
     >
       {handles.slice(0, 4)}

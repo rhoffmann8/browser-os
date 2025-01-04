@@ -1,28 +1,19 @@
 import { ContextMenuItem } from "../../state/contextMenuState";
-import { useIconStore } from "../../state/iconState";
-import * as faIcons from "@fortawesome/free-regular-svg-icons";
+import { fsAsync, getFileType } from "../../system/utils/fs";
+import { DesktopIcon } from "../../types/widget";
 
-const allIcons = Object.keys(faIcons)
-  .filter((key) => key !== "fas" && key !== "prefix")
-  .map((icon) => (faIcons as any)[icon]);
-
-export function useIconContextMenu(): ContextMenuItem[] {
-  const selectedIcons = useIconStore((state) => state.selectedIcons);
-  const updateIconImage = useIconStore((state) => state.updateIconImage);
-
+export function useIconContextMenu(icon: DesktopIcon): ContextMenuItem[] {
   return [
-    // { id: "icon-rename", title: "Rename", onClick: () => {} },
-    {
-      id: "icon-randomize-icon",
-      title: "Randomize icon",
-      onClick: () => {
-        Array.from(selectedIcons).map((iconId) =>
-          updateIconImage(
-            iconId,
-            allIcons[Math.floor(Math.random() * allIcons.length)]
-          )
-        );
-      },
-    },
+    ...(getFileType(icon.widget.filePath)
+      ? [
+          {
+            id: "icon-delete",
+            title: "Delete",
+            onClick: async () => {
+              fsAsync.deleteFile(icon.widget.filePath!);
+            },
+          },
+        ]
+      : []),
   ];
 }

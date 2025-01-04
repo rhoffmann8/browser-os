@@ -6,9 +6,7 @@ export function randomRgba(opacity: number) {
 }
 
 export function setBackgroundOpacity(bgColor: string, opacity: number) {
-  return `color-mix(in srgb, ${bgColor} ${Math.floor(
-    opacity * 100
-  )}%, transparent)`;
+  return `color-mix(in srgb, ${bgColor} ${Math.floor(opacity * 100)}%, #111)`;
 }
 
 export function getButtonBackgroundGradientStyles(

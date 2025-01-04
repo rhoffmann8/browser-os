@@ -6,33 +6,35 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Transition } from "react-transition-group";
 import { Box, BoxCol } from "../../components/Box";
 import { ZIndex } from "../../constants/constants";
-import { LINKEDIN_LINK_APPLICATION } from "../../constants/applications";
-import { GITHUB_LINK_APPLICATION } from "../../constants/applications";
-import { RESUME_PDF_APPLICATION } from "../../constants/applications";
-import { useDesktopStore } from "../../state/desktopState";
+import { useAddWidget } from "../../state/widgetState";
+import { WidgetSettings } from "../../types/widget";
 import { Avatar } from "./Avatar";
 import { PowerButtons } from "./PowerButtons";
-import { WidgetParams } from "../../types";
-import { Application } from "../../types/application";
+import { ApplicationId } from "../../types/application";
+import { useRef } from "react";
 
-const widgets: (WidgetParams<Application> & { icon: IconDefinition })[] = [
+const widgets: (WidgetSettings & { icon: IconDefinition })[] = [
   {
     position: { x: 100, y: 40 },
-    application: RESUME_PDF_APPLICATION,
+    applicationId: ApplicationId.PDFViewer,
+    params: { src: "/Hoffmann_Resume.pdf" },
     title: "Resume",
     icon: faFilePdf,
   },
   {
     dimensions: { height: 0, width: 0 },
     position: { x: 0, y: 0 },
-    application: GITHUB_LINK_APPLICATION,
+    applicationId: ApplicationId.ExternalLink,
+    params: { url: "https://github.com/rhoffmann8" },
     title: "Github",
     icon: faGithub,
   },
   {
-    application: LINKEDIN_LINK_APPLICATION,
+    applicationId: ApplicationId.ExternalLink,
+    params: { url: "https://linkedin.com/in/rhoffmann8" },
     dimensions: { height: 0, width: 0 },
     position: { x: 0, y: 0 },
     title: "LinkedIn",
@@ -40,34 +42,71 @@ const widgets: (WidgetParams<Application> & { icon: IconDefinition })[] = [
   },
 ];
 
-export function StartMenu({ onItemClick }: { onItemClick: () => void }) {
-  const addWidget = useDesktopStore((state) => state.addWidget);
+const duration = 100;
+
+const transitionStyles = {
+  entering: { transform: "translateY(100%)", opacity: 0 },
+  entered: { transform: "translateY(0)", opacity: 1 },
+  exiting: { transform: "translateY(0)", opacity: 1 },
+  exited: { transform: "translateY(100%)", opacity: 0 },
+  unmounted: { transform: "translateY(100%)", opacity: 0 },
+};
+
+const defaultStyle = {
+  transition: `all ${duration}ms ease-out`,
+  transform: "translateY(100%)",
+  opacity: 0,
+};
+
+interface Props {
+  show: boolean;
+  onItemClick: () => void;
+}
+
+export function StartMenu({ show, onItemClick }: Props) {
+  const addWidget = useAddWidget();
+
+  const nodeRef = useRef(null);
 
   return (
-    <Box className={menuCss}>
-      <BoxCol justifyContent="space-between" gap={4} padding="0 4px 4px 4px">
-        <Avatar />
-        <PowerButtons />
-      </BoxCol>
-      <BoxCol padding={"0 0 6rem 0"} style={{ borderLeft: "1px solid #333" }}>
-        <ul>
-          {widgets.map((widget, index) => (
-            <li
-              key={index}
-              onClick={() => {
-                addWidget(widget);
-                onItemClick();
-              }}
-            >
-              <Box alignItems="center" gap={12}>
-                <FontAwesomeIcon icon={widget.icon} size="xl" />
-                <span>{widget.title}</span>
-              </Box>
-            </li>
-          ))}
-        </ul>
-      </BoxCol>
-    </Box>
+    <Transition nodeRef={nodeRef} in={show} timeout={duration}>
+      {(state) => (
+        <Box
+          className={menuCss}
+          style={{ ...defaultStyle, ...transitionStyles[state] }}
+        >
+          <BoxCol
+            justifyContent="space-between"
+            gap={4}
+            padding="0 4px 4px 4px"
+          >
+            <Avatar />
+            <PowerButtons />
+          </BoxCol>
+          <BoxCol
+            padding={"0 0 6rem 0"}
+            style={{ borderLeft: "1px solid #333" }}
+          >
+            <ul>
+              {widgets.map((widget, index) => (
+                <li
+                  key={index}
+                  onClick={() => {
+                    addWidget(widget);
+                    onItemClick();
+                  }}
+                >
+                  <Box alignItems="center" gap={12}>
+                    <FontAwesomeIcon icon={widget.icon} size="xl" />
+                    <span>{widget.title}</span>
+                  </Box>
+                </li>
+              ))}
+            </ul>
+          </BoxCol>
+        </Box>
+      )}
+    </Transition>
   );
 }
 
@@ -76,7 +115,7 @@ const menuCss = css`
   left: 0;
   bottom: 2rem;
 
-  border-radius: none;
+  border-radius: 0;
   overflow: hidden;
 
   z-index: ${ZIndex.StartMenu};

@@ -7,8 +7,8 @@ import {
 } from "../../constants/constants";
 import { ContextMenuItem } from "../../state/contextMenuState";
 import { useTaskbarStore } from "../../state/taskbarState";
-import { Widget } from "../../types";
-import { Application } from "../../types/application";
+import { useWidgetStore } from "../../state/widgetState";
+import { Widget } from "../../types/widget";
 
 const taskbarItemCss = css`
   display: flex;
@@ -47,19 +47,22 @@ export function useTaskbarContextMenu(): ContextMenuItem[] {
   ];
 }
 
-export function useTaskbarApplicationContextMenu<A extends Application>(
-  widget: Widget<A>
+export function useTaskbarApplicationContextMenu(
+  widget: Widget
 ): ContextMenuItem[] {
+  const setWidgetPosition = useWidgetStore((state) => state.setWidgetPosition);
+  const closeWidget = useWidgetStore((state) => state.closeWidget);
+
   return [
     {
       id: "taskbar-recenter-window",
       title: "Reset position",
-      onClick: () => widget.setPosition({ x: 10, y: 10 }),
+      onClick: () => setWidgetPosition(widget.id, { x: 10, y: 10 }),
     },
     {
       id: "taskbar-close-window",
       title: "Close window",
-      onClick: () => widget.close(),
+      onClick: () => closeWidget(widget.id),
     },
   ];
 }

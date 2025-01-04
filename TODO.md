@@ -1,0 +1,4 @@
+- Integrate explorer component into desktop
+- Rethink icon positioning logic
+- Drag and drop files from external source
+- File operations (cut/copy/rename)

@@ -11,7 +11,7 @@ export function PowerButtons() {
 
   return (
     <BoxCol className={powerButtonsCss} gap={4}>
-      <button title="Restart" onClick={reboot}>
+      <button title="Restart (will reset all saved state)" onClick={reboot}>
         <FontAwesomeIcon icon={faRotateLeft} size="1x" />
       </button>
       <button title="Power off" onClick={powerOff}>
@@ -30,7 +30,7 @@ const powerButtonsCss = css`
   button {
     padding: 6px 8px;
     border-radius: 0.4rem;
-    box-shadow: 0 1px 1px 1px black;
+    box-shadow: 0 1px 1px 1px #222;
 
     &:hover {
       opacity: 0.75;

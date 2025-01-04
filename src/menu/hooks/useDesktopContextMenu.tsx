@@ -1,10 +1,10 @@
-import { useDesktopStore } from "../../state/desktopState";
+import { useWidgetStore } from "../../state/widgetState";
 import { useIconStore } from "../../state/iconState";
 import { randomRgba } from "../../utils/style";
 
 export function useDesktopContextMenu(desktopEl: HTMLDivElement | null) {
-  const setBackground = useDesktopStore((state) => state.setBackground);
-  const closeAll = useDesktopStore((state) => state.closeAll);
+  const setBackground = useWidgetStore((state) => state.setBackground);
+  const closeAll = useWidgetStore((state) => state.closeAll);
   const autoLayout = useIconStore((state) => state.autoLayout);
   const resetIconsToDefault = useIconStore(
     (state) => state.resetIconsToDefault
@@ -33,14 +33,6 @@ export function useDesktopContextMenu(desktopEl: HTMLDivElement | null) {
       id: "close-all-windows",
       title: "Close all windows",
       onClick: closeAll,
-    },
-    {
-      id: "reset-application-state",
-      title: "Reset all saved state",
-      onClick: () => {
-        localStorage.clear();
-        window.location.reload();
-      },
     },
   ].filter((i) => i.id !== "icons-auto-layout");
 }

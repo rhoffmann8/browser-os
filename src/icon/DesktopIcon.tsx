@@ -1,12 +1,15 @@
 import { css } from "@emotion/css";
 import cx from "classnames";
-import { MouseEventHandler, useCallback, useState } from "react";
-import { useDesktopStore } from "../state/desktopState";
-import { DesktopIcon as DesktopIconType } from "../types";
+import { MouseEventHandler, useCallback, useRef, useState } from "react";
+import { useIconContextMenu } from "../menu/hooks/useIconContextMenu";
+import { useContextMenuStore } from "../state/contextMenuState";
+import {
+  DesktopIcon as DesktopIconType,
+  WidgetSettings,
+} from "../types/widget";
 import { DesktopIconImage } from "./DesktopIconImage";
 import { IconTitle } from "./IconTitle";
-import { useIconStore } from "../state/iconState";
-import { Application } from "../types/application";
+import { useOutsideClick } from "rooks";
 
 const containerCss = css`
   display: inline-flex;
@@ -41,53 +44,48 @@ const containerCss = css`
   }
 `;
 
-export interface IconProps<A extends Application> {
-  icon: DesktopIconType<A>;
-  selected: boolean;
-  onContextMenu?: (pos: { x: number; y: number }) => void;
+export interface IconProps {
+  icon: DesktopIconType;
+  className?: string;
+  titleClassName?: string;
+  selected?: boolean;
+  // onContextMenu?: (pos: { x: number; y: number }) => void;
+  onClick?: (id: string, append: boolean) => void;
+  onDoubleClick?: (widget: WidgetSettings) => void;
+  onOutsideClick?: () => void;
 }
 
-export function DesktopIcon<A extends Application>(props: IconProps<A>) {
+export function DesktopIcon(props: IconProps) {
   const {
-    icon: {
-      description,
-      title: defaultTitle = "Icon",
-      application,
-      widget,
-      id,
-    },
+    icon: { description, title: defaultTitle = "Icon", widget, id },
+    className,
+    titleClassName,
     selected,
-    // onContextMenu,
+    onClick,
+    onDoubleClick,
+    onOutsideClick,
   } = props;
   const [title, setTitle] = useState(defaultTitle);
   const [isEditingTitle, setIsEditingTitle] = useState(false);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  useOutsideClick(containerRef, onOutsideClick ?? (() => {}));
+
   // const clickTimerRef = useRef<number | null>(null);
 
-  const selectIcon = useIconStore((state) => state.selectIcon);
+  // const selectIcon = useIconStore((state) => state.selectIcon);
   // const unselectIcon = useIconStore((state) => state.unselectIcon);
-  const addWidget = useDesktopStore((state) => state.addWidget);
+  // const addWidget = useWidgetStore((state) => state.addWidget);
+
+  const iconContextMenuItems = useIconContextMenu(props.icon);
+  const showContextMenu = useContextMenuStore((state) => state.show);
 
   const onOpenWindow: MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
       e.stopPropagation();
-
-      addWidget({
-        title: widget.title,
-        application,
-        position: widget.position!,
-        dimensions: widget.dimensions,
-        resizable: widget.resizable,
-      });
+      onDoubleClick?.(widget);
     },
-    [
-      addWidget,
-      application,
-      widget.dimensions,
-      widget.position,
-      widget.resizable,
-      widget.title,
-    ]
+    [onDoubleClick, widget]
   );
 
   // const onMouseDown: MouseEventHandler<HTMLDivElement> = useCallback(
@@ -130,25 +128,30 @@ export function DesktopIcon<A extends Application>(props: IconProps<A>) {
 
   return (
     <div
-      className={cx(containerCss, { selected })}
+      ref={containerRef}
+      className={cx(containerCss, { selected }, className)}
       title={description}
       // onMouseDown={onMouseDown}
       onClick={(e) => {
         e.stopPropagation();
-        selectIcon(id, false);
+        onClick?.(id, false);
+        // selectIcon(id, false);
       }}
       onDoubleClick={onOpenWindow}
       onContextMenu={(e) => {
-        // e.preventDefault();
+        e.preventDefault();
         e.stopPropagation();
+        showContextMenu(iconContextMenuItems, { x: e.pageX, y: e.pageY });
         // onContextMenu?.({ x: e.pageX, y: e.pageY });
-        // return false;
+        return false;
       }}
     >
       <DesktopIconImage icon={props.icon} />
       <IconTitle
         title={title}
+        selected={selected}
         isEditing={isEditingTitle}
+        className={titleClassName}
         onCancel={() => setIsEditingTitle(false)}
         onUpdate={(next) => {
           setIsEditingTitle(false);

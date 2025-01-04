@@ -1,9 +1,7 @@
 import { css } from "@emotion/css";
 import { Box } from "../../components/Box";
-import {
-  ApplicationComponent,
-  DialogApplication,
-} from "../../types/application";
+import { ApplicationComponent } from "../../types/application";
+import { useWidgetStore } from "../../state/widgetState";
 
 const dialogCss = css`
   padding: 4px 12px 12px 12px;
@@ -20,10 +18,13 @@ const dialogCss = css`
   }
 `;
 
-export const Dialog: ApplicationComponent<DialogApplication> = ({
-  widget,
-  params: { message },
-}) => {
+export const Dialog: ApplicationComponent = ({ widget }) => {
+  const {
+    params: { message },
+  } = widget;
+
+  const close = useWidgetStore((state) => state.closeWidget);
+
   return (
     <Box
       className={dialogCss}
@@ -33,7 +34,7 @@ export const Dialog: ApplicationComponent<DialogApplication> = ({
       justifyContent="space-between"
     >
       <Box padding={"0 8px 4px 8px"}>{message}</Box>
-      <button onClick={() => widget.close()}>OK</button>
+      <button onClick={() => close(widget.id)}>OK</button>
     </Box>
   );
 };

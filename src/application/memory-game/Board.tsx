@@ -1,5 +1,5 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
-import { ChangeHandler } from "../../types";
+import { ChangeHandler } from "../../types/widget";
 
 interface BoardProps {
   size: number;

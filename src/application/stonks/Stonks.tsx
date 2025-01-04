@@ -1,8 +1,5 @@
-import {
-  ApplicationComponent,
-  StonksApplication,
-} from "../../types/application";
+import { ApplicationComponent } from "../../types/application";
 
-export const Stonks: ApplicationComponent<StonksApplication> = () => {
+export const Stonks: ApplicationComponent = () => {
   return <div>Stonks</div>;
 };

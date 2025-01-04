@@ -1,5 +1,5 @@
 import { RefObject, createContext, useContext } from "react";
-import { ChangeHandler } from "../../../types";
+import { ChangeHandler } from "../../../types/widget";
 
 export interface Track {
   title: string;

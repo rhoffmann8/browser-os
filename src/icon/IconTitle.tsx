@@ -1,4 +1,5 @@
 import { css } from "@emotion/css";
+import cx from "classnames";
 import {
   ChangeEventHandler,
   KeyboardEventHandler,
@@ -7,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Box } from "../components/Box";
+import { Div } from "../components/Div";
 
 const inputCss = css`
   color: white;
@@ -27,19 +28,42 @@ const displayCss = css`
   font-size: 0.8rem;
   font-weight: 600;
   line-height: 1.2;
-  text-shadow: 0px 1px 2px #000;
+  word-break: break-word;
 
-  user-select: none;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  visibility: visible;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+
+  &.selected {
+    display: flex;
+  }
+
+  &.shadow {
+    text-shadow: 0px 1px 2px #000;
+  }
 `;
 
 interface Props {
   title: string;
   isEditing: boolean;
+  selected?: boolean;
+  className?: string;
   onUpdate: (next: string) => void;
   onCancel: () => void;
 }
 
-export function IconTitle({ isEditing, title, onUpdate, onCancel }: Props) {
+export function IconTitle({
+  isEditing,
+  title,
+  selected,
+  className,
+  onUpdate,
+  onCancel,
+}: Props) {
   const [workingTitle, setWorkingTitle] = useState(title);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -75,7 +99,9 @@ export function IconTitle({ isEditing, title, onUpdate, onCancel }: Props) {
   );
 
   if (!isEditing) {
-    return <Box className={displayCss}>{title}</Box>;
+    return (
+      <Div className={cx(displayCss, { selected }, className)}>{title}</Div>
+    );
   }
 
   return (
