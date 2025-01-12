@@ -10,10 +10,7 @@ import { TrackDisplay } from "./components/TrackDisplay";
 import { TrackList } from "./components/TrackList";
 
 import { ID3Tag } from "id3js/lib/id3Tag";
-import {
-  useSetWidgetDimensions,
-  useWidgetStore,
-} from "../../state/widgetState";
+import { useSetWidgetDimensions, useWidgetStore } from "../../state/widgetState";
 import { AddTrack } from "./components/AddTrack";
 import { AudioPlayerContext, Track } from "./context/AudioPlayerContext";
 
@@ -62,15 +59,11 @@ export const MusicPlayer: ApplicationComponent = ({ widget }) => {
 
     if (trackFromFilePath) {
       setTrackList((prev) =>
-        prev.find((t) => t.src === trackFromFilePath.src)
-          ? prev
-          : prev.concat(trackFromFilePath)
+        prev.find((t) => t.src === trackFromFilePath.src) ? prev : prev.concat(trackFromFilePath)
       );
 
       setTimeout(() => {
-        const existingTrack = trackList.find(
-          (t) => t.src === trackFromFilePath.src
-        );
+        const existingTrack = trackList.find((t) => t.src === trackFromFilePath.src);
         setCurrentTrack(existingTrack ?? trackFromFilePath);
         setIsPlaying(true);
       });
@@ -134,7 +127,7 @@ const containerCss = css`
   background: #111;
   padding: 8px;
   color: white;
-  width: 340px;
+  width: 100%;
 `;
 
 function Inner() {
