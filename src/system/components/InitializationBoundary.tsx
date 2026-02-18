@@ -21,6 +21,11 @@ export function InitializationBoundary({ children }: PropsWithChildren) {
         console.warn("Music initialization failed, continuing without preloaded tracks:", e);
       }
       try {
+        await initializeVideo();
+      } catch (e) {
+        console.warn("Video directory creation failed:", e);
+      }
+      try {
         await fsAsync.mkdir("/notes");
       } catch (e) {
         console.warn("Notes directory creation failed:", e);
@@ -61,4 +66,17 @@ async function initializeMusic() {
 
 function isInitialized() {
   return localStorage.getItem("initialized") === "true";
+}
+
+async function initializeVideo() {
+  await fsAsync.mkdir("/video");
+  await fsAsync.writeFile(
+    "/video/A thing I made.video",
+    JSON.stringify({
+      params: {
+        url: "https://www.youtube.com/watch?v=Zu8BcbzhPNE",
+        start: 6,
+      },
+    }
+  ));
 }
