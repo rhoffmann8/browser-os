@@ -56,9 +56,11 @@ export const useWidgetStore = create<WidgetState>((set, get) => ({
 
   widgets: {},
   setWidgets: (next) => {
-    currentStackIndex = next.length
-      ? Math.max(...Object.values(next).map((w) => w.stackIndex))
-      : 0;
+    const values = Object.values(next);
+    currentStackIndex =
+      values.length > 0
+        ? Math.max(...values.map((w) => w.stackIndex))
+        : 0;
     set({ widgets: next });
   },
   setWidgetDimensions: (id, dims) =>

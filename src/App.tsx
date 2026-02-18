@@ -11,12 +11,49 @@ import { useEffect, useState } from "react";
 
 function App() {
   const [backendInitialized, setBackendInitialized] = useState(false);
+  const [backendError, setBackendError] = useState<string | null>(null);
 
   useEffect(() => {
-    configureSingle({ backend: WebStorage }).then(() =>
-      setBackendInitialized(true)
-    );
+    setBackendError(null);
+    configureSingle({ backend: WebStorage })
+      .then(() => setBackendInitialized(true))
+      .catch((err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        setBackendError(message);
+      });
   }, []);
+
+  if (backendError) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "2rem",
+          background: "#1a1a1a",
+          color: "#eee",
+          fontFamily: "system-ui, sans-serif",
+        }}
+      >
+        <p style={{ marginBottom: "1rem" }}>
+          Failed to initialize storage: {backendError}
+        </p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          style={{
+            padding: "0.5rem 1rem",
+            cursor: "pointer",
+          }}
+        >
+          Reload
+        </button>
+      </div>
+    );
+  }
 
   if (!backendInitialized) return null;
 

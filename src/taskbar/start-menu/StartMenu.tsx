@@ -4,7 +4,6 @@ import {
   faLinkedin,
   IconDefinition,
 } from "@fortawesome/free-brands-svg-icons";
-import { faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "react-transition-group";
 import { Box, BoxCol } from "../../components/Box";
@@ -17,13 +16,6 @@ import { ApplicationId } from "../../types/application";
 import { useRef } from "react";
 
 const widgets: (WidgetSettings & { icon: IconDefinition })[] = [
-  {
-    position: { x: 100, y: 40 },
-    applicationId: ApplicationId.PDFViewer,
-    params: { src: "/Hoffmann_Resume.pdf" },
-    title: "Resume",
-    icon: faFilePdf,
-  },
   {
     dimensions: { height: 0, width: 0 },
     position: { x: 0, y: 0 },

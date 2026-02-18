@@ -44,15 +44,7 @@ export function Desktop() {
   }, [setWidgets]);
 
   const desktopRef = useRef<HTMLDivElement>(null);
-  // const iconContextMenuItems = useIconContextMenu();
   const desktopContextMenuItems = useDesktopContextMenu(desktopRef.current);
-
-  // const onContextMenu = useCallback(
-  //   (pos: { x: number; y: number }) => {
-  //     showContextMenu(iconContextMenuItems, pos);
-  //   },
-  //   [iconContextMenuItems, showContextMenu]
-  // );
 
   const onViewportContextMenu: MouseEventHandler<HTMLDivElement> = useCallback(
     (e) => {
@@ -108,15 +100,12 @@ export function Desktop() {
               icon={icon}
               selected={selectedIcons.has(icon.id)}
               onClick={selectIcon}
-              // onContextMenu={onContextMenu}
               onDoubleClick={addWidget}
             />
           </Draggable>
         ))}
 
-        <WidgetDroppableContext
-          parentRect={desktopRef.current?.getBoundingClientRect()}
-        >
+        <WidgetDroppableContext>
           {Object.values(widgets).map((widget) => (
             <Widget key={widget.id} widget={widget} />
           ))}
@@ -130,21 +119,11 @@ export function Desktop() {
   );
 }
 
+/** Prevents default drag/drop; file drop onto desktop is not implemented. */
 function useExternalDroppable() {
   const onDrop: DragEventHandler<HTMLDivElement> = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if (!e.dataTransfer.items.length) return;
-
-    [...e.dataTransfer.items].forEach((item, i) => {
-      // If dropped items aren't files, reject them
-      if (item.kind === "file") {
-        const file = item.getAsFile();
-        if (!file) return;
-        console.log(`… file[${i}].name = ${file.name}`);
-      }
-    });
   }, []);
 
   const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((e) => {

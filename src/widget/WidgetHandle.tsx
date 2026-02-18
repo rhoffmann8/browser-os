@@ -13,6 +13,9 @@ const handleCss = css`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  /* Prevent drag from triggering page scroll (touch and mouse) */
+  touch-action: none;
 `;
 
 interface Props {

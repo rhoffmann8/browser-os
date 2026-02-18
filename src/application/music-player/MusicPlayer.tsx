@@ -61,14 +61,12 @@ export const MusicPlayer: ApplicationComponent = ({ widget }) => {
       setTrackList((prev) =>
         prev.find((t) => t.src === trackFromFilePath.src) ? prev : prev.concat(trackFromFilePath)
       );
-
       setTimeout(() => {
-        const existingTrack = trackList.find((t) => t.src === trackFromFilePath.src);
-        setCurrentTrack(existingTrack ?? trackFromFilePath);
+        setCurrentTrack(trackFromFilePath);
         setIsPlaying(true);
-      });
+      }, 0);
     }
-  }, [filePath, trackList]);
+  }, [filePath]);
 
   useEffect(() => {
     if (prevFilePath !== filePath) {
@@ -79,8 +77,7 @@ export const MusicPlayer: ApplicationComponent = ({ widget }) => {
 
   useEffect(() => {
     setTitle(widget.id, trackList[trackIndex]?.title ?? "");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trackList, trackIndex, widget.id]);
+  }, [trackList, trackIndex, widget.id, setTitle]);
 
   useEffect(() => {
     setWidgetDimensions(widget.id, { width: 340 });

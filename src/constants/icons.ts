@@ -3,7 +3,6 @@ import {
   faChessBoard,
   faComputer,
   faEnvelope,
-  faFilePdf,
   faFilm,
   faInfoCircle,
   faMusic,
@@ -20,15 +19,25 @@ export const DESKTOP_ICON_VERTICAL_DELTA = 80;
 // TODO: Rethink icon positioning logic
 export let xPos = 0;
 export let yPos = 0;
+
 export function createDefaultIcons(): DesktopIcon[] {
-  xPos = 0;
-  yPos = 0;
+  let localX = 10;
+  let localY = 10;
+  function nextPos() {
+    const out = { x: localX, y: localY };
+    localY += DESKTOP_ICON_VERTICAL_DELTA;
+    if (localY > window.innerHeight - 100) {
+      localY = 10;
+      localX += 80;
+    }
+    return out;
+  }
   return [
     createIcon({
       icon: {
         title: "My PC",
         icon: faComputer,
-        position: generateIconPos(),
+        position: nextPos(),
       },
       widget: {
         applicationId: ApplicationId.Explorer,
@@ -42,7 +51,7 @@ export function createDefaultIcons(): DesktopIcon[] {
         title: "About",
         description: "about me",
         icon: faInfoCircle,
-        position: generateIconPos(),
+        position: nextPos(),
       },
       widget: {
         dimensions: { height: 304, width: 550 },
@@ -54,24 +63,10 @@ export function createDefaultIcons(): DesktopIcon[] {
     }),
     createIcon({
       icon: {
-        title: "Resume",
-        description: "stuff I've done",
-        icon: faFilePdf,
-        position: generateIconPos(),
-      },
-      widget: {
-        position: { x: 100, y: 40 },
-        title: "Resume",
-        applicationId: ApplicationId.PDFViewer,
-        params: { src: "/Hoffmann_Resume.pdf" },
-      },
-    }),
-    createIcon({
-      icon: {
         title: "Contact",
         description: "email me",
         icon: faEnvelope,
-        position: generateIconPos(),
+        position: nextPos(),
       },
       widget: {
         dimensions: { height: 0, width: 0 },
@@ -85,7 +80,7 @@ export function createDefaultIcons(): DesktopIcon[] {
         title: "Github",
         description: "code",
         icon: faGithub,
-        position: generateIconPos(),
+        position: nextPos(),
       },
       widget: {
         dimensions: { height: 0, width: 0 },
@@ -99,7 +94,7 @@ export function createDefaultIcons(): DesktopIcon[] {
         title: "LinkedIn",
         description: "jerbs",
         icon: faLinkedin,
-        position: generateIconPos(),
+        position: nextPos(),
       },
       widget: {
         dimensions: { height: 0, width: 0 },
@@ -113,7 +108,7 @@ export function createDefaultIcons(): DesktopIcon[] {
         title: "Notes",
         description: "write some text",
         icon: faPencil,
-        position: generateIconPos(),
+        position: nextPos(),
       },
       widget: {
         dimensions: { height: 300, width: 500 },
@@ -126,7 +121,7 @@ export function createDefaultIcons(): DesktopIcon[] {
         title: "Memory",
         description: "match the tiles",
         icon: faChessBoard,
-        position: generateIconPos(),
+        position: nextPos(),
       },
       widget: {
         dimensions: { width: 400 },
@@ -141,7 +136,7 @@ export function createDefaultIcons(): DesktopIcon[] {
         title: "Music",
         description: "beats to recruit to",
         icon: faMusic,
-        position: generateIconPos(),
+        position: nextPos(),
       },
       widget: {
         dimensions: { width: 340 },
@@ -156,7 +151,7 @@ export function createDefaultIcons(): DesktopIcon[] {
         title: "A thing I made",
         description: "5 minutes of fame in 2011",
         icon: faFilm,
-        position: generateIconPos(),
+        position: nextPos(),
       },
       widget: {
         dimensions: { width: 640, height: 480 },
