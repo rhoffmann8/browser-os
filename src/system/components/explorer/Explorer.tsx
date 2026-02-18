@@ -98,7 +98,7 @@ export function Explorer({
       getIconsForPath(current).then(setIcons);
     });
     return () => watcher.close();
-  }, [current, setWidgetTitleFromPath]);
+  }, [current]);
 
   const sortedIcons = useMemo(() => {
     return icons.slice().sort((a, b) => {
@@ -132,7 +132,7 @@ export function Explorer({
 
   return (
     <BoxCol style={{ flex: 1 }}>
-      <Suspense fallback={<>Test</>}>
+      <Suspense fallback={<span aria-busy>Loading…</span>}>
         <Toolbar {...undoRedoStack} />
       </Suspense>
       <Box flex={1} gap={8} alignItems="start" padding={"4px 8px"}>
@@ -142,7 +142,7 @@ export function Explorer({
             icon={icon}
             selected={!!selectedIcons[icon.id]}
             onClick={(id) => toggleSelected(id, true)}
-            onOutsideClick={() => toggleSelected(id, false)}
+            onOutsideClick={() => toggleSelected(icon.id, false)}
             titleClassName={noTextShadowCss}
             onDoubleClick={async (nextWidget) => {
               if (!nextWidget.filePath) {

@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import { Box } from "../../../components/Box";
 import { useSetWidgetFilePath } from "../../../state/widgetState";
-import { ChangeHandler, Widget } from "../../../types/widget";
+import { Widget } from "../../../types/widget";
 import { getErrorMessage } from "../../../utils/error";
 import { toolbarCss } from "../styles";
 import { saveFile } from "../utils";
@@ -10,7 +10,6 @@ import { SaveButton } from "./toolbar-buttons/SaveButton";
 interface Props {
   widget: Widget;
   content: string;
-  onContentChange: ChangeHandler<string>;
 }
 
 export function Toolbar({ widget, content }: Props) {

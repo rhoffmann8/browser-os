@@ -3,11 +3,6 @@ export const DEFAULT_TEXT_EDITOR = {
   params: {},
 };
 
-export const RESUME_PDF_APPLICATION = {
-  id: "pdf-viewer",
-  params: { src: "/Hoffmann_Resume.pdf" },
-};
-
 export const GITHUB_LINK_APPLICATION = {
   id: "external-link",
   params: { url: "https://github.com/rhoffmann8" },

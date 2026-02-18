@@ -15,11 +15,17 @@ export function InitializationBoundary({ children }: PropsWithChildren) {
   useEffect(() => {
     if (isInitialized()) return;
     (async () => {
-      await initializeMusic();
-      await fsAsync.mkdir("/notes");
-
+      try {
+        await initializeMusic();
+      } catch (e) {
+        console.warn("Music initialization failed, continuing without preloaded tracks:", e);
+      }
+      try {
+        await fsAsync.mkdir("/notes");
+      } catch (e) {
+        console.warn("Notes directory creation failed:", e);
+      }
       setIcons(createDefaultIcons());
-
       localStorage.setItem("initialized", "true");
       setIsInitialized(true);
     })();
@@ -28,6 +34,7 @@ export function InitializationBoundary({ children }: PropsWithChildren) {
   return _isInitialized ? <>{children}</> : null;
 }
 
+/** Buffer is provided by vite-plugin-node-polyfills in this Vite build. */
 async function initializeMusic() {
   await fsAsync.mkdir("/music");
   await fsAsync.writeFile(

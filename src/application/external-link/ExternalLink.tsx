@@ -13,8 +13,7 @@ export const ExternalLink: ApplicationComponent = ({ widget: widget }) => {
   useEffect(() => {
     window.open(url);
     close(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [url, id, close]);
 
   return <></>;
 };

@@ -1,11 +1,12 @@
+import { css } from "@emotion/css";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { css } from "@emotion/css";
 import { BoxCol } from "../components/Box";
 
 const mobileCss = css`
   width: 100vw;
+  height: 100vh;
   align-items: center;
   justify-content: center;
   gap: 12px;
@@ -25,11 +26,7 @@ export function Mobile() {
     <BoxCol className={mobileCss}>
       <span>This site is best viewed through a desktop browser.</span>
       <span>
-        In the meantime, here is a{" "}
-        <a target="_blank" href="/Hoffmann_Resume.pdf">
-          link
-        </a>{" "}
-        to my resume. You can also find me
+        In the meantime, you can find me at{" "}
         <a href="mailto:contact@robhoffmann.me">
           <FontAwesomeIcon icon={faEnvelope} />
         </a>

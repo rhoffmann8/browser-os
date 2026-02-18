@@ -25,18 +25,11 @@ export const TextEditor: ApplicationComponent = ({ widget }) => {
       setWidgetTitle(id, WIDGET_TITLE_UNSAVED);
       return;
     }
-
+    setWidgetTitle(id, filePath.split("/").at(-1) ?? undefined);
     getFile(filePath).then((content) => {
-      if (content) {
-        setContent(content);
-        setWidgetTitle(id, filePath?.split("/").at(-1));
-      }
+      if (content) setContent(content);
     });
   }, [filePath, id, setWidgetTitle]);
-
-  useEffect(() => {
-    setWidgetTitle(id, filePath?.split("/").at(-1));
-  }, [id, setWidgetTitle, filePath]);
 
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 100);
@@ -44,7 +37,7 @@ export const TextEditor: ApplicationComponent = ({ widget }) => {
 
   return (
     <BoxCol fillWidth className={editorCss}>
-      <Toolbar widget={widget} content={content} onContentChange={setContent} />
+      <Toolbar widget={widget} content={content} />
       <textarea
         ref={inputRef}
         placeholder="Your text goes here"
