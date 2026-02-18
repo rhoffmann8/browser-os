@@ -1,5 +1,5 @@
 import { css } from "@emotion/css";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { BoxCol } from "../../components/Box";
 import { Div } from "../../components/Div";
@@ -8,19 +8,26 @@ import { useSetWidgetTitle } from "../../state/widgetState";
 import { ApplicationComponent } from "../../types/application";
 import { Navigation } from "./Navigation";
 import { createVideoUrl, extractVideoFromUrl, Video } from "./utils";
+import fs from "@zenfs/core";
 
 export const VideoPlayer: ApplicationComponent = ({ widget }) => {
-  const {
-    params: { url: defaultUrl, start: defaultStart },
-  } = widget;
-  const [undoStack, setUndoStack] = useState<Video[]>(() => {
-    const { videoId, playlistId } = extractVideoFromUrl(defaultUrl) ?? {};
-    return videoId
-      ? [{ videoId, playlistId, params: { start: defaultStart } }]
-      : [];
-  });
+  const { filePath } = widget;
+  const [prevFilePath, setPrevFilePath] = useState<string | undefined>();
+  const [undoStack, setUndoStack] = useState<Video[]>([]);
+
+  useEffect(() => {
+    if (prevFilePath !== filePath) {
+      if (filePath) {
+        const videoInfo = JSON.parse(fs.readFileSync(filePath, "utf8"));
+        const { videoId, playlistId } = extractVideoFromUrl(videoInfo.params.url) ?? {};
+        setUndoStack([{ videoId, playlistId, params: videoInfo.params }]);
+      }
+      setPrevFilePath(filePath);
+    }
+  }, [filePath, prevFilePath]);
+
   const [redoStack, setRedoStack] = useState<Video[]>([]);
-  const currentVideo = useMemo(
+  const currentVideo: Video | undefined = useMemo(
     () => undoStack[undoStack.length - 1],
     [undoStack]
   );
@@ -84,9 +91,9 @@ export const VideoPlayer: ApplicationComponent = ({ widget }) => {
           key={playerKey}
           playing
           controls
-          url={createVideoUrl(currentVideo) ?? undefined}
+          url={currentVideo ? createVideoUrl(currentVideo) : undefined}
           config={
-            currentVideo.params
+            currentVideo?.params
               ? {
                   youtube: { playerVars: currentVideo?.params },
                 }
