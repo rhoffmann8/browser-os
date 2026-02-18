@@ -4,7 +4,7 @@ import {
   faRotateForward,
   faShare,
 } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Box } from "../../components/Box";
 import { IconButton } from "../../components/IconButton";
 import { createVideoUrl, extractVideoFromUrl, Video } from "./utils";
@@ -34,7 +34,12 @@ export function Navigation({
   isForwardDisabled,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const url = currentVideo ? createVideoUrl(currentVideo) : undefined;
   const [input, setInput] = useState(createVideoUrl(currentVideo) ?? "");
+
+  useEffect(() => {
+    setInput(url ?? "");
+  }, [url]);
 
   const isGoDisabled = useMemo(() => {
     if (!input) return true;

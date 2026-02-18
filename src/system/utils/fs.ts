@@ -90,6 +90,8 @@ export function getFileType(path: string | undefined): FileType {
       return FileType.AUDIO;
     case "exe":
       return FileType.APPLICATION;
+    case "video":
+      return FileType.VIDEO;
     default:
       return FileType.UNKNOWN;
   }

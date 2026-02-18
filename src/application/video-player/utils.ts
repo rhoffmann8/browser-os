@@ -23,7 +23,9 @@ export function extractVideoFromUrl(urlOrVideoId: string): Video | null {
   return { videoId, playlistId: listId };
 }
 
-export function createVideoUrl(video: Video) {
+export function createVideoUrl(video: Video | undefined) {
+  if (!video) return undefined;
+
   if (video.videoId) {
     const url = new URL(`https://www.youtube.com/watch`);
     url.searchParams.set("v", video.videoId);

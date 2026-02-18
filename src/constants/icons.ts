@@ -3,7 +3,6 @@ import {
   faChessBoard,
   faComputer,
   faEnvelope,
-  faFilm,
   faInfoCircle,
   faMusic,
   faPencil,
@@ -146,24 +145,6 @@ export function createDefaultIcons(): DesktopIcon[] {
         isSingleInstance: true,
       },
     }),
-    createIcon({
-      icon: {
-        title: "A thing I made",
-        description: "5 minutes of fame in 2011",
-        icon: faFilm,
-        position: nextPos(),
-      },
-      widget: {
-        dimensions: { width: 640, height: 480 },
-        position: { x: 400, y: 100 },
-        isResizable: true,
-        applicationId: ApplicationId.VideoPlayer,
-        params: {
-          url: "https://www.youtube.com/watch?v=Zu8BcbzhPNE",
-          start: 6,
-        },
-      },
-    }),
   ];
 }
 
@@ -181,5 +162,3 @@ export function generateIconPos() {
   }
   return { x: xPos, y: yPos };
 }
-
-// export const DEFAULT_ICONS = createDefaultIcons();
